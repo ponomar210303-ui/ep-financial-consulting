@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Clock, Search } from 'lucide-react';
-import Logo from '../components/Logo';
-import ThemeToggle from '../components/ThemeToggle';
+import { Clock, Search } from 'lucide-react';
+import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AnimatedSection from '../components/AnimatedSection';
 
@@ -68,21 +67,7 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Navbar */}
-      <header className="fixed top-0 left-0 right-0 z-40 glass-strong py-3 shadow-lg shadow-background/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <Link to="/">
-            <Logo />
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="h-4 w-4" />
-              На главную
-            </Link>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <div className="pt-28 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
