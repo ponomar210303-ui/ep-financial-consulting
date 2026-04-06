@@ -171,33 +171,33 @@ export default function HeroAnimation() {
                 }}>
                   {/* Outer ring */}
                   <circle cx="80" cy="80" r="76" fill="none" stroke="#3B82F6" strokeWidth="3.5"/>
-                  {/* Dashes ring */}
-                  <circle cx="80" cy="80" r="70" fill="none" stroke="#3B82F6" strokeWidth="1" strokeDasharray="3 5"/>
+                  {/* Dots ring */}
+                  <circle cx="80" cy="80" r="70" fill="none" stroke="#3B82F6" strokeWidth="2" strokeDasharray="1 8" strokeLinecap="round"/>
                   {/* Inner ring */}
                   <circle cx="80" cy="80" r="63" fill="none" stroke="#3B82F6" strokeWidth="2"/>
 
-                  {/* Circular top text — r=67, arc=210px, text≈160px ✓ */}
+                  {/* Top text — centered on upper arc */}
                   <path id="topArc" d="M 80,80 m -67,0 a 67,67 0 1,1 134,0" fill="none"/>
-                  <text fontSize="7.5" fontFamily="'Inter', sans-serif" fontWeight="800" fill="#3B82F6" letterSpacing="2">
-                    <textPath href="#topArc" startOffset="8%">EVGENII PONOMAREV</textPath>
+                  <text fontSize="8" fontFamily="'Inter', sans-serif" fontWeight="800" fill="#3B82F6" letterSpacing="3" textAnchor="middle">
+                    <textPath href="#topArc" startOffset="50%">EVGENII PONOMAREV</textPath>
                   </text>
 
-                  {/* Circular bottom text — r=67, arc=210px, text≈177px ✓ */}
+                  {/* Bottom text — centered on lower arc */}
                   <path id="bottomArc" d="M 80,80 m -67,0 a 67,67 0 0,0 134,0" fill="none"/>
-                  <text fontSize="7" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#3B82F6" letterSpacing="1.5">
-                    <textPath href="#bottomArc" startOffset="10%">BRATISLAVA • SLOVAKIA</textPath>
+                  <text fontSize="7.5" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#3B82F6" letterSpacing="2" textAnchor="middle">
+                    <textPath href="#bottomArc" startOffset="50%">BRATISLAVA, SLOVAKIA</textPath>
                   </text>
+
+                  {/* Dot separators at 3 and 9 o'clock */}
+                  <circle cx="13" cy="80" r="2" fill="#3B82F6"/>
+                  <circle cx="147" cy="80" r="2" fill="#3B82F6"/>
 
                   {/* Center EP. text */}
-                  <text x="80" y="75" textAnchor="middle" fontSize="30" fontFamily="'Inter', sans-serif" fontWeight="900" fill="#3B82F6" letterSpacing="-1">EP.</text>
+                  <text x="80" y="78" textAnchor="middle" fontSize="38" fontFamily="'Inter', sans-serif" fontWeight="900" fill="#3B82F6" letterSpacing="-1">EP.</text>
                   {/* Center sub line */}
-                  <line x1="56" y1="81" x2="104" y2="81" stroke="#3B82F6" strokeWidth="1" opacity="0.6"/>
+                  <line x1="52" y1="84" x2="108" y2="84" stroke="#3B82F6" strokeWidth="1.2" opacity="0.5"/>
                   {/* Center year */}
-                  <text x="80" y="93" textAnchor="middle" fontSize="8" fontFamily="monospace" fontWeight="500" fill="#3B82F6" letterSpacing="2" opacity="0.8">2025</text>
-
-                  {/* Star decorations at 12 and 6 o'clock */}
-                  <text x="80" y="14" textAnchor="middle" fontSize="6" fill="#3B82F6">★</text>
-                  <text x="80" y="150" textAnchor="middle" fontSize="6" fill="#3B82F6">★</text>
+                  <text x="80" y="98" textAnchor="middle" fontSize="11" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#3B82F6" letterSpacing="3" opacity="0.85">2026</text>
                 </svg>
 
                 {/* Ink bleed at bottom */}
