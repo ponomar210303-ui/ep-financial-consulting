@@ -2,7 +2,7 @@ import { MessageSquare, Zap, Heart, Shield } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 
 const comparison = [
-  { them: 'Формальное общение на словацком', us: 'Всё на русском, как с другом' },
+  { them: 'Формальное общение на словацком', us: 'Объясняю по-человечески, без жаргона' },
   { them: 'Ответ через неделю по email', us: 'Ответ в WhatsApp за час' },
   { them: 'Только ведение учёта', us: 'Стратегия + учёт + помощь с документами' },
 ];
@@ -11,7 +11,7 @@ const features = [
   {
     icon: MessageSquare,
     title: 'На твоём языке',
-    desc: 'Всё общение на русском. Без языкового барьера.',
+    desc: 'Русский, украинский, английский, словацкий — говорим как тебе удобно.',
   },
   {
     icon: Zap,

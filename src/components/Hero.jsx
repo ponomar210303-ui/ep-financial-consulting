@@ -31,7 +31,7 @@ export default function Hero() {
             <AnimatedSection delay={100}>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
                 Открою živnosť, настрою учёт и объясню
-                <span className="gradient-text"> всё по-русски</span>
+                <span className="gradient-text"> всё по-человечески</span>
               </h1>
             </AnimatedSection>
 
