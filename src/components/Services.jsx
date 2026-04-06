@@ -1,5 +1,4 @@
 import { ClipboardList, BarChart3, Lightbulb, Rocket, ArrowRight } from 'lucide-react';
-import TaxCalculator from './TaxCalculator';
 import AnimatedSection from './AnimatedSection';
 
 const services = [
@@ -72,15 +71,6 @@ export default function Services() {
           ))}
         </div>
 
-        {/* Tax Calculator */}
-        <div className="mt-16">
-          <AnimatedSection delay={100}>
-            <h3 className="text-xl font-bold text-center mb-6 text-muted-foreground">
-              Узнай сколько платишь государству 👇
-            </h3>
-          </AnimatedSection>
-          <TaxCalculator />
-        </div>
       </div>
     </section>
   );

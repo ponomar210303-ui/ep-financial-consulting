@@ -6,6 +6,7 @@ import Services from '../components/Services';
 import HowItWorks from '../components/HowItWorks';
 import About from '../components/About';
 import BlogSection from '../components/BlogSection';
+import ToolsSection from '../components/ToolsSection';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 
@@ -33,6 +34,7 @@ export default function Landing() {
       <WhyMe />
       <Services />
       <HowItWorks />
+      <ToolsSection />
       <BlogSection blogImages={BLOG_IMAGES} />
       <Contact />
       <Footer />
