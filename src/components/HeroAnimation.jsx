@@ -69,10 +69,10 @@ export default function HeroAnimation() {
   const stampGone = phase === 'flyaway' || phase === 'reset' || phase === 'idle';
 
   return (
-    <div className="relative w-full flex flex-col items-center justify-center" style={{ height: 440 }}>
+    <div className="relative w-full flex flex-col items-center justify-center" style={{ height: 510 }}>
 
       {/* MacBook lid */}
-      <div style={{ position: 'relative', width: 390, perspective: 1000 }}>
+      <div style={{ position: 'relative', width: 390, perspective: 1000, transform: 'scale(1.15)', transformOrigin: 'top center', marginBottom: 26 }}>
         {/* Outer aluminum shell */}
         <div style={{
           width: 390,
@@ -170,34 +170,34 @@ export default function HeroAnimation() {
                   opacity: 0.92,
                 }}>
                   {/* Outer ring */}
-                  <circle cx="55" cy="55" r="52" fill="none" stroke="#2563EB" strokeWidth="3"/>
+                  <circle cx="55" cy="55" r="52" fill="none" stroke="#3B82F6" strokeWidth="3.5"/>
                   {/* Inner ring */}
-                  <circle cx="55" cy="55" r="44" fill="none" stroke="#2563EB" strokeWidth="1.5"/>
+                  <circle cx="55" cy="55" r="44" fill="none" stroke="#3B82F6" strokeWidth="2"/>
                   {/* Decorative dashes ring */}
-                  <circle cx="55" cy="55" r="48" fill="none" stroke="#2563EB" strokeWidth="0.8" strokeDasharray="3 4"/>
+                  <circle cx="55" cy="55" r="48" fill="none" stroke="#3B82F6" strokeWidth="1" strokeDasharray="3 4"/>
 
                   {/* Circular top text */}
-                  <path id="topArc" d="M 55,55 m -38,0 a 38,38 0 1,1 76,0" fill="none"/>
-                  <text fontSize="7.5" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#2563EB" letterSpacing="2.5">
+                  <path id="topArc" d="M 55,55 m -34,0 a 34,34 0 1,1 68,0" fill="none"/>
+                  <text fontSize="7.5" fontFamily="'Inter', sans-serif" fontWeight="800" fill="#3B82F6" letterSpacing="2.5">
                     <textPath href="#topArc" startOffset="8%">EVGENII PONOMAREV • FINANCIE •</textPath>
                   </text>
 
                   {/* Circular bottom text */}
-                  <path id="bottomArc" d="M 55,55 m -38,0 a 38,38 0 0,0 76,0" fill="none"/>
-                  <text fontSize="7" fontFamily="'Inter', sans-serif" fontWeight="600" fill="#2563EB" letterSpacing="2">
+                  <path id="bottomArc" d="M 55,55 m -34,0 a 34,34 0 0,0 68,0" fill="none"/>
+                  <text fontSize="7" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#3B82F6" letterSpacing="2">
                     <textPath href="#bottomArc" startOffset="12%">BRATISLAVA • SLOVAKIA</textPath>
                   </text>
 
                   {/* Center EP. text */}
-                  <text x="55" y="51" textAnchor="middle" fontSize="26" fontFamily="'Inter', sans-serif" fontWeight="900" fill="#2563EB" letterSpacing="-1">EP.</text>
+                  <text x="55" y="51" textAnchor="middle" fontSize="26" fontFamily="'Inter', sans-serif" fontWeight="900" fill="#3B82F6" letterSpacing="-1">EP.</text>
                   {/* Center sub line */}
-                  <line x1="35" y1="57" x2="75" y2="57" stroke="#2563EB" strokeWidth="1" opacity="0.6"/>
+                  <line x1="35" y1="57" x2="75" y2="57" stroke="#3B82F6" strokeWidth="1" opacity="0.6"/>
                   {/* Center year */}
-                  <text x="55" y="67" textAnchor="middle" fontSize="7" fontFamily="monospace" fontWeight="500" fill="#2563EB" letterSpacing="2" opacity="0.8">2025</text>
+                  <text x="55" y="67" textAnchor="middle" fontSize="7" fontFamily="monospace" fontWeight="500" fill="#3B82F6" letterSpacing="2" opacity="0.8">2025</text>
 
                   {/* Small star decorations */}
-                  <text x="55" y="30" textAnchor="middle" fontSize="5" fill="#2563EB">★</text>
-                  <text x="55" y="84" textAnchor="middle" fontSize="5" fill="#2563EB">★</text>
+                  <text x="55" y="30" textAnchor="middle" fontSize="5" fill="#3B82F6">★</text>
+                  <text x="55" y="84" textAnchor="middle" fontSize="5" fill="#3B82F6">★</text>
                 </svg>
 
                 {/* Ink bleed at bottom */}
