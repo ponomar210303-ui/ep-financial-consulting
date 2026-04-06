@@ -146,7 +146,7 @@ export default function HeroAnimation() {
                 ))}
               </div>
 
-              {/* EP. STAMP */}
+              {/* EP. ROUND SEAL STAMP */}
               <div style={{
                 position: 'absolute', inset: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -161,78 +161,53 @@ export default function HeroAnimation() {
                     ? `all ${TIMINGS.flyaway * 0.4}ms ease-in`
                     : 'none',
               }}>
-                {/* Classic rubber stamp */}
-                <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  {/* Stamp handle */}
+                <svg width="110" height="110" viewBox="0 0 110 110" style={{
+                  filter: phase === 'hold'
+                    ? 'drop-shadow(0 0 12px rgba(37,99,235,0.7)) drop-shadow(0 0 30px rgba(37,99,235,0.4))'
+                    : 'drop-shadow(0 0 6px rgba(37,99,235,0.4))',
+                  transition: `filter ${TIMINGS.stamp}ms ease-out`,
+                  opacity: 0.92,
+                }}>
+                  {/* Outer ring */}
+                  <circle cx="55" cy="55" r="52" fill="none" stroke="#2563EB" strokeWidth="3"/>
+                  {/* Inner ring */}
+                  <circle cx="55" cy="55" r="44" fill="none" stroke="#2563EB" strokeWidth="1.5"/>
+                  {/* Decorative dashes ring */}
+                  <circle cx="55" cy="55" r="48" fill="none" stroke="#2563EB" strokeWidth="0.8" strokeDasharray="3 4"/>
+
+                  {/* Circular top text */}
+                  <path id="topArc" d="M 55,55 m -38,0 a 38,38 0 1,1 76,0" fill="none"/>
+                  <text fontSize="7.5" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#2563EB" letterSpacing="2.5">
+                    <textPath href="#topArc" startOffset="8%">EVGENII PONOMAREV • FINANCIE •</textPath>
+                  </text>
+
+                  {/* Circular bottom text */}
+                  <path id="bottomArc" d="M 55,55 m -38,0 a 38,38 0 0,0 76,0" fill="none"/>
+                  <text fontSize="7" fontFamily="'Inter', sans-serif" fontWeight="600" fill="#2563EB" letterSpacing="2">
+                    <textPath href="#bottomArc" startOffset="12%">BRATISLAVA • SLOVAKIA</textPath>
+                  </text>
+
+                  {/* Center EP. text */}
+                  <text x="55" y="51" textAnchor="middle" fontSize="26" fontFamily="'Inter', sans-serif" fontWeight="900" fill="#2563EB" letterSpacing="-1">EP.</text>
+                  {/* Center sub line */}
+                  <line x1="35" y1="57" x2="75" y2="57" stroke="#2563EB" strokeWidth="1" opacity="0.6"/>
+                  {/* Center year */}
+                  <text x="55" y="67" textAnchor="middle" fontSize="7" fontFamily="monospace" fontWeight="500" fill="#2563EB" letterSpacing="2" opacity="0.8">2025</text>
+
+                  {/* Small star decorations */}
+                  <text x="55" y="30" textAnchor="middle" fontSize="5" fill="#2563EB">★</text>
+                  <text x="55" y="84" textAnchor="middle" fontSize="5" fill="#2563EB">★</text>
+                </svg>
+
+                {/* Ink bleed at bottom */}
+                {stampVisible && (
                   <div style={{
-                    width: 32, height: 14, borderRadius: '6px 6px 0 0',
-                    background: 'linear-gradient(180deg, #1a3a8f 0%, #1e40af 100%)',
-                    boxShadow: '0 -2px 6px rgba(37,99,235,0.4)',
+                    position: 'absolute', bottom: -6, left: '50%', transform: 'translateX(-50%)',
+                    width: 120, height: 10,
+                    background: 'radial-gradient(ellipse, rgba(37,99,235,0.2) 0%, transparent 70%)',
+                    filter: 'blur(4px)',
                   }} />
-                  {/* Stamp body */}
-                  <div style={{
-                    width: 96, height: 8,
-                    background: 'linear-gradient(180deg, #1e40af 0%, #1d4ed8 100%)',
-                    boxShadow: '0 2px 8px rgba(37,99,235,0.3)',
-                  }} />
-                  {/* Stamp face */}
-                  <div style={{
-                    width: 100,
-                    padding: '8px 16px 10px',
-                    border: '2.5px solid #2563EB',
-                    borderRadius: 4,
-                    background: 'rgba(37,99,235,0.08)',
-                    position: 'relative',
-                    boxShadow: phase === 'hold'
-                      ? '0 0 0 2px rgba(37,99,235,0.2), 0 0 30px rgba(37,99,235,0.5), 0 0 60px rgba(37,99,235,0.2)'
-                      : '0 0 15px rgba(37,99,235,0.3)',
-                    transition: `box-shadow ${TIMINGS.stamp}ms ease-out`,
-                  }}>
-                    {/* Outer decorative border */}
-                    <div style={{
-                      position: 'absolute', inset: 3,
-                      border: '1px solid rgba(37,99,235,0.5)',
-                      borderRadius: 2,
-                      pointerEvents: 'none',
-                    }} />
-                    {/* Main text */}
-                    <div style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontWeight: 900,
-                      fontSize: 30,
-                      color: '#2563EB',
-                      letterSpacing: '-1px',
-                      lineHeight: 1,
-                      textAlign: 'center',
-                      textShadow: '0 0 20px rgba(37,99,235,0.6)',
-                      position: 'relative', zIndex: 1,
-                    }}>
-                      EP<span style={{ color: '#1d4ed8' }}>.</span>
-                    </div>
-                    {/* Sub-text */}
-                    <div style={{
-                      fontFamily: 'monospace',
-                      fontSize: 6,
-                      color: 'rgba(37,99,235,0.7)',
-                      letterSpacing: '2px',
-                      textAlign: 'center',
-                      marginTop: 3,
-                      textTransform: 'uppercase',
-                    }}>
-                      Bratislava · SK
-                    </div>
-                  </div>
-                  {/* Ink splatter on impact */}
-                  {stampVisible && (
-                    <div style={{
-                      position: 'absolute',
-                      bottom: -8, left: '50%', transform: 'translateX(-50%)',
-                      width: 120, height: 12,
-                      background: 'radial-gradient(ellipse, rgba(37,99,235,0.25) 0%, transparent 70%)',
-                      filter: 'blur(3px)',
-                    }} />
-                  )}
-                </div>
+                )}
               </div>
 
               {/* Ripple on stamp */}
