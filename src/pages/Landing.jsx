@@ -29,10 +29,10 @@ export default function Landing() {
     <div className="min-h-screen bg-background text-foreground transition-colors duration-700">
       <Navbar />
       <Hero />
+      <About photoUrl={ABOUT_PHOTO} />
       <WhyMe />
       <Services />
       <HowItWorks />
-      <About photoUrl={ABOUT_PHOTO} />
       <BlogSection blogImages={BLOG_IMAGES} />
       <Contact />
       <Footer />
