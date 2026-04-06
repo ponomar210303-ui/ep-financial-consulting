@@ -162,49 +162,49 @@ export default function HeroAnimation() {
                     ? `all ${TIMINGS.flyaway * 0.4}ms ease-in`
                     : 'none',
               }}>
-                <svg width="110" height="110" viewBox="0 0 110 110" style={{
+                <svg width="160" height="160" viewBox="0 0 160 160" style={{
                   filter: phase === 'hold'
-                    ? 'drop-shadow(0 0 12px rgba(37,99,235,0.7)) drop-shadow(0 0 30px rgba(37,99,235,0.4))'
-                    : 'drop-shadow(0 0 6px rgba(37,99,235,0.4))',
+                    ? 'drop-shadow(0 0 14px rgba(59,130,246,0.8)) drop-shadow(0 0 36px rgba(59,130,246,0.4))'
+                    : 'drop-shadow(0 0 7px rgba(59,130,246,0.5))',
                   transition: `filter ${TIMINGS.stamp}ms ease-out`,
-                  opacity: 0.92,
+                  opacity: 0.93,
                 }}>
                   {/* Outer ring */}
-                  <circle cx="55" cy="55" r="52" fill="none" stroke="#3B82F6" strokeWidth="3.5"/>
+                  <circle cx="80" cy="80" r="76" fill="none" stroke="#3B82F6" strokeWidth="3.5"/>
+                  {/* Dashes ring */}
+                  <circle cx="80" cy="80" r="70" fill="none" stroke="#3B82F6" strokeWidth="1" strokeDasharray="3 5"/>
                   {/* Inner ring */}
-                  <circle cx="55" cy="55" r="44" fill="none" stroke="#3B82F6" strokeWidth="2"/>
-                  {/* Decorative dashes ring */}
-                  <circle cx="55" cy="55" r="48" fill="none" stroke="#3B82F6" strokeWidth="1" strokeDasharray="3 4"/>
+                  <circle cx="80" cy="80" r="63" fill="none" stroke="#3B82F6" strokeWidth="2"/>
 
-                  {/* Circular top text */}
-                  <path id="topArc" d="M 55,55 m -34,0 a 34,34 0 1,1 68,0" fill="none"/>
-                  <text fontSize="7.5" fontFamily="'Inter', sans-serif" fontWeight="800" fill="#3B82F6" letterSpacing="2.5">
-                    <textPath href="#topArc" startOffset="8%">EVGENII PONOMAREV • FINANCIE •</textPath>
+                  {/* Circular top text — r=67, arc=210px, text≈160px ✓ */}
+                  <path id="topArc" d="M 80,80 m -67,0 a 67,67 0 1,1 134,0" fill="none"/>
+                  <text fontSize="7.5" fontFamily="'Inter', sans-serif" fontWeight="800" fill="#3B82F6" letterSpacing="2">
+                    <textPath href="#topArc" startOffset="8%">EVGENII PONOMAREV</textPath>
                   </text>
 
-                  {/* Circular bottom text */}
-                  <path id="bottomArc" d="M 55,55 m -34,0 a 34,34 0 0,0 68,0" fill="none"/>
-                  <text fontSize="7" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#3B82F6" letterSpacing="2">
-                    <textPath href="#bottomArc" startOffset="12%">BRATISLAVA • SLOVAKIA</textPath>
+                  {/* Circular bottom text — r=67, arc=210px, text≈177px ✓ */}
+                  <path id="bottomArc" d="M 80,80 m -67,0 a 67,67 0 0,0 134,0" fill="none"/>
+                  <text fontSize="7" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#3B82F6" letterSpacing="1.5">
+                    <textPath href="#bottomArc" startOffset="10%">BRATISLAVA • SLOVAKIA</textPath>
                   </text>
 
                   {/* Center EP. text */}
-                  <text x="55" y="51" textAnchor="middle" fontSize="26" fontFamily="'Inter', sans-serif" fontWeight="900" fill="#3B82F6" letterSpacing="-1">EP.</text>
+                  <text x="80" y="75" textAnchor="middle" fontSize="30" fontFamily="'Inter', sans-serif" fontWeight="900" fill="#3B82F6" letterSpacing="-1">EP.</text>
                   {/* Center sub line */}
-                  <line x1="35" y1="57" x2="75" y2="57" stroke="#3B82F6" strokeWidth="1" opacity="0.6"/>
+                  <line x1="56" y1="81" x2="104" y2="81" stroke="#3B82F6" strokeWidth="1" opacity="0.6"/>
                   {/* Center year */}
-                  <text x="55" y="67" textAnchor="middle" fontSize="7" fontFamily="monospace" fontWeight="500" fill="#3B82F6" letterSpacing="2" opacity="0.8">2025</text>
+                  <text x="80" y="93" textAnchor="middle" fontSize="8" fontFamily="monospace" fontWeight="500" fill="#3B82F6" letterSpacing="2" opacity="0.8">2025</text>
 
-                  {/* Small star decorations */}
-                  <text x="55" y="30" textAnchor="middle" fontSize="5" fill="#3B82F6">★</text>
-                  <text x="55" y="84" textAnchor="middle" fontSize="5" fill="#3B82F6">★</text>
+                  {/* Star decorations at 12 and 6 o'clock */}
+                  <text x="80" y="14" textAnchor="middle" fontSize="6" fill="#3B82F6">★</text>
+                  <text x="80" y="150" textAnchor="middle" fontSize="6" fill="#3B82F6">★</text>
                 </svg>
 
                 {/* Ink bleed at bottom */}
                 {stampVisible && (
                   <div style={{
                     position: 'absolute', bottom: -6, left: '50%', transform: 'translateX(-50%)',
-                    width: 120, height: 10,
+                    width: 170, height: 10,
                     background: 'radial-gradient(ellipse, rgba(37,99,235,0.2) 0%, transparent 70%)',
                     filter: 'blur(4px)',
                   }} />
