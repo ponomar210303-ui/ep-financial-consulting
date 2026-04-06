@@ -1,0 +1,52 @@
+{
+  "name": "BlogPost",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "\u0417\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a"
+    },
+    "slug": {
+      "type": "string",
+      "title": "URL slug"
+    },
+    "category": {
+      "type": "string",
+      "title": "\u041a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u044f",
+      "enum": [
+        "\u041d\u0430\u043b\u043e\u0433\u0438",
+        "\u017divnos\u0165",
+        "\u041b\u0430\u0439\u0444\u0445\u0430\u043a\u0438",
+        "\u0411\u0438\u0437\u043d\u0435\u0441"
+      ]
+    },
+    "excerpt": {
+      "type": "string",
+      "title": "\u041a\u0440\u0430\u0442\u043a\u043e\u0435 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435"
+    },
+    "body": {
+      "type": "string",
+      "title": "\u0422\u0435\u043a\u0441\u0442 \u0441\u0442\u0430\u0442\u044c\u0438"
+    },
+    "image_url": {
+      "type": "string",
+      "title": "\u0418\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435"
+    },
+    "reading_time": {
+      "type": "number",
+      "title": "\u0412\u0440\u0435\u043c\u044f \u0447\u0442\u0435\u043d\u0438\u044f (\u043c\u0438\u043d)"
+    },
+    "published": {
+      "type": "boolean",
+      "title": "\u041e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u043d\u043e",
+      "default": false
+    }
+  },
+  "required": [
+    "title",
+    "slug",
+    "category",
+    "excerpt",
+    "body"
+  ]
+}
