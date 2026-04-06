@@ -9,11 +9,11 @@ import BlogSection from '../components/BlogSection';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 
-const ABOUT_PHOTO = '/__generating__/img_32855d94c41f.png';
+const ABOUT_PHOTO = 'https://media.base44.com/images/public/69d414bc41ee308b2992cc63/e33643230_generated_cd602d92.png';
 const BLOG_IMAGES = [
-  '/__generating__/img_336e123728f6.png',
-  '/__generating__/img_a95840967756.png',
-  '/__generating__/img_1512a5f37006.png',
+  'https://media.base44.com/images/public/69d414bc41ee308b2992cc63/292f89ffb_generated_921b0648.png',
+  'https://media.base44.com/images/public/69d414bc41ee308b2992cc63/7e84b47d7_generated_fa9b0de8.png',
+  'https://media.base44.com/images/public/69d414bc41ee308b2992cc63/532e64ec7_generated_b02604b5.png',
 ];
 
 export default function Landing() {
