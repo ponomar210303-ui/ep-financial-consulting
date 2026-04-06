@@ -142,14 +142,20 @@ export default function BlogPost() {
 
   useEffect(() => {
     async function loadPost() {
-      // Try to load from DB first
-      const posts = await base44.entities.BlogPost.filter({ slug, published: true });
-      if (posts.length > 0) {
-        setPost(posts[0]);
-      } else if (placeholderArticles[slug]) {
-        setPost(placeholderArticles[slug]);
+      try {
+        const posts = await base44.entities.BlogPost.filter({ slug, published: true });
+        if (posts.length > 0) {
+          setPost(posts[0]);
+        } else if (placeholderArticles[slug]) {
+          setPost(placeholderArticles[slug]);
+        }
+      } catch {
+        if (placeholderArticles[slug]) {
+          setPost(placeholderArticles[slug]);
+        }
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     loadPost();
   }, [slug]);
