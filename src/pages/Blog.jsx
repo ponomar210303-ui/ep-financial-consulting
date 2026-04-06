@@ -51,7 +51,6 @@ export default function Blog() {
   const [activeCategory, setActiveCategory] = useState('Все');
 
   useEffect(() => {
-    document.documentElement.classList.add('dark');
     base44.entities.BlogPost.filter({ published: true }, '-created_date', 50)
       .then(setPosts)
       .catch(() => setPosts([]));
