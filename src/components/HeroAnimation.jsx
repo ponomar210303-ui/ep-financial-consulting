@@ -107,7 +107,7 @@ export default function HeroAnimation() {
             <div style={{
               width: '100%',
               height: 230,
-              background: 'linear-gradient(135deg, #08080e 0%, #0a0a14 60%, #0d0818 100%)',
+              background: 'linear-gradient(135deg, #141420 0%, #181825 60%, #151320 100%)',
               borderRadius: '4px 4px 0 0',
               position: 'relative',
               overflow: 'hidden',
@@ -141,7 +141,7 @@ export default function HeroAnimation() {
                     ...getDocStyle(doc),
                   }}>
                     <span style={{ fontSize: 16 }}>{doc.emoji}</span>
-                    <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.5)', fontFamily: 'monospace' }}>{doc.label}</span>
+                    <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.75)', fontFamily: 'monospace', fontWeight: 600 }}>{doc.label}</span>
                   </div>
                 ))}
               </div>
