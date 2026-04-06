@@ -7,6 +7,7 @@ import ThemeToggle from './ThemeToggle';
 const links = [
   { label: 'Услуги', href: '#services' },
   { label: 'Обо мне', href: '#about' },
+  { label: 'Инструменты', href: '#tools' },
   { label: 'Блог', href: '/blog', external: true },
   { label: 'Контакт', href: '#contact' },
 ];
