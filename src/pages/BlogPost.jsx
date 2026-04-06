@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, Calendar } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { base44 } from '@/api/base44Client';
-import Logo from '../components/Logo';
-import ThemeToggle from '../components/ThemeToggle';
+import Navbar from '../components/Navbar';
 
 const placeholderArticles = {
   'kak-otkryt-zivnost': {
@@ -137,6 +136,7 @@ const placeholderArticles = {
 
 export default function BlogPost() {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -183,24 +183,12 @@ export default function BlogPost() {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-700">
-      {/* Header */}
-      <header className="sticky top-0 z-40 glass-strong py-3">
-        <div className="max-w-4xl mx-auto px-4 flex items-center justify-between">
-          <Link to="/">
-            <Logo />
-          </Link>
-          <ThemeToggle />
-        </div>
-      </header>
+      <Navbar />
 
-      <article className="max-w-3xl mx-auto px-4 py-12">
+      <article className="max-w-3xl mx-auto px-4 pt-28 pb-12">
         <Link
-          to="/"
+          to="/blog"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
-          onClick={(e) => {
-            e.preventDefault();
-            window.location.href = '/#blog';
-          }}
         >
           <ArrowLeft className="h-4 w-4" />
           Назад к блогу
@@ -238,12 +226,8 @@ export default function BlogPost() {
         {/* Back link */}
         <div className="mt-16 pt-8 border-t border-border/30">
           <Link
-            to="/"
+            to="/blog"
             className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
-            onClick={(e) => {
-              e.preventDefault();
-              window.location.href = '/#blog';
-            }}
           >
             <ArrowLeft className="h-4 w-4" />
             Все статьи
