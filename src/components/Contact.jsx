@@ -10,8 +10,8 @@ const contactCards = [
   {
     icon: MessageCircle,
     label: 'WhatsApp',
-    value: '+421 000 000 000',
-    href: 'https://wa.me/421000000000',
+    value: '+421 910 650 045',
+    href: 'https://wa.me/421910650045',
     color: 'from-green-500/20 to-green-600/20',
   },
   {
@@ -24,8 +24,8 @@ const contactCards = [
   {
     icon: Mail,
     label: 'Email',
-    value: 'hello@ep.sk',
-    href: 'mailto:hello@ep.sk',
+    value: 'ponomarev.businessonly@gmail.com',
+    href: 'mailto:ponomarev.businessonly@gmail.com',
     color: 'from-secondary/20 to-secondary/10',
   },
 ];

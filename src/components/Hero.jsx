@@ -59,7 +59,7 @@ export default function Hero() {
                   className="rounded-full px-8 font-semibold text-base border-border/50 hover:border-primary/50 hover:bg-primary/5"
                   asChild
                 >
-                  <a href="https://wa.me/421000000000" target="_blank" rel="noopener noreferrer">
+                  <a href="https://wa.me/421910650045" target="_blank" rel="noopener noreferrer">
                     <MessageCircle className="mr-2 h-4 w-4" />
                     Написать в WhatsApp
                   </a>

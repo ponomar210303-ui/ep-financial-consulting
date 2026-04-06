@@ -24,7 +24,7 @@ export default function Footer() {
 
           <div className="flex flex-wrap gap-6 text-sm">
             <a
-              href="https://wa.me/421000000000"
+              href="https://wa.me/421910650045"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -32,7 +32,7 @@ export default function Footer() {
               WhatsApp
             </a>
             <a
-              href="mailto:hello@ep.sk"
+              href="mailto:ponomarev.businessonly@gmail.com"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Email
