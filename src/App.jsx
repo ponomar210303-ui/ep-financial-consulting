@@ -6,6 +6,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Landing from './pages/Landing';
+import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 
 const AuthenticatedApp = () => {
@@ -35,6 +36,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/blog" element={<Blog />} />
       <Route path="/blog/:slug" element={<BlogPost />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>

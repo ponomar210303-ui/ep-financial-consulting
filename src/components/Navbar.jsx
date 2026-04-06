@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
@@ -8,13 +9,14 @@ import MobileMenu from './MobileMenu';
 const links = [
   { label: 'Услуги', href: '#services' },
   { label: 'Обо мне', href: '#about' },
-  { label: 'Блог', href: '#blog' },
+  { label: 'Блог', href: '/blog', external: true },
   { label: 'Контакт', href: '#contact' },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -22,7 +24,8 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollTo = (href) => {
+  const scrollTo = (href, external) => {
+    if (external) { navigate(href); return; }
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -44,7 +47,7 @@ export default function Navbar() {
             {links.map((link) => (
               <button
                 key={link.href}
-                onClick={() => scrollTo(link.href)}
+                onClick={() => scrollTo(link.href, link.external)}
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 {link.label}

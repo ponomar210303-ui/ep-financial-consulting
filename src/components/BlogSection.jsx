@@ -1,4 +1,5 @@
 import { ArrowRight, Clock } from 'lucide-react';
+import { Link as RouterLink } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import AnimatedSection from './AnimatedSection';
 
@@ -59,7 +60,7 @@ export default function BlogSection({ posts = [], blogImages = [] }) {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {displayPosts.map((post, i) => (
             <AnimatedSection key={post.id} delay={i * 100}>
-              <Link to={`/blog/${post.slug}`} className="group block h-full">
+              <RouterLink to={`/blog/${post.slug}`} className="group block h-full">
                 <div className="glass rounded-2xl overflow-hidden h-full hover:border-primary/30 transition-all duration-500 hover:glow-blue">
                   {/* Image */}
                   <div className="aspect-video overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10">
@@ -101,10 +102,22 @@ export default function BlogSection({ posts = [], blogImages = [] }) {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </RouterLink>
             </AnimatedSection>
           ))}
         </div>
+
+        <AnimatedSection delay={400}>
+          <div className="text-center mt-12">
+            <RouterLink
+              to="/blog"
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-primary/40 text-primary font-semibold hover:bg-primary hover:text-primary-foreground transition-all duration-300 group"
+            >
+              Все статьи
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </RouterLink>
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );

@@ -1,20 +1,23 @@
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 
 const links = [
   { label: 'Услуги', href: '#services' },
   { label: 'Обо мне', href: '#about' },
-  { label: 'Блог', href: '#blog' },
+  { label: 'Блог', href: '/blog', external: true },
   { label: 'Контакт', href: '#contact' },
 ];
 
 export default function MobileMenu({ isOpen, onClose }) {
+  const navigate = useNavigate();
   if (!isOpen) return null;
 
-  const handleClick = (href) => {
+  const handleClick = (href, external) => {
     onClose();
+    if (external) { navigate(href); return; }
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -32,7 +35,7 @@ export default function MobileMenu({ isOpen, onClose }) {
           {links.map((link) => (
             <button
               key={link.href}
-              onClick={() => handleClick(link.href)}
+              onClick={() => handleClick(link.href, link.external)}
               className="text-left text-2xl font-semibold py-3 px-2 rounded-lg hover:bg-accent transition-colors"
             >
               {link.label}
