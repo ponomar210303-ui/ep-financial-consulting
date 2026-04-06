@@ -11,7 +11,7 @@ const docs = [
   { id: 8, label: 'Report', emoji: '📊', x: 115, y: -25, rot: -48, vx: 270, vy: -80 },
 ];
 
-const TIMINGS = { idle: 800, chaos: 2200, stamp: 700, hold: 1800, flyaway: 900, reset: 500 };
+const TIMINGS = { idle: 600, popin: 1800, stamp: 700, hold: 1800, flyaway: 900, reset: 500 };
 
 export default function HeroAnimation() {
   const [phase, setPhase] = useState('idle');
@@ -19,8 +19,8 @@ export default function HeroAnimation() {
   useEffect(() => {
     let timers = [];
     function runCycle() {
-      setPhase('chaos');
-      const t1 = TIMINGS.chaos;
+      setPhase('popin');
+      const t1 = TIMINGS.popin;
       const t2 = t1 + TIMINGS.stamp;
       const t3 = t2 + TIMINGS.hold;
       const t4 = t3 + TIMINGS.flyaway;
@@ -36,15 +36,16 @@ export default function HeroAnimation() {
   }, []);
 
   const getDocStyle = (doc) => {
+    const staggerDelay = (doc.id - 1) * 120;
     if (phase === 'idle' || phase === 'reset') return {
-      transform: `translate(${doc.x}px, ${doc.y}px) rotate(${doc.rot}deg)`,
+      transform: `translate(${doc.vx * 0.6}px, ${doc.vy * 0.6}px) rotate(${doc.rot * 2}deg) scale(0.4)`,
       opacity: 0,
-      transition: 'all 0.4s ease-in-out',
+      transition: 'all 0.4s ease-in',
     };
-    if (phase === 'chaos') return {
-      transform: `translate(${doc.x}px, ${doc.y}px) rotate(${doc.rot}deg)`,
+    if (phase === 'popin') return {
+      transform: `translate(${doc.x}px, ${doc.y}px) rotate(${doc.rot}deg) scale(1)`,
       opacity: 1,
-      transition: 'opacity 0.5s ease-in',
+      transition: `all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${staggerDelay}ms`,
     };
     if (phase === 'stamp') return {
       transform: `translate(${doc.x * 0.25}px, ${doc.y * 0.25}px) rotate(${doc.rot * 0.3}deg) scale(0.8)`,
