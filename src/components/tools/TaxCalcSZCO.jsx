@@ -1,17 +1,33 @@
 import { useState, useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
-// ─── 2025 Slovak SZČO tax rates ─────────────────────────────────
+// ─── 2025 Slovak SZČO rates (szcokalkulacka.sk verified) ────────
+const ZM = 273.99;                              // životné minimum 2025
+const AVG_SALARY_2023 = 1430;                   // priemerná mzda 2023
+const AVG_SALARY_2024 = 1524;                   // priemerná mzda 2024
+const INSURANCE_COEF = 1.486;                   // koeficient pre VZ
+
 const PAUSALNE_RATE = 0.60;
 const PAUSALNE_CAP = 20000;
-const NEZDANITELNA_CAST = 5753.79;       // 21 × ŽM (273.99)
-const TAX_RATE_LOW = 0.19;
-const TAX_RATE_HIGH = 0.25;
-const TAX_BRACKET = 48441.43;            // 176.8 × ŽM
-const ZDRAVOTNA_RATE = 0.14;
-const SOCIALNA_RATE = 0.3315;
-const MIN_VZ_MONTHLY = 652.00;
-const MAX_VZ_SOCIALNA_MONTHLY = 9128.00;
+
+const NEZDANITELNA_CAST = ZM * 21;              // 5 753.79 €
+const NEZDANITELNA_LIMIT = ZM * 92.8;           // hranica pre krátenie NČZD
+const NEZDANITELNA_COEF = ZM * 44.2;            // koeficient pre krátenie
+
+const TAX_RATE_SMALL = 0.15;                    // príjem ≤ 100 000 €
+const TAX_RATE_LOW = 0.19;                      // 1. pásmo
+const TAX_RATE_HIGH = 0.25;                     // 2. pásmo
+const TAX_BRACKET = ZM * 176.8;                 // 48 421.03 € — hranica pásiem
+const SMALL_BIZ_LIMIT = 100000;                 // hranica pre 15% sadzbu
+
+const ZDRAVOTNA_RATE = 0.15;                    // 15% pre SZČO v 2025
+const ZDRAVOTNA_MIN_VZ = AVG_SALARY_2023 * 0.5; // 715.00 €/mes
+
+const SOCIALNA_RATES = { nem: 0.044, star: 0.18, inv: 0.06, rez: 0.0475 };
+const SOCIALNA_TOTAL = 0.3315;
+const SOCIALNA_MIN_VZ = AVG_SALARY_2024 * 0.5;  // 762.00 €/mes
+const SOCIALNA_MAX_VZ = AVG_SALARY_2024 * 7;    // 10 668.00 €/mes
+const SOCIALNA_INCOME_LIMIT = AVG_SALARY_2024 * 12 * 0.5; // hranica pre povinnosť
 
 function fmt(n) {
   return new Intl.NumberFormat('sk-SK', {
@@ -23,6 +39,17 @@ function fmtExact(n) {
   return new Intl.NumberFormat('sk-SK', {
     style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2,
   }).format(n);
+}
+
+function floorTo2(n) {
+  return Math.floor(n * 100) / 100;
+}
+
+function calcSocialInsurance(vz, isRetired) {
+  return floorTo2(vz * SOCIALNA_RATES.nem)
+    + floorTo2(vz * SOCIALNA_RATES.star)
+    + floorTo2(vz * (isRetired ? 0 : SOCIALNA_RATES.inv))
+    + floorTo2(vz * SOCIALNA_RATES.rez);
 }
 
 function NumberInput({ value, onChange, label, suffix = '€', min = 0, max = 999999 }) {
@@ -60,40 +87,55 @@ export default function TaxCalcSZCO() {
       ? Math.min(gross * PAUSALNE_RATE, PAUSALNE_CAP)
       : realExpenses;
 
-    // 2. Čiastkový základ dane
+    // 2. Čiastkový základ dane (ČZD)
     const czd = Math.max(0, gross - expenses);
 
-    // 3. Vymeriavací základ pre odvody
-    const annualVZ = czd / 2;
-    const rawMonthlyVZ = monthsActive > 0 ? annualVZ / monthsActive : 0;
+    // 3. Zdravotné poistenie (15%)
+    //    VZ = ČZD / monthsActive / 1.486
+    const rawHealthVZ = monthsActive > 0 ? czd / monthsActive / INSURANCE_COEF : 0;
+    const healthMonthlyVZ = Math.max(rawHealthVZ, ZDRAVOTNA_MIN_VZ);
+    const healthMonthly = floorTo2(healthMonthlyVZ * ZDRAVOTNA_RATE);
+    const zdravotna = healthMonthly * monthsActive;
 
-    // 4. Zdravotné poistenie (14%)
-    const healthMonthlyVZ = Math.max(rawMonthlyVZ, MIN_VZ_MONTHLY);
-    const zdravotna = healthMonthlyVZ * ZDRAVOTNA_RATE * monthsActive;
-
-    // 5. Sociálne poistenie (33.15%) — 0 ak prvý rok
+    // 4. Sociálne poistenie (33.15%)
     let socialna = 0;
-    if (!firstYear) {
+    let socialMonths = 0;
+    if (!firstYear && gross > SOCIALNA_INCOME_LIMIT) {
+      socialMonths = monthsActive;
+      const rawSocialVZ = czd / 12 / INSURANCE_COEF;
       const socialMonthlyVZ = Math.min(
-        Math.max(rawMonthlyVZ, MIN_VZ_MONTHLY),
-        MAX_VZ_SOCIALNA_MONTHLY
+        Math.max(rawSocialVZ, SOCIALNA_MIN_VZ),
+        SOCIALNA_MAX_VZ
       );
-      socialna = socialMonthlyVZ * SOCIALNA_RATE * monthsActive;
+      const socialMonthly = calcSocialInsurance(socialMonthlyVZ, false);
+      socialna = socialMonthly * socialMonths;
     }
 
-    // 6. Základ dane (po odpočítaní odvodov)
+    // 5. Základ dane = ČZD - odvody
     const zakladDane = Math.max(0, czd - zdravotna - socialna);
 
-    // 7. Nezdaniteľná časť
-    const nezdanitelna = zakladDane > 0 ? Math.min(NEZDANITELNA_CAST, zakladDane) : 0;
+    // 6. Nezdaniteľná časť (s krátením pri vyššom príjme)
+    let nezdanitelna;
+    if (zakladDane <= NEZDANITELNA_LIMIT) {
+      nezdanitelna = NEZDANITELNA_CAST;
+    } else {
+      nezdanitelna = Math.max(0, NEZDANITELNA_COEF - zakladDane * 0.25);
+    }
+    nezdanitelna = Math.min(nezdanitelna, zakladDane);
+
+    // 7. Zdaniteľný základ
     const zdanitelnyCZ = Math.max(0, zakladDane - nezdanitelna);
 
-    // 8. Daň z príjmov (19% / 25%)
+    // 8. Daň z príjmov (15% ak príjem ≤ 100k, inak 19%/25%)
     let tax = 0;
-    if (zdanitelnyCZ <= TAX_BRACKET) {
-      tax = zdanitelnyCZ * TAX_RATE_LOW;
+    if (gross <= SMALL_BIZ_LIMIT) {
+      tax = zdanitelnyCZ * TAX_RATE_SMALL;
     } else {
-      tax = TAX_BRACKET * TAX_RATE_LOW + (zdanitelnyCZ - TAX_BRACKET) * TAX_RATE_HIGH;
+      if (zdanitelnyCZ <= TAX_BRACKET) {
+        tax = zdanitelnyCZ * TAX_RATE_LOW;
+      } else {
+        tax = TAX_BRACKET * TAX_RATE_LOW + (zdanitelnyCZ - TAX_BRACKET) * TAX_RATE_HIGH;
+      }
     }
 
     // 9. Čistý príjem
@@ -114,6 +156,7 @@ export default function TaxCalcSZCO() {
       net,
       effectiveRate,
       monthlyNet: net / 12,
+      taxRate: gross <= SMALL_BIZ_LIMIT ? '15%' : '19/25%',
     };
   }, [income, expenseType, realExpenses, monthsActive, firstYear]);
 
@@ -129,9 +172,10 @@ export default function TaxCalcSZCO() {
   const breakdownRows = [
     { label: 'Доход (príjmy)', value: result.gross, bold: true },
     { label: expenseType === 'pausalne' ? 'Паушальные расходы (60%)' : 'Реальные расходы', value: -result.expenses },
-    { label: 'Здравотное (14%)', value: -result.zdravotna, color: '#a855f7' },
-    { label: 'Социальное (33.15%)', value: -result.socialna, color: '#f59e0b', hide: firstYear },
-    { label: 'Налог на доход', value: -result.tax, color: '#3b82f6' },
+    { label: `Здравотное (${(ZDRAVOTNA_RATE * 100).toFixed(0)}%)`, value: -result.zdravotna, color: '#a855f7' },
+    { label: `Социальное (${(SOCIALNA_TOTAL * 100).toFixed(2)}%)`, value: -result.socialna, color: '#f59e0b', hide: result.socialna === 0 },
+    { label: 'НЧЗД (необлагаемый минимум)', value: result.nezdanitelna, muted: true },
+    { label: `Налог на доход (${result.taxRate})`, value: -result.tax, color: '#3b82f6' },
     { label: 'Чистый доход', value: result.net, bold: true, color: '#22c55e' },
   ].filter((r) => !r.hide);
 
@@ -288,22 +332,40 @@ export default function TaxCalcSZCO() {
             >
               <div className="flex items-center gap-2">
                 {row.color && <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: row.color }} />}
-                <span className={`text-sm ${row.bold ? 'font-bold' : 'text-muted-foreground'}`}>{row.label}</span>
+                <span className={`text-sm ${row.bold ? 'font-bold' : row.muted ? 'text-muted-foreground/60 italic' : 'text-muted-foreground'}`}>{row.label}</span>
               </div>
-              <span className={`text-sm tabular-nums ${row.bold ? 'font-bold' : ''} ${row.value < 0 ? 'text-red-400/80' : ''}`}
+              <span className={`text-sm tabular-nums ${row.bold ? 'font-bold' : ''} ${row.muted ? 'text-muted-foreground/60 italic' : ''} ${!row.muted && row.value < 0 ? 'text-red-400/80' : ''}`}
                     style={row.color && row.bold ? { color: row.color } : undefined}
               >
-                {row.value < 0 ? '−' : ''}{fmtExact(Math.abs(row.value / div))}
+                {row.muted ? '' : row.value < 0 ? '−' : ''}{fmtExact(Math.abs(row.value / div))}
               </span>
             </div>
           ))}
         </div>
       </div>
 
+      {/* ── Info about rates ── */}
+      {result.socialna === 0 && !firstYear && (
+        <div className="glass rounded-xl p-3 border-l-4 border-amber-500/50">
+          <p className="text-xs text-muted-foreground">
+            Социальное страхование не начисляется — доход ниже порога ({fmt(SOCIALNA_INCOME_LIMIT)}/год).
+          </p>
+        </div>
+      )}
+
+      {income <= SMALL_BIZ_LIMIT && (
+        <div className="glass rounded-xl p-3 border-l-4 border-blue-500/50">
+          <p className="text-xs text-muted-foreground">
+            Применена ставка 15% (príjem ≤ {fmt(SMALL_BIZ_LIMIT)}).
+          </p>
+        </div>
+      )}
+
       {/* ── Disclaimer ── */}
       <p className="text-[11px] text-muted-foreground/60 leading-relaxed">
-        * Ориентировочный расчёт на основе ставок 2025 г. Не является налоговой консультацией.
-        Для точного расчёта обратитесь к специалисту.
+        * Расчёт на основе ставок 2025 г. (ŽM {fmtExact(ZM)}, priem. mzda 2024: {fmt(AVG_SALARY_2024)}).
+        Коэффициент VZ: {INSURANCE_COEF}. Здравотное {ZDRAVOTNA_RATE * 100}%, социальное {(SOCIALNA_TOTAL * 100).toFixed(2)}%.
+        Не является налоговой консультацией.
       </p>
     </div>
   );
