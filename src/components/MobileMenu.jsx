@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 
@@ -14,11 +14,19 @@ const links = [
 
 export default function MobileMenu({ isOpen, onClose }) {
   const navigate = useNavigate();
+  const location = useLocation();
   if (!isOpen) return null;
 
   const handleClick = (href, external) => {
     onClose();
     if (external) { navigate(href); return; }
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      return;
+    }
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
   };
 
