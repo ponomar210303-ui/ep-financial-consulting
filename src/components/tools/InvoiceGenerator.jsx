@@ -285,6 +285,7 @@ export default function InvoiceGenerator() {
   const [items, setItems] = useState([makeItem()]);
   const [note, setNote] = useState('');
   const [enableQR, setEnableQR] = useState(true);
+  const [qrPreviewUrl, setQrPreviewUrl] = useState(null);
   const [exemptReason, setExemptReason] = useState('');
   const [sections, setSections] = useState({ seller: true, buyer: true, params: false, vat: false, items: true, extra: false });
   const [savedMsg, setSavedMsg] = useState('');
@@ -323,6 +324,36 @@ export default function InvoiceGenerator() {
 
     return { lines, vatGroups, totalBase, totalVat, totalDue };
   }, [items, isVatPayer]);
+
+  // ── QR preview ──
+  useEffect(() => {
+    if (!enableQR || paymentMethod !== 'prevod' || !seller.iban || calculations.totalDue <= 0) {
+      setQrPreviewUrl(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const { encode, PaymentOptions, CurrencyCode } = await import('bysquare/pay');
+        const qrstring = encode({
+          payments: [{
+            type: PaymentOptions.PaymentOrder,
+            amount: Math.round(calculations.totalDue * 100) / 100,
+            currencyCode: CurrencyCode.EUR,
+            variableSymbol: vs,
+            constantSymbol: ks,
+            beneficiary: { name: seller.name },
+            bankAccounts: [{ iban: seller.iban.replace(/\s/g, '') }],
+          }],
+        });
+        const url = await QRCode.toDataURL(qrstring, { width: 300, margin: 1 });
+        if (!cancelled) setQrPreviewUrl(url);
+      } catch {
+        if (!cancelled) setQrPreviewUrl(null);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [enableQR, paymentMethod, seller.iban, seller.name, calculations.totalDue, vs, ks]);
 
   // ── Handlers ──
   const toggleSection = (key) => setSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -431,16 +462,24 @@ export default function InvoiceGenerator() {
     y += 5;
 
     // ── Dates & Payment ──
-    const drawField = (x, label, value) => {
+    const col3 = (W - M * 2) / 3;
+    const drawField = (x, label, value, maxW) => {
       setM(7); doc.text(label, x, y);
-      setN(9); doc.text(value || '—', x, y + 4);
+      setN(9);
+      const text = value || '—';
+      const fitW = maxW || col3 - 4;
+      const lines = doc.splitTextToSize(text, fitW);
+      doc.text(lines[0], x, y + 4);
+      if (lines.length > 1) {
+        doc.setFontSize(7);
+        doc.text(lines[1], x, y + 7.5);
+      }
     };
 
-    const col3 = (W - M * 2) / 3;
     drawField(M, t(lang, 'dateIssued'), dateIssued);
     drawField(M + col3, t(lang, 'dateDelivery'), dateDelivery);
     drawField(M + col3 * 2, t(lang, 'dateDue'), dateDue);
-    y += 10;
+    y += 12;
 
     if (paymentMethod === 'prevod' && seller.iban) {
       drawField(M, t(lang, 'iban'), seller.iban.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim());
@@ -451,7 +490,7 @@ export default function InvoiceGenerator() {
       drawField(M, t(lang, 'paymentMethod'), t(lang, pmLabels[paymentMethod]));
       if (vs) drawField(M + col3, t(lang, 'vs'), vs);
     }
-    y += 10;
+    y += 12;
     line(M, y, W - M, y);
     y += 6;
 
@@ -536,44 +575,67 @@ export default function InvoiceGenerator() {
       }
     }
 
-    if (qrImg) {
-      doc.addImage(qrImg, 'PNG', M, y - 2, 30, 30);
-      setM(6);
-      doc.text('Pay by Square', M, y + 30);
-    }
-
-    // ── Totals (right side) ──
+    // ── QR + Totals (side by side) ──
+    const qrSize = 32;
     const totX = W - M - 65;
     const totW = 65;
+    const sectionStartY = y;
 
+    // Draw totals on the right
+    let totY = sectionStartY;
     if (isVatPayer) {
       Object.entries(calculations.vatGroups).forEach(([rate, group]) => {
         setM(8);
-        doc.text(`${t(lang, 'subtotal')} (${rate}%)`, totX, y);
+        doc.text(`${t(lang, 'subtotal')} (${rate}%)`, totX, totY);
         setN(9);
-        doc.text(`${fmt(group.base)} €`, totX + totW, y, { align: 'right' });
-        y += 4;
+        doc.text(`${fmt(group.base)} €`, totX + totW, totY, { align: 'right' });
+        totY += 4;
         setM(8);
-        doc.text(`${t(lang, 'vat')} (${rate}%)`, totX, y);
+        doc.text(`${t(lang, 'vat')} (${rate}%)`, totX, totY);
         setN(9);
-        doc.text(`${fmt(group.vat)} €`, totX + totW, y, { align: 'right' });
-        y += 5;
+        doc.text(`${fmt(group.vat)} €`, totX + totW, totY, { align: 'right' });
+        totY += 5;
       });
     } else {
       setM(8);
-      doc.text(t(lang, 'subtotal'), totX, y);
+      doc.text(t(lang, 'subtotal'), totX, totY);
       setN(9);
-      doc.text(`${fmt(calculations.totalBase)} €`, totX + totW, y, { align: 'right' });
-      y += 5;
+      doc.text(`${fmt(calculations.totalBase)} €`, totX + totW, totY, { align: 'right' });
+      totY += 5;
     }
 
-    // Total due
-    line(totX, y, totX + totW, y, accent);
-    y += 5;
+    line(totX, totY, totX + totW, totY, accent);
+    totY += 5;
     setA(12);
-    doc.text(t(lang, 'totalDue'), totX, y);
-    doc.text(`${fmt(calculations.totalDue)} €`, totX + totW, y, { align: 'right' });
-    y += 8;
+    doc.text(t(lang, 'totalDue'), totX, totY);
+    doc.text(`${fmt(calculations.totalDue)} €`, totX + totW, totY, { align: 'right' });
+    totY += 4;
+
+    // Draw QR on the left with Pay by Square frame
+    let qrBottomY = sectionStartY;
+    if (qrImg) {
+      const qrX = M;
+      const qrY = sectionStartY - 3;
+      const pad = 2;
+      const frameW = qrSize + pad * 2;
+      const frameH = qrSize + pad * 2 + 7;
+      // Blue border
+      doc.setDrawColor(91, 155, 213);
+      doc.setLineWidth(0.6);
+      doc.roundedRect(qrX - pad, qrY - pad, frameW, frameH, 2, 2, 'S');
+      // QR image
+      doc.addImage(qrImg, 'PNG', qrX, qrY, qrSize, qrSize);
+      // "PAY by square" label
+      const labelY = qrY + qrSize + 4;
+      doc.setFont('Roboto', 'bold'); doc.setFontSize(6); doc.setTextColor(91, 155, 213);
+      doc.text('PAY', qrX + frameW / 2 - 7, labelY);
+      doc.setFont('Roboto', 'normal'); doc.setFontSize(6); doc.setTextColor(139, 139, 139);
+      doc.text('by square', qrX + frameW / 2 - 3, labelY);
+      qrBottomY = qrY + frameH + 3;
+    }
+
+    // Advance y past whichever column is taller
+    y = Math.max(totY, qrBottomY) + 6;
 
     // ── Not VAT payer note ──
     if (!isVatPayer) {
@@ -840,6 +902,20 @@ export default function InvoiceGenerator() {
           <span className="text-2xl font-black text-primary">{fmt(calculations.totalDue)} €</span>
         </div>
       </div>
+
+      {/* ═══ QR PREVIEW ═══ */}
+      {qrPreviewUrl && (
+        <div className="flex justify-center">
+          <div className="inline-flex flex-col items-center rounded-xl border-2 border-[#5b9bd5] bg-white p-3 shadow-sm">
+            <img src={qrPreviewUrl} alt="Pay by Square QR" className="w-44 h-44" />
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-sm font-bold" style={{ color: '#5b9bd5' }}>PAY</span>
+              <span className="text-sm" style={{ color: '#8b8b8b' }}>by square</span>
+              <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><rect x="0.5" y="0.5" width="17" height="13" rx="2" stroke="#5b9bd5" /><rect y="3" width="18" height="3" fill="#5b9bd5" /></svg>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ═══ DOWNLOAD BUTTON ═══ */}
       <button
