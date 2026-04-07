@@ -41,8 +41,8 @@ export default function About({ photoUrl }) {
 
             <AnimatedSection delay={100}>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Финансист, выпускник Univerzita Komenského, работал в Deutsche Telekom и со стартапами. 
-                Переехал в Словакию, прошёл через весь процесс сам — от živnosť до daňové priznanie. 
+                Финансист, выпускник Univerzity Komenského, с опытом работы как в корпорациях (Deutsche Telekom, Arval Slovakia), так и в стартапах.
+                Прошёл через весь процесс сам — от регистрации первой živnosťi до daňového priznania. 
                 Теперь помогаю другим не наступать на те же грабли.
               </p>
             </AnimatedSection>
