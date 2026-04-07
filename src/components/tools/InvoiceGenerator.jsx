@@ -155,7 +155,8 @@ function variabilnySymbol(num) {
 function validateIBAN(iban) {
   if (!iban) return true;
   const clean = iban.replace(/\s/g, '').toUpperCase();
-  if (!/^SK\d{22}$/.test(clean)) return false;
+  if (!/^[A-Z]{2}\d{2}[A-Z0-9]{4,30}$/.test(clean)) return false;
+  if (clean.length < 15 || clean.length > 34) return false;
   const rearranged = clean.slice(4) + clean.slice(0, 4);
   const numeric = rearranged.replace(/[A-Z]/g, (ch) => ch.charCodeAt(0) - 55);
   let remainder = '';
@@ -163,6 +164,11 @@ function validateIBAN(iban) {
     remainder = String(Number(remainder + ch) % 97);
   }
   return Number(remainder) === 1;
+}
+
+function formatIBAN(value) {
+  const clean = value.replace(/\s/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  return clean.replace(/(.{4})/g, '$1 ').trim();
 }
 
 function validateICO(ico) {
@@ -287,7 +293,7 @@ export default function InvoiceGenerator() {
   const vs = variabilnySymbol(invoiceNum);
 
   // ── Validation ──
-  const ibanError = seller.iban && !validateIBAN(seller.iban) ? 'Nesprávny IBAN (formát: SK + 22 číf.)' : '';
+  const ibanError = seller.iban && !validateIBAN(seller.iban) ? 'Nesprávny IBAN (napr. SK89 0200 ... alebo LT38 3250 ...)' : '';
   const icoSellerError = seller.ico && !validateICO(seller.ico) ? 'IČO: 8 číslic' : '';
   const icoBuyerError = buyer.ico && !validateICO(buyer.ico) ? 'IČO: 8 číslic' : '';
 
@@ -659,7 +665,7 @@ export default function InvoiceGenerator() {
           <Field label="Телефон"><Input value={seller.phone} onChange={(v) => updateSeller('phone', v)} /></Field>
           <Field label="E-mail"><Input value={seller.email} onChange={(v) => updateSeller('email', v)} type="email" /></Field>
           <Field label="Банк"><Input value={seller.bank} onChange={(v) => updateSeller('bank', v)} /></Field>
-          <Field label="IBAN" error={ibanError}><Input value={seller.iban} onChange={(v) => updateSeller('iban', v)} placeholder="SK89 0200 0000 0000 0000 0000" /></Field>
+          <Field label="IBAN" error={ibanError}><Input value={seller.iban} onChange={(v) => updateSeller('iban', formatIBAN(v))} placeholder="SK89 0200 0000 0000 0000 0000" /></Field>
         </div>
 
         <button onClick={saveSeller} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
