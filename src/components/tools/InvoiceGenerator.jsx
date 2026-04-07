@@ -630,7 +630,7 @@ export default function InvoiceGenerator() {
       doc.setFont('Roboto', 'bold'); doc.setFontSize(6); doc.setTextColor(91, 155, 213);
       doc.text('PAY', qrX + frameW / 2 - 7, labelY);
       doc.setFont('Roboto', 'normal'); doc.setFontSize(6); doc.setTextColor(139, 139, 139);
-      doc.text('by square', qrX + frameW / 2 - 3, labelY);
+      doc.text(' by square', qrX + frameW / 2 - 3, labelY);
       qrBottomY = qrY + frameH + 3;
     }
 

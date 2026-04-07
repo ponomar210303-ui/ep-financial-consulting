@@ -171,33 +171,31 @@ export default function HeroAnimation() {
                 }}>
                   {/* Outer ring */}
                   <circle cx="80" cy="80" r="76" fill="none" stroke="#3B82F6" strokeWidth="3.5"/>
-                  {/* Dots ring */}
-                  <circle cx="80" cy="80" r="70" fill="none" stroke="#3B82F6" strokeWidth="2" strokeDasharray="1 8" strokeLinecap="round"/>
                   {/* Inner ring */}
                   <circle cx="80" cy="80" r="63" fill="none" stroke="#3B82F6" strokeWidth="2"/>
 
-                  {/* Top text — baseline at r=66.5, chars extend outward → centered between r=63 and r=76 */}
-                  <path id="topArc" d="M 80,80 m -66.5,0 a 66.5,66.5 0 1,1 133,0" fill="none"/>
+                  {/* Top text — centered on upper arc */}
+                  <path id="topArc" d="M 80,80 m -67,0 a 67,67 0 1,1 134,0" fill="none"/>
                   <text fontSize="8" fontFamily="'Inter', sans-serif" fontWeight="800" fill="#3B82F6" letterSpacing="3" textAnchor="middle">
                     <textPath href="#topArc" startOffset="50%">EVGENII PONOMAREV</textPath>
                   </text>
 
-                  {/* Bottom text — baseline at r=72, chars extend inward → centered between r=63 and r=76 */}
-                  <path id="bottomArc" d="M 80,80 m -72,0 a 72,72 0 0,0 144,0" fill="none"/>
+                  {/* Bottom text — centered on lower arc */}
+                  <path id="bottomArc" d="M 80,80 m -67,0 a 67,67 0 0,0 134,0" fill="none"/>
                   <text fontSize="7.5" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#3B82F6" letterSpacing="2" textAnchor="middle">
                     <textPath href="#bottomArc" startOffset="50%">BRATISLAVA, SLOVAKIA</textPath>
                   </text>
 
-                  {/* Dot separators at 3 and 9 o'clock — centered between rings */}
-                  <circle cx="10.5" cy="80" r="2" fill="#3B82F6"/>
-                  <circle cx="149.5" cy="80" r="2" fill="#3B82F6"/>
+                  {/* Dot separators at 3 and 9 o'clock */}
+                  <circle cx="11" cy="80" r="2" fill="#3B82F6"/>
+                  <circle cx="149" cy="80" r="2" fill="#3B82F6"/>
 
-                  {/* Center EP. text (+10%) */}
-                  <text x="80" y="79" textAnchor="middle" fontSize="42" fontFamily="'Inter', sans-serif" fontWeight="900" fill="#3B82F6" letterSpacing="-1">EP.</text>
+                  {/* Center EP. text */}
+                  <text x="80" y="78" textAnchor="middle" fontSize="38" fontFamily="'Inter', sans-serif" fontWeight="900" fill="#3B82F6" letterSpacing="-1">EP.</text>
                   {/* Center sub line */}
-                  <line x1="49" y1="85" x2="111" y2="85" stroke="#3B82F6" strokeWidth="1.2" opacity="0.5"/>
-                  {/* Center year (+10%) */}
-                  <text x="80" y="99" textAnchor="middle" fontSize="12" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#3B82F6" letterSpacing="3" opacity="0.85">2026</text>
+                  <line x1="52" y1="84" x2="108" y2="84" stroke="#3B82F6" strokeWidth="1.2" opacity="0.5"/>
+                  {/* Center year */}
+                  <text x="80" y="98" textAnchor="middle" fontSize="11" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#3B82F6" letterSpacing="3" opacity="0.85">2026</text>
                 </svg>
 
                 {/* Ink bleed at bottom */}

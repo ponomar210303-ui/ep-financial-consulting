@@ -6,13 +6,13 @@ const services = [
     icon: ClipboardList,
     emoji: '📋',
     title: 'Открытие živnosť',
-    desc: 'Подберу коды, подготовлю документы, зарегистрирую. Ты подписываешь — я делаю остальное.',
+    desc: 'Подберу виды  деятельности, подготовлю документы, зарегистрирую. Ты подписываешь — я делаю остальное.',
   },
   {
     icon: BarChart3,
     emoji: '📊',
     title: 'Ведение учёта',
-    desc: 'Jednoduché účtovníctvo, DPH, daňové priznanie. Ты занимаешься бизнесом — я считаю цифры.',
+    desc: 'Jednoduché účtovníctvo, zamestnanci, daňové priznanie. Ты занимаешься бизнесом — я считаю цифры.',
   },
   {
     icon: Lightbulb,
