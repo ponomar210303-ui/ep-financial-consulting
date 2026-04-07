@@ -29,7 +29,10 @@ export default function Navbar() {
   const scrollTo = (href, external) => {
     if (external) { navigate(href); return; }
     if (location.pathname !== '/') {
-      navigate('/' + href);
+      navigate('/');
+      setTimeout(() => {
+        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
       return;
     }
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
