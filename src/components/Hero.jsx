@@ -22,11 +22,6 @@ export default function Hero() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left content */}
           <div className="space-y-8">
-            <AnimatedSection>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm font-medium">
-                Финансы без головной боли 🇸🇰
-              </div>
-            </AnimatedSection>
 
             <AnimatedSection delay={100}>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight">
@@ -37,7 +32,7 @@ export default function Hero() {
 
             <AnimatedSection delay={200}>
               <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-lg">
-                Ты приехал в Словакию строить бизнес — не разбираться в бюрократии. Я возьму это на себя.
+                Ты приехал в Словакию строить бизнес, а не разбираться в бюрократии. Я возьму это на себя.
               </p>
             </AnimatedSection>
 
@@ -76,7 +71,7 @@ export default function Hero() {
                       className={`w-8 h-8 rounded-full ${bg} border-2 border-background flex items-center justify-center`}
                     >
                       <span className="text-[10px] text-white font-bold">
-                        {['А', 'М', 'Д', 'К', 'О'][i]}
+                        {['А', 'М', 'Д', 'Е', 'О'][i]}
                       </span>
                     </div>
                   ))}

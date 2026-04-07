@@ -2,7 +2,7 @@ import { GraduationCap, Globe, MapPin } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 
 const stats = [
-  { icon: GraduationCap, label: 'Магистр финансов, UK BA', emoji: '🎓' },
+  { icon: GraduationCap, label: 'Магистр финансов, FM UK', emoji: '🎓' },
   { icon: Globe, label: 'RU / SK / EN', emoji: '🌍' },
   { icon: MapPin, label: 'Братислава', emoji: '📍' },
 ];

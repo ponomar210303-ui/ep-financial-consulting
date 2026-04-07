@@ -15,7 +15,7 @@ export default function Footer() {
           <div className="space-y-3">
             <Logo size="text-3xl" />
             <p className="text-sm text-muted-foreground max-w-sm">
-              Evgenii Ponomarev — Účtovníctvo a financie pre podnikateľov
+              Evgenii Ponomarev - Účtovníctvo a financie pre podnikateľov
             </p>
             <p className="text-sm text-muted-foreground">
               Bratislava, Slovakia
@@ -48,7 +48,7 @@ export default function Footer() {
 
         <div className="mt-12 pt-8 border-t border-border/20 text-center">
           <p className="text-xs text-muted-foreground">
-            © 2025 EP. Všetky práva vyhradené.
+            © 2026 EP. Všetky práva vyhradené.
           </p>
         </div>
       </div>

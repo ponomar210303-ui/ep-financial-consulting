@@ -198,18 +198,18 @@ export default function TaxCalcSZCO() {
   const chartData = [
     { name: 'Чистыми', value: Math.max(0, result.net), color: '#22c55e' },
     { name: 'Налог', value: Math.max(0, result.tax), color: '#3b82f6' },
-    { name: 'Здравотное', value: Math.max(0, result.zdravotna), color: '#a855f7' },
-    { name: 'Социальное', value: Math.max(0, result.socialna), color: '#f59e0b' },
+    { name: 'Мед.Отчисления', value: Math.max(0, result.zdravotna), color: '#a855f7' },
+    { name: 'Соц.Отчисления', value: Math.max(0, result.socialna), color: '#f59e0b' },
   ].filter((d) => d.value > 0);
 
   const breakdownRows = [
     { label: 'Доход (príjmy)', value: result.gross, bold: true },
-    { label: expenseType === 'pausalne' ? 'Паушальные расходы (60%)' : 'Реальные расходы', value: -result.expenses },
-    { label: `Здравотное (${(ZDRAVOTNA_RATE * 100).toFixed(0)}%)`, value: -result.zdravotna, color: '#a855f7' },
-    { label: `Социальное (${(SOCIALNA_TOTAL * 100).toFixed(2)}%)`, value: -result.socialna, color: '#f59e0b', hide: result.socialna === 0 },
-    { label: 'НЧЗД (необлагаемый минимум)', value: result.nezdanitelna, muted: true },
-    { label: `Налог на доход (${result.taxRate})`, value: -result.tax, color: '#3b82f6' },
-    { label: 'Чистый доход', value: result.net, bold: true, color: '#22c55e' },
+    { label: expenseType === 'pausalne' ? 'Паушальные расходы 60% (никому не платишь)' : 'Реальные расходы', value: -result.expenses },
+    { label: `Мед.Отчисления (${(ZDRAVOTNA_RATE * 100).toFixed(0)}%)`, value: -result.zdravotna, color: '#a855f7' },
+    { label: `Соц.Отчисления (${(SOCIALNA_TOTAL * 100).toFixed(2)}%)`, value: -result.socialna, color: '#f59e0b', hide: result.socialna === 0 },
+    { label: 'NČZD (необлагаемый минимум)', value: result.nezdanitelna, muted: true },
+    { label: `Налог на прибыль (${result.taxRate})`, value: -result.tax, color: '#3b82f6' },
+    { label: 'Остаётся чистыми', value: result.net, bold: true, color: '#22c55e' },
   ].filter((r) => !r.hide);
 
   return (
@@ -309,7 +309,7 @@ export default function TaxCalcSZCO() {
             firstYear ? 'translate-x-5' : ''
           }`} />
         </div>
-        <span className="text-sm">Первый год (без sociálne poistenie)</span>
+        <span className="text-sm">Первый год (без socialného poistenia)</span>
       </label>
 
       {/* ── Monthly / Annual toggle ── */}
