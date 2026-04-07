@@ -11,11 +11,6 @@ import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 
 const ABOUT_PHOTO = '/images/about.png';
-const BLOG_IMAGES = [
-  'https://media.base44.com/images/public/69d414bc41ee308b2992cc63/292f89ffb_generated_921b0648.png',
-  'https://media.base44.com/images/public/69d414bc41ee308b2992cc63/7e84b47d7_generated_fa9b0de8.png',
-  'https://media.base44.com/images/public/69d414bc41ee308b2992cc63/532e64ec7_generated_b02604b5.png',
-];
 
 export default function Landing() {
   useEffect(() => {
@@ -35,7 +30,7 @@ export default function Landing() {
       <Services />
       <HowItWorks />
       <ToolsSection />
-      <BlogSection blogImages={BLOG_IMAGES} />
+      <BlogSection />
       <Contact />
       <Footer />
     </div>

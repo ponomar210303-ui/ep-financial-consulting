@@ -1,37 +1,7 @@
 import { ArrowRight, Clock } from 'lucide-react';
-import { Link as RouterLink } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import AnimatedSection from './AnimatedSection';
-
-const placeholderPosts = [
-  {
-    id: 'placeholder-1',
-    slug: 'kak-otkryt-zivnost',
-    category: 'Živnosť',
-    title: 'Как открыть živnosť в Словакии: пошаговая инструкция',
-    excerpt: 'Полное руководство для тех, кто только приехал и хочет начать работать на себя.',
-    reading_time: 8,
-    created_date: '2025-03-15',
-  },
-  {
-    id: 'placeholder-2',
-    slug: 'nalogi-dlya-zivnostnikov',
-    category: 'Налоги',
-    title: 'Налоги для živnostník: что, когда и сколько платить',
-    excerpt: 'Разбираемся в daň z príjmov, DPH, odvody в poisťovne — простыми словами.',
-    reading_time: 12,
-    created_date: '2025-02-20',
-  },
-  {
-    id: 'placeholder-3',
-    slug: 'pausalne-vydavky-vs-sro',
-    category: 'Лайфхаки',
-    title: 'Paušálne výdavky или s.r.o.? Что выгоднее в 2025',
-    excerpt: 'Считаем на конкретных примерах — когда стоит переходить на фирму.',
-    reading_time: 10,
-    created_date: '2025-01-10',
-  },
-];
+import { getAllPosts } from '../lib/blog';
 
 const categoryColors = {
   'Živnosť': 'bg-primary/10 text-primary',
@@ -40,9 +10,12 @@ const categoryColors = {
   'Бизнес': 'bg-amber-500/10 text-amber-500',
 };
 
-export default function BlogSection({ posts = [], blogImages = [] }) {
-  const displayPosts = posts.length > 0 ? posts.slice(0, 3) : placeholderPosts;
+const EMOJI = ['📋', '📊', '💡'];
 
+// Loaded synchronously — no props needed
+const previewPosts = getAllPosts().slice(0, 3);
+
+export default function BlogSection() {
   return (
     <section id="blog" className="py-24 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -58,22 +31,21 @@ export default function BlogSection({ posts = [], blogImages = [] }) {
         </AnimatedSection>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {displayPosts.map((post, i) => (
-            <AnimatedSection key={post.id} delay={i * 100}>
-              <RouterLink to={`/blog/${post.slug}`} className="group block h-full">
+          {previewPosts.map((post, i) => (
+            <AnimatedSection key={post.slug} delay={i * 100}>
+              <Link to={`/blog/${post.slug}`} className="group block h-full">
                 <div className="glass rounded-2xl overflow-hidden h-full hover:border-primary/30 transition-all duration-500 hover:glow-blue">
-                  {/* Image */}
                   <div className="aspect-video overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10">
-                    {blogImages[i] ? (
+                    {post.image ? (
                       <img
-                        src={blogImages[i]}
+                        src={post.image}
                         alt={post.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-4xl">
-                        {['📋', '📊', '💡'][i]}
+                        {EMOJI[i % EMOJI.length]}
                       </div>
                     )}
                   </div>
@@ -85,7 +57,7 @@ export default function BlogSection({ posts = [], blogImages = [] }) {
                       </span>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Clock className="h-3 w-3" />
-                        {post.reading_time || 5} мин
+                        {post.readingTime} мин
                       </div>
                     </div>
 
@@ -102,20 +74,20 @@ export default function BlogSection({ posts = [], blogImages = [] }) {
                     </div>
                   </div>
                 </div>
-              </RouterLink>
+              </Link>
             </AnimatedSection>
           ))}
         </div>
 
         <AnimatedSection delay={400}>
           <div className="text-center mt-12">
-            <RouterLink
+            <Link
               to="/blog"
               className="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-primary/40 text-primary font-semibold hover:bg-primary hover:text-primary-foreground transition-all duration-300 group"
             >
               Все статьи
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </RouterLink>
+            </Link>
           </div>
         </AnimatedSection>
       </div>
