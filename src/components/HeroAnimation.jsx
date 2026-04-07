@@ -171,8 +171,6 @@ export default function HeroAnimation() {
                 }}>
                   {/* Outer ring */}
                   <circle cx="80" cy="80" r="76" fill="none" stroke="#3B82F6" strokeWidth="3.5"/>
-                  {/* Dots ring */}
-                  <circle cx="80" cy="80" r="70" fill="none" stroke="#3B82F6" strokeWidth="2" strokeDasharray="1 8" strokeLinecap="round"/>
                   {/* Inner ring */}
                   <circle cx="80" cy="80" r="63" fill="none" stroke="#3B82F6" strokeWidth="2"/>
 
@@ -193,11 +191,11 @@ export default function HeroAnimation() {
                   <circle cx="149.5" cy="80" r="2" fill="#3B82F6"/>
 
                   {/* Center EP. text (+10%) */}
-                  <text x="80" y="79" textAnchor="middle" fontSize="42" fontFamily="'Inter', sans-serif" fontWeight="900" fill="#3B82F6" letterSpacing="-1">EP.</text>
+                  <text x="80" y="83" textAnchor="middle" fontSize="42" fontFamily="'Inter', sans-serif" fontWeight="900" fill="#3B82F6" letterSpacing="-1">EP.</text>
                   {/* Center sub line */}
-                  <line x1="49" y1="85" x2="111" y2="85" stroke="#3B82F6" strokeWidth="1.2" opacity="0.5"/>
+                  <line x1="49" y1="89" x2="111" y2="89" stroke="#3B82F6" strokeWidth="1.2" opacity="0.5"/>
                   {/* Center year (+10%) */}
-                  <text x="80" y="99" textAnchor="middle" fontSize="12" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#3B82F6" letterSpacing="3" opacity="0.85">2026</text>
+                  <text x="80" y="105" textAnchor="middle" fontSize="12" fontFamily="'Inter', sans-serif" fontWeight="700" fill="#3B82F6" letterSpacing="3" opacity="0.85">2026</text>
                 </svg>
 
                 {/* Ink bleed at bottom */}
@@ -211,7 +209,7 @@ export default function HeroAnimation() {
                 )}
               </div>
 
-              {/* Ripple on stamp */}
+              {/* Ripple on stamp */}s
               {phase === 'stamp' && (
                 <div style={{
                   position: 'absolute', inset: 0,
