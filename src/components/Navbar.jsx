@@ -7,8 +7,8 @@ import ThemeToggle from './ThemeToggle';
 import MobileMenu from './MobileMenu';
 
 const links = [
-  { label: 'Услуги', href: '#services' },
   { label: 'Обо мне', href: '#about' },
+  { label: 'Услуги', href: '#services' },
   { label: 'Инструменты', href: '#tools' },
   { label: 'Блог', href: '/blog', external: true },
   { label: 'Контакт', href: '#contact' },
