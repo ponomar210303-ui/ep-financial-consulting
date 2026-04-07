@@ -4,7 +4,7 @@ slug: "kak-otkryt-zivnost-za-4-dnya"
 date: "2026-03-10"
 category: "Živnosť"
 excerpt: "Пошаговый план: от выбора кодов деятельности до получения IČO. Реально занимает 3–5 рабочих дней и стоит €0 при электронной подаче."
-image: ""
+image: "/images/blog/kak-otkryt-zivnost-za-4-dnya.jpg"
 readingTime: 6
 ---
 
@@ -22,7 +22,7 @@ readingTime: 6
 
 ## Шаг 1: Выбери коды деятельности
 
-Зайди на [živnostenský register](https://www.zivnostensky-register.sk) и найди нужные коды. Их три вида:
+Зайди на [živnostenský register](https://www.zrsr.sk) и найди нужные коды. Их три вида:
 
 - **Voľné živnosti** — свободные, не требуют ни образования, ни опыта. Подходят для IT, консалтинга, переводов, маркетинга, дизайна.
 - **Remeselné živnosti** — ремесленные (строитель, электрик, сантехник). Нужно подтвердить квалификацию.

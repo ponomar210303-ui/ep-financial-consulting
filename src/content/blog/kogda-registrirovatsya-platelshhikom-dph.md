@@ -4,7 +4,7 @@ slug: "kogda-registrirovatsya-platelshhikom-dph"
 date: "2026-01-15"
 category: "Налоги"
 excerpt: "С 2025 года правила изменились: теперь считается оборот за календарный год, а не за скользящие 12 месяцев. Два порога — €50 000 и €62 500 — и разные последствия."
-image: ""
+image: "/images/blog/kogda-registrirovatsya-platelshhikom-dph.jpg"
 readingTime: 5
 ---
 
