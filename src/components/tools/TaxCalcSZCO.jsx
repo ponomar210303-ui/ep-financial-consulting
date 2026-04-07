@@ -53,17 +53,35 @@ function calcSocialInsurance(vz, isRetired) {
 }
 
 function NumberInput({ value, onChange, label, suffix = '€', min = 0, max = 999999 }) {
+  const [raw, setRaw] = useState(String(value));
+
+  const handleChange = (e) => {
+    const text = e.target.value;
+    setRaw(text);
+    const num = parseFloat(text);
+    if (!isNaN(num)) {
+      onChange(Math.max(min, Math.min(max, num)));
+    } else if (text === '') {
+      onChange(0);
+    }
+  };
+
+  const handleBlur = () => {
+    setRaw(String(value));
+  };
+
   return (
     <div>
       <label className="text-sm font-semibold text-muted-foreground">{label}</label>
       <div className="relative mt-1">
         <input
-          type="number"
-          min={min}
-          max={max}
-          value={value}
-          onChange={(e) => onChange(Math.max(min, Math.min(max, +e.target.value || 0)))}
-          className="w-full bg-background/50 border border-border/50 rounded-xl h-11 px-4 pr-10 text-sm font-semibold focus:outline-none focus:border-primary/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          type="text"
+          inputMode="decimal"
+          value={raw}
+          onFocus={() => { if (value === 0) setRaw(''); }}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className="w-full bg-background/50 border border-border/50 rounded-xl h-11 px-4 pr-10 text-sm font-semibold focus:outline-none focus:border-primary/50 transition-colors"
         />
         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span>
       </div>
@@ -71,13 +89,28 @@ function NumberInput({ value, onChange, label, suffix = '€', min = 0, max = 99
   );
 }
 
+/** Вычислить кол-во месяцев деятельности в текущем году по дате начала */
+function calcMonthsFromDate(dateStr) {
+  if (!dateStr) return 12;
+  const start = new Date(dateStr);
+  const now = new Date();
+  const yearStart = new Date(now.getFullYear(), 0, 1);
+  const effectiveStart = start > yearStart ? start : yearStart;
+  const monthsRaw = (now.getFullYear() - effectiveStart.getFullYear()) * 12
+    + now.getMonth() - effectiveStart.getMonth() + 1;
+  return Math.max(1, Math.min(12, monthsRaw));
+}
+
 export default function TaxCalcSZCO() {
   const [income, setIncome] = useState(30000);
+  const [incomeRaw, setIncomeRaw] = useState('30000');
   const [expenseType, setExpenseType] = useState('pausalne');
   const [realExpenses, setRealExpenses] = useState(0);
-  const [monthsActive, setMonthsActive] = useState(12);
+  const [startDate, setStartDate] = useState('');
   const [firstYear, setFirstYear] = useState(false);
   const [showMonthly, setShowMonthly] = useState(false);
+
+  const monthsActive = calcMonthsFromDate(startDate);
 
   const result = useMemo(() => {
     const gross = income;
@@ -184,17 +217,33 @@ export default function TaxCalcSZCO() {
 
       {/* ── Income input ── */}
       <div>
-        <div className="flex items-baseline justify-between mb-1">
-          <label className="text-sm font-semibold">Годовой доход (príjmy)</label>
-          <span className="text-primary font-bold text-lg">{fmt(income)}</span>
+        <label className="text-sm font-semibold">Годовой доход (príjmy)</label>
+        <div className="relative mt-1 mb-2">
+          <input
+            type="text"
+            inputMode="decimal"
+            value={incomeRaw}
+            onFocus={() => { if (income === 0) setIncomeRaw(''); }}
+            onChange={(e) => {
+              const text = e.target.value;
+              setIncomeRaw(text);
+              const num = parseFloat(text);
+              if (!isNaN(num)) setIncome(Math.max(0, Math.min(100000, num)));
+              else if (text === '') setIncome(0);
+            }}
+            onBlur={() => setIncomeRaw(String(income))}
+            className="w-full bg-background/50 border border-border/50 rounded-xl h-11 px-4 pr-10 text-sm font-semibold focus:outline-none focus:border-primary/50 transition-colors"
+          />
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">€</span>
         </div>
         <input
-          type="range" min={1000} max={200000} step={500}
-          value={income} onChange={(e) => setIncome(+e.target.value)}
+          type="range" min={0} max={100000} step={500}
+          value={income}
+          onChange={(e) => { const v = +e.target.value; setIncome(v); setIncomeRaw(String(v)); }}
           className="w-full accent-primary"
         />
         <div className="flex justify-between text-xs text-muted-foreground mt-0.5">
-          <span>€1 000</span><span>€200 000</span>
+          <span>€0</span><span>€100 000</span>
         </div>
       </div>
 
@@ -231,20 +280,21 @@ export default function TaxCalcSZCO() {
         />
       )}
 
-      {/* ── Months active ── */}
+      {/* ── Start date ── */}
       <div>
         <div className="flex items-baseline justify-between mb-1">
-          <label className="text-sm font-semibold">Месяцев деятельности</label>
-          <span className="text-primary font-bold">{monthsActive}</span>
+          <label className="text-sm font-semibold">Дата открытия živnosť</label>
+          <span className="text-xs text-muted-foreground">{monthsActive} мес. в этом году</span>
         </div>
         <input
-          type="range" min={1} max={12} step={1}
-          value={monthsActive} onChange={(e) => setMonthsActive(+e.target.value)}
-          className="w-full accent-primary"
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="w-full bg-background/50 border border-border/50 rounded-xl h-11 px-4 text-sm font-semibold focus:outline-none focus:border-primary/50 transition-colors"
         />
-        <div className="flex justify-between text-xs text-muted-foreground mt-0.5">
-          <span>1 мес.</span><span>12 мес.</span>
-        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          {startDate ? `Расчёт за ${monthsActive} мес. текущего года` : 'Если не указана — расчёт за 12 месяцев'}
+        </p>
       </div>
 
       {/* ── First year toggle ── */}
