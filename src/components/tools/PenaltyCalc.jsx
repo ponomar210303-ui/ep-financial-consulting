@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { CONSULTATION_URL } from '../../config/tools';
 
 const situations = [
   {
@@ -113,7 +114,7 @@ export default function PenaltyCalc() {
         <p className="text-sm text-muted-foreground leading-relaxed">{result.note}</p>
       </div>
 
-      <p className="text-xs text-muted-foreground text-center">Расчёт носит ознакомительный характер. Реальные штрафы зависят от обстоятельств. <button onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })} className="text-primary underline">Проконсультируйся со мной.</button></p>
+      <p className="text-xs text-muted-foreground text-center">Расчёт носит ознакомительный характер. Реальные штрафы зависят от обстоятельств. <a href={CONSULTATION_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline">Проконсультируйся со мной.</a></p>
     </div>
   );
 }

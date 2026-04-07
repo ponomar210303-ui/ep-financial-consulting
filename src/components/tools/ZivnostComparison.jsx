@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
+import { CONSULTATION_URL } from '../../config/tools';
 
 // ═══════════════════════════════════════════════════════════════════════
 // 2026 SLOVAK TAX & INSURANCE RATES
@@ -477,9 +478,9 @@ export default function ZivnostComparison() {
         <a href="https://www.podnikajte.sk/dane/dolezite-cisla-v-podnikani-2026" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">podnikajte.sk</a>,{' '}
         <a href="https://www.socpoist.sk/socialne-poistenie/platenie-poistneho/tabulky-platenia-poistneho/tabulky-platenia-poistneho-od-1-6" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">socpoist.sk</a>.
         {' '}Для точного анализа —{' '}
-        <button onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })} className="text-primary underline">
+        <a href={CONSULTATION_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline">
           запишись на консультацию
-        </button>.
+        </a>.
       </p>
     </div>
   );

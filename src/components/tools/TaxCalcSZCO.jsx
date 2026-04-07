@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { CONSULTATION_URL } from '../../config/tools';
 
 // ─── 2025 Slovak SZČO rates (szcokalkulacka.sk verified) ────────
 const ZM = 273.99;                              // životné minimum 2025
@@ -416,6 +417,8 @@ export default function TaxCalcSZCO() {
         * Расчёт на основе ставок 2025 г. (ŽM {fmtExact(ZM)}, priem. mzda 2024: {fmt(AVG_SALARY_2024)}).
         Коэффициент VZ: {INSURANCE_COEF}. Здравотное {ZDRAVOTNA_RATE * 100}%, социальное {(SOCIALNA_TOTAL * 100).toFixed(2)}%.
         Не является налоговой консультацией.
+        {' '}Для точного анализа —{' '}
+        <a href={CONSULTATION_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline">запишись на консультацию</a>.
       </p>
     </div>
   );

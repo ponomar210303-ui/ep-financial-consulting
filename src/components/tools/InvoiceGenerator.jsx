@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Download, Save, Plus, Trash2, Upload, ChevronDown, ChevronUp } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import QRCode from 'qrcode';
+import { CONSULTATION_URL } from '../../config/tools';
 
 // ═══════════════════════════════════════════════════════════════════
 // 2026 SLOVAK INVOICE CONSTANTS
@@ -928,6 +929,8 @@ export default function InvoiceGenerator() {
       <p className="text-[10px] text-muted-foreground/50 leading-relaxed text-center">
         Фактура соответствует §74 zákona č. 222/2004 Z.z. o DPH. Ставки DPH 2026: 23% / 19% / 5%.
         Лимит регистрации DPH: 50 000 € / 62 500 €.
+        {' '}Нужна помощь? —{' '}
+        <a href={CONSULTATION_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline">запишись на консультацию</a>.
       </p>
     </div>
   );

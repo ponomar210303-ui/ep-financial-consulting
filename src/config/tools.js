@@ -1,5 +1,8 @@
 import { Calculator, GitCompare, FileText, AlertTriangle } from 'lucide-react';
 
+// TODO: заменить на реальную ссылку Google Calendar
+export const CONSULTATION_URL = 'https://calendar.google.com/calendar/appointments/PLACEHOLDER';
+
 const tools = [
   {
     id: 'tax',
