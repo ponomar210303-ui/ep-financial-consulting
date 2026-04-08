@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import AnimatedSection from './AnimatedSection';
 
 // Получи бесплатный ключ на https://web3forms.com → Enter your email
-const WEB3FORMS_KEY = 'YOUR_ACCESS_KEY';
+const WEB3FORMS_KEY = '929e8f83-7c01-4eea-a57e-0e73be12b604';
 
 const contactCards = [
   {
