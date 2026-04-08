@@ -209,7 +209,7 @@ export default function HeroAnimation() {
                 )}
               </div>
 
-              {/* Ripple on stamp */}s
+              {/* Ripple on stamp */}
               {phase === 'stamp' && (
                 <div style={{
                   position: 'absolute', inset: 0,
