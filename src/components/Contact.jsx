@@ -6,6 +6,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import AnimatedSection from './AnimatedSection';
 
+// Получи бесплатный ключ на https://web3forms.com → Enter your email
+const WEB3FORMS_KEY = 'YOUR_ACCESS_KEY';
+
 const contactCards = [
   {
     icon: MessageCircle,
@@ -18,7 +21,7 @@ const contactCards = [
     icon: Calendar,
     label: 'Google Calendar',
     value: 'Забронировать звонок',
-    href: 'https://calendar.google.com',
+    href: 'https://calendar.app.google/JmVTFpHUB3szUqoK7',
     color: 'from-primary/20 to-primary/10',
   },
   {
@@ -37,10 +40,29 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSending(true);
-    // Simulate send
-    await new Promise((r) => setTimeout(r, 1000));
-    toast.success('Сообщение отправлено! Свяжусь с вами в ближайшее время.');
-    setForm({ name: '', email: '', phone: '', message: '' });
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          name: form.name,
+          email: form.email,
+          phone: form.phone || '—',
+          message: form.message,
+          subject: `Новое сообщение от ${form.name} — epfinance.sk`,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('Сообщение отправлено! Свяжусь с вами в ближайшее время.');
+        setForm({ name: '', email: '', phone: '', message: '' });
+      } else {
+        throw new Error(data.message || 'Ошибка отправки');
+      }
+    } catch {
+      toast.error('Не удалось отправить. Напишите напрямую на ponomarev.businessonly@gmail.com');
+    }
     setSending(false);
   };
 

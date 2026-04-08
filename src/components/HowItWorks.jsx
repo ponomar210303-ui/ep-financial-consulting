@@ -72,7 +72,7 @@ export default function HowItWorks() {
               className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-10 font-semibold text-base group"
               asChild
             >
-              <a href="https://calendar.google.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://calendar.app.google/JmVTFpHUB3szUqoK7" target="_blank" rel="noopener noreferrer">
                 Записаться на бесплатную консультацию
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </a>
