@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(start notepad:*)"
+      "Bash(start notepad:*)",
+      "Bash(npx vercel:*)"
     ],
     "deny": [
       "EnterWorktree"

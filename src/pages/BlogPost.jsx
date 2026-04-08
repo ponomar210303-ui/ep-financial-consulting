@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 import { getPostBySlug } from '../lib/blog';
 
 const categoryColors = {
@@ -36,8 +37,28 @@ export default function BlogPost() {
       })
     : '';
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    image: post.image ? `https://epfinance.sk${post.image}` : 'https://epfinance.sk/images/about.png',
+    author: { '@type': 'Person', name: 'Евгений Пономарёв', url: 'https://epfinance.sk' },
+    publisher: { '@type': 'Organization', name: 'EP. Финансовый консалтинг', url: 'https://epfinance.sk' },
+    mainEntityOfPage: `https://epfinance.sk/blog/${post.slug}`,
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-700">
+      <SEO
+        title={`${post.title} — EP.`}
+        description={post.excerpt}
+        image={post.image}
+        url={`/blog/${post.slug}`}
+        type="article"
+        jsonLd={jsonLd}
+      />
       <Navbar />
 
       <article className="max-w-3xl mx-auto px-4 pt-28 pb-12">

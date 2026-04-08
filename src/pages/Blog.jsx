@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Clock, Search } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 import AnimatedSection from '../components/AnimatedSection';
 import { getAllPosts } from '../lib/blog';
 
@@ -33,6 +34,11 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title="Блог — EP. Финансовый консалтинг"
+        description="Полезные статьи о налогах, živnosť и финансах в Словакии для русскоязычных предпринимателей."
+        url="/blog"
+      />
       <Navbar />
 
       <div className="pt-28 pb-16">

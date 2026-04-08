@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import tools from '../config/tools';
+import SEO from '../components/SEO';
 import TaxCalcSZCO from '../components/tools/TaxCalcSZCO';
 import ZivnostComparison from '../components/tools/ZivnostComparison';
 import InvoiceGenerator from '../components/tools/InvoiceGenerator';
@@ -25,6 +26,11 @@ export default function ToolPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title={`${tool.title} — EP. Финансовый консалтинг`}
+        description={tool.desc}
+        url={`/tools/${tool.slug}`}
+      />
       <Navbar />
 
       <div className="pt-28 pb-16">

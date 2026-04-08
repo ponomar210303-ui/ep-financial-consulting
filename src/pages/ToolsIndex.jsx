@@ -4,10 +4,16 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AnimatedSection from '../components/AnimatedSection';
 import tools from '../config/tools';
+import SEO from '../components/SEO';
 
 export default function ToolsIndex() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title="Онлайн-инструменты — EP. Финансовый консалтинг"
+        description="Бесплатные калькуляторы для предпринимателей в Словакии: налоги SZČO, živnosť vs s.r.o., генератор фактур, калькулятор штрафов."
+        url="/tools"
+      />
       <Navbar />
 
       <div className="pt-28 pb-16">
