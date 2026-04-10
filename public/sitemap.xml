@@ -44,6 +44,12 @@
 
   <!-- Статьи блога -->
   <url>
+    <loc>https://epfinance.sk/blog/skolko-stoit-zivnost-2026-raschet-po-mesyacam</loc>
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://epfinance.sk/blog/dochasny-azyl-zivnost-2026</loc>
     <lastmod>2026-04-07</lastmod>
     <changefreq>monthly</changefreq>
