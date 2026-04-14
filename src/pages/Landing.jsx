@@ -15,10 +15,9 @@ const ABOUT_PHOTO = '/images/about.png';
 
 export default function Landing() {
   useEffect(() => {
-    // Set dark mode by default
     if (!localStorage.getItem('ep-theme')) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('ep-theme', 'dark');
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('ep-theme', 'light');
     }
   }, []);
 
