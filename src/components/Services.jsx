@@ -1,3 +1,4 @@
+'use client';
 import { ClipboardList, BarChart3, Lightbulb, Rocket, ArrowRight } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 

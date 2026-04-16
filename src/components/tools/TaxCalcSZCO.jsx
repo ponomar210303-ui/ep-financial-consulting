@@ -1,3 +1,4 @@
+'use client';
 import { useState, useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { CONSULTATION_URL } from '../../config/tools';

@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import { CONSULTATION_URL } from '../../config/tools';

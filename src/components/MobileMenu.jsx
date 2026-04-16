@@ -1,7 +1,8 @@
+'use client';
 import { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useRouter, usePathname } from 'next/navigation';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 import tools from '../config/tools';
@@ -15,20 +16,17 @@ const links = [
 ];
 
 export default function MobileMenu({ isOpen, onClose }) {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const [toolsExpanded, setToolsExpanded] = useState(false);
 
   if (!isOpen) return null;
 
   const handleClick = (href, external) => {
     onClose();
-    if (external) { navigate(href); return; }
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+    if (external) { router.push(href); return; }
+    if (pathname !== '/') {
+      router.push('/' + href);
       return;
     }
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
@@ -50,7 +48,7 @@ export default function MobileMenu({ isOpen, onClose }) {
               <div key={link.href}>
                 <div className="flex items-center">
                   <button
-                    onClick={() => { onClose(); navigate('/tools'); }}
+                    onClick={() => { onClose(); router.push('/tools'); }}
                     className="text-left text-2xl font-semibold py-3 px-2 rounded-lg hover:bg-accent transition-colors flex-1"
                   >
                     {link.label}
@@ -67,7 +65,7 @@ export default function MobileMenu({ isOpen, onClose }) {
                     {tools.map((tool) => (
                       <button
                         key={tool.slug}
-                        onClick={() => { onClose(); navigate(`/tools/${tool.slug}`); }}
+                        onClick={() => { onClose(); router.push(`/tools/${tool.slug}`); }}
                         className="flex items-center gap-3 text-left py-2.5 px-3 rounded-lg hover:bg-accent transition-colors"
                       >
                         <span className="text-lg">{tool.emoji}</span>

@@ -1,7 +1,7 @@
+'use client';
 import { ArrowRight, Clock } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import AnimatedSection from './AnimatedSection';
-import { getAllPosts } from '../lib/blog';
 
 const categoryColors = {
   'Živnosť': 'bg-primary/10 text-primary',
@@ -12,10 +12,11 @@ const categoryColors = {
 
 const EMOJI = ['📋', '📊', '💡'];
 
-// Loaded synchronously — no props needed
-const previewPosts = getAllPosts().slice(0, 3);
+// Posts come from the parent Server Component (landing page) so that
+// blog.js — a Node-only loader — never ships to the client.
+export default function BlogSection({ posts = [] }) {
+  const previewPosts = posts.slice(0, 3);
 
-export default function BlogSection() {
   return (
     <section id="blog" className="py-24 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,7 +34,7 @@ export default function BlogSection() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {previewPosts.map((post, i) => (
             <AnimatedSection key={post.slug} delay={i * 100}>
-              <Link to={`/blog/${post.slug}`} className="group block h-full">
+              <Link href={`/blog/${post.slug}`} className="group block h-full">
                 <div className="glass rounded-2xl overflow-hidden h-full hover:border-primary/30 transition-all duration-500 hover:glow-blue">
                   <div className="aspect-video overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10">
                     {post.image ? (
@@ -82,7 +83,7 @@ export default function BlogSection() {
         <AnimatedSection delay={400}>
           <div className="text-center mt-12">
             <Link
-              to="/blog"
+              href="/blog"
               className="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-primary/40 text-primary font-semibold hover:bg-primary hover:text-primary-foreground transition-all duration-300 group"
             >
               Все статьи

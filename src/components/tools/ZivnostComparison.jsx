@@ -1,3 +1,4 @@
+'use client';
 import { useState, useMemo } from 'react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 import { CONSULTATION_URL } from '../../config/tools';

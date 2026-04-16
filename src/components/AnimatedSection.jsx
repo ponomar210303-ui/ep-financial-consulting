@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useRef, useState } from 'react';
 
 export default function AnimatedSection({ children, className = '', delay = 0 }) {

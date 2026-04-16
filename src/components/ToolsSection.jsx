@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { Calculator, GitCompare, FileText, AlertTriangle, X, ArrowRight } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';

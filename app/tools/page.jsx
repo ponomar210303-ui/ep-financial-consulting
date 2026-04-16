@@ -1,19 +1,36 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import AnimatedSection from '../components/AnimatedSection';
-import tools from '../config/tools';
-import SEO from '../components/SEO';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import AnimatedSection from '@/components/AnimatedSection';
+import tools from '@/config/tools';
 
-export default function ToolsIndex() {
+export const metadata = {
+  title: 'Онлайн-инструменты — EP. Финансовый консалтинг',
+  description:
+    'Бесплатные калькуляторы для предпринимателей в Словакии: налоги SZČO, živnosť vs s.r.o., генератор фактур, калькулятор штрафов.',
+  alternates: { canonical: '/tools' },
+  openGraph: {
+    title: 'Онлайн-инструменты — EP. Финансовый консалтинг',
+    description:
+      'Бесплатные калькуляторы для предпринимателей в Словакии: налоги SZČO, živnosť vs s.r.o., генератор фактур, калькулятор штрафов.',
+    url: '/tools',
+    type: 'website',
+    locale: 'ru_RU',
+    siteName: 'EP. Финансовый консалтинг',
+    images: ['/images/about.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Онлайн-инструменты — EP.',
+    description: 'Бесплатные калькуляторы для предпринимателей в Словакии.',
+    images: ['/images/about.png'],
+  },
+};
+
+export default function ToolsIndexPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <SEO
-        title="Онлайн-инструменты — EP. Финансовый консалтинг"
-        description="Бесплатные калькуляторы для предпринимателей в Словакии: налоги SZČO, živnosť vs s.r.o., генератор фактур, калькулятор штрафов."
-        url="/tools"
-      />
       <Navbar />
 
       <div className="pt-28 pb-16">
@@ -33,7 +50,7 @@ export default function ToolsIndex() {
             {tools.map((tool, i) => (
               <AnimatedSection key={tool.id} delay={i * 80}>
                 <Link
-                  to={`/tools/${tool.slug}`}
+                  href={`/tools/${tool.slug}`}
                   className="group block w-full text-left glass rounded-2xl p-8 hover:border-primary/30 transition-all duration-300 hover:glow-blue relative overflow-hidden"
                 >
                   <div className={`absolute inset-0 bg-gradient-to-br ${tool.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`} />

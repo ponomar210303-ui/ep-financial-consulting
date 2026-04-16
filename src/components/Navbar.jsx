@@ -1,6 +1,8 @@
+'use client';
 import { useState, useEffect } from 'react';
 import { Menu, ChevronDown } from 'lucide-react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
@@ -18,8 +20,8 @@ const links = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -28,12 +30,9 @@ export default function Navbar() {
   }, []);
 
   const scrollTo = (href, external) => {
-    if (external) { navigate(href); return; }
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+    if (external) { router.push(href); return; }
+    if (pathname !== '/') {
+      router.push('/' + href); // Next preserves hash and scrolls on navigation
       return;
     }
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
@@ -58,7 +57,7 @@ export default function Navbar() {
               link.hasDropdown ? (
                 <div key={link.href} className="relative group">
                   <button
-                    onClick={() => navigate('/tools')}
+                    onClick={() => router.push('/tools')}
                     className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
                   >
                     {link.label}
@@ -69,7 +68,7 @@ export default function Navbar() {
                       {tools.map((tool) => (
                         <Link
                           key={tool.slug}
-                          to={`/tools/${tool.slug}`}
+                          href={`/tools/${tool.slug}`}
                           className="flex items-center gap-3 px-4 py-2.5 hover:bg-accent/50 transition-colors"
                         >
                           <span className="text-lg">{tool.emoji}</span>
