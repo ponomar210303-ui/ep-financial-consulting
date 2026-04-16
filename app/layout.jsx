@@ -36,6 +36,9 @@ export const metadata = {
   },
   description:
     'Открытие živnosť, ведение учёта, финансовая стратегия для русскоязычных предпринимателей в Словакии.',
+  icons: {
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+  },
 };
 
 export default function RootLayout({ children }) {
