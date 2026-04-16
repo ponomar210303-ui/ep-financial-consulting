@@ -29,5 +29,6 @@ dist-ssr
 
 .env
 .vite
+.next
 .claude/worktrees/
 .vercel
