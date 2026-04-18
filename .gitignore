@@ -31,4 +31,14 @@ dist-ssr
 .vite
 .next
 .claude/worktrees/
+.claude/launch.json
+.claude/settings.local.json
 .vercel
+
+# Skill outputs (graphify, etc.)
+graphify-out/
+*.skill-output/
+
+# Stray content / archives in repo root
+/kolko-stoji-zivnost.md
+*.zip
