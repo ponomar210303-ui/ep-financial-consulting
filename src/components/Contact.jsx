@@ -1,14 +1,40 @@
 'use client';
 import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import Link from 'next/link';
 import { Send, MessageCircle, Calendar, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import AnimatedSection from './AnimatedSection';
 
 // Получи бесплатный ключ на https://web3forms.com → Enter your email
 const WEB3FORMS_KEY = '929e8f83-7c01-4eea-a57e-0e73be12b604';
+
+const schema = z.object({
+  name: z.string().trim().min(2, 'Минимум 2 символа'),
+  email: z.string().trim().email('Неверный формат email'),
+  phone: z
+    .string()
+    .trim()
+    .optional()
+    .refine(
+      (v) => !v || /^[+\d\s\-()]{6,}$/.test(v),
+      'Похоже, телефон введён неправильно'
+    ),
+  message: z.string().trim().min(10, 'Расскажи чуть подробнее (минимум 10 символов)'),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: 'Нужно согласие на обработку данных' }),
+  }),
+  // Honeypot: реальные люди не заполняют скрытое поле, боты — заполняют.
+  // Web3Forms сам отбрасывает submissions с непустым botcheck.
+  botcheck: z.string().max(0, 'Поле должно быть пустым'),
+});
 
 const contactCards = [
   {
@@ -35,11 +61,27 @@ const contactCards = [
 ];
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
   const [sending, setSending] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(schema),
+    mode: 'onTouched',
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      message: '',
+      consent: false,
+      botcheck: '',
+    },
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (values) => {
     setSending(true);
     try {
       const res = await fetch('https://api.web3forms.com/submit', {
@@ -47,25 +89,30 @@ export default function Contact() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           access_key: WEB3FORMS_KEY,
-          name: form.name,
-          email: form.email,
-          phone: form.phone || '—',
-          message: form.message,
-          subject: `Новое сообщение от ${form.name} — epfinance.sk`,
+          name: values.name,
+          email: values.email,
+          phone: values.phone || '—',
+          message: values.message,
+          subject: `Новое сообщение от ${values.name} — epfinance.sk`,
+          botcheck: values.botcheck, // Web3Forms drop spam if non-empty
         }),
       });
       const data = await res.json();
       if (data.success) {
         toast.success('Сообщение отправлено! Свяжусь с вами в ближайшее время.');
-        setForm({ name: '', email: '', phone: '', message: '' });
+        reset();
       } else {
         throw new Error(data.message || 'Ошибка отправки');
       }
     } catch {
-      toast.error('Не удалось отправить. Напишите напрямую на ponomarev.businessonly@gmail.com');
+      toast.error(
+        'Не удалось отправить. Напишите напрямую на ponomarev.businessonly@gmail.com'
+      );
     }
     setSending(false);
   };
+
+  const errId = (name) => (errors[name] ? `${name}-error` : undefined);
 
   return (
     <section id="contact" className="py-24 relative">
@@ -86,49 +133,178 @@ export default function Contact() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 max-w-5xl mx-auto">
           {/* Form */}
           <AnimatedSection>
-            <form onSubmit={handleSubmit} className="glass rounded-2xl p-8 space-y-5">
-              <div>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              noValidate
+              className="glass rounded-2xl p-8 space-y-5"
+              aria-label="Контактная форма"
+            >
+              {/* Name */}
+              <div className="space-y-1.5">
+                <Label htmlFor="contact-name" className="text-sm font-medium">
+                  Имя <span className="text-destructive">*</span>
+                </Label>
                 <Input
-                  placeholder="Имя"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  required
+                  id="contact-name"
+                  autoComplete="name"
+                  aria-required="true"
+                  aria-invalid={!!errors.name}
+                  aria-describedby={errId('name')}
                   className="bg-background/50 border-border/50 rounded-xl h-12"
+                  {...register('name')}
                 />
+                {errors.name && (
+                  <p id="name-error" role="alert" className="text-xs text-destructive">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
-              <div>
+
+              {/* Email */}
+              <div className="space-y-1.5">
+                <Label htmlFor="contact-email" className="text-sm font-medium">
+                  Email <span className="text-destructive">*</span>
+                </Label>
                 <Input
+                  id="contact-email"
                   type="email"
-                  placeholder="Email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  required
+                  inputMode="email"
+                  autoComplete="email"
+                  aria-required="true"
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errId('email')}
                   className="bg-background/50 border-border/50 rounded-xl h-12"
+                  {...register('email')}
                 />
+                {errors.email && (
+                  <p id="email-error" role="alert" className="text-xs text-destructive">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
-              <div>
+
+              {/* Phone */}
+              <div className="space-y-1.5">
+                <Label htmlFor="contact-phone" className="text-sm font-medium">
+                  Телефон{' '}
+                  <span className="text-muted-foreground font-normal">
+                    (необязательно)
+                  </span>
+                </Label>
                 <Input
-                  placeholder="Телефон"
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  id="contact-phone"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  aria-invalid={!!errors.phone}
+                  aria-describedby={errId('phone')}
                   className="bg-background/50 border-border/50 rounded-xl h-12"
+                  {...register('phone')}
                 />
+                {errors.phone && (
+                  <p id="phone-error" role="alert" className="text-xs text-destructive">
+                    {errors.phone.message}
+                  </p>
+                )}
               </div>
-              <div>
+
+              {/* Message */}
+              <div className="space-y-1.5">
+                <Label htmlFor="contact-message" className="text-sm font-medium">
+                  Сообщение <span className="text-destructive">*</span>
+                </Label>
                 <Textarea
-                  placeholder="Расскажи коротко о своей ситуации..."
-                  value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  required
+                  id="contact-message"
                   rows={4}
+                  placeholder="Расскажи коротко о своей ситуации..."
+                  aria-required="true"
+                  aria-invalid={!!errors.message}
+                  aria-describedby={errId('message')}
                   className="bg-background/50 border-border/50 rounded-xl resize-none"
+                  {...register('message')}
+                />
+                {errors.message && (
+                  <p
+                    id="message-error"
+                    role="alert"
+                    className="text-xs text-destructive"
+                  >
+                    {errors.message.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Honeypot — visually hidden, hidden from AT */}
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  left: '-9999px',
+                  width: '1px',
+                  height: '1px',
+                  overflow: 'hidden',
+                }}
+              >
+                <label htmlFor="botcheck">
+                  Не заполняй это поле, если ты человек
+                </label>
+                <input
+                  id="botcheck"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  {...register('botcheck')}
                 />
               </div>
+
+              {/* GDPR consent */}
+              <div className="space-y-1.5">
+                <div className="flex items-start gap-3">
+                  <Controller
+                    control={control}
+                    name="consent"
+                    render={({ field }) => (
+                      <Checkbox
+                        id="contact-consent"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        aria-required="true"
+                        aria-invalid={!!errors.consent}
+                        aria-describedby={errId('consent')}
+                        className="mt-0.5"
+                      />
+                    )}
+                  />
+                  <Label
+                    htmlFor="contact-consent"
+                    className="text-xs text-muted-foreground leading-relaxed font-normal cursor-pointer"
+                  >
+                    Согласен на обработку персональных данных согласно{' '}
+                    <Link
+                      href="/privacy"
+                      className="underline hover:text-foreground"
+                    >
+                      Политике конфиденциальности
+                    </Link>
+                    .
+                  </Label>
+                </div>
+                {errors.consent && (
+                  <p
+                    id="consent-error"
+                    role="alert"
+                    className="text-xs text-destructive"
+                  >
+                    {errors.consent.message}
+                  </p>
+                )}
+              </div>
+
               <Button
                 type="submit"
                 size="lg"
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold"
-                disabled={sending}
+                disabled={sending || isSubmitting}
               >
                 {sending ? (
                   <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
@@ -153,7 +329,9 @@ export default function Contact() {
                   rel="noopener noreferrer"
                   className="group flex items-center gap-5 glass rounded-2xl p-6 hover:border-primary/30 transition-all duration-300 hover:glow-blue"
                 >
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                  <div
+                    className={`w-14 h-14 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}
+                  >
                     <card.icon className="h-6 w-6 text-foreground" />
                   </div>
                   <div>
