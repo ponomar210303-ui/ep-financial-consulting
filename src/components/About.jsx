@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { GraduationCap, Globe, MapPin } from 'lucide-react';
 import AnimatedSection from './AnimatedSection';
 
@@ -18,11 +19,14 @@ export default function About({ photoUrl }) {
           <AnimatedSection>
             <div className="relative max-w-md mx-auto lg:mx-0">
               <div className="aspect-square rounded-3xl overflow-hidden glow-blue">
-                <img
+                <Image
                   src={photoUrl}
                   alt="Евгений Пономарёв — финансовый консультант"
+                  width={800}
+                  height={800}
+                  sizes="(max-width: 1024px) 90vw, 448px"
                   className="w-full h-full object-cover"
-                  loading="lazy"
+                  priority={false}
                 />
               </div>
               {/* Decorative elements */}

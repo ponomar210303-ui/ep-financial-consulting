@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import tools from '@/config/tools';
 import ToolLoader from './ToolLoader';
+import { BASE_URL } from '@/lib/site';
 
 export function generateStaticParams() {
   return tools.map((tool) => ({ slug: tool.slug }));
@@ -26,13 +27,13 @@ export function generateMetadata({ params }) {
       type: 'website',
       locale: 'ru_RU',
       siteName: 'EP. Финансовый консалтинг',
-      images: ['/images/about.png'],
+      images: ['/images/about.jpg'],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description: tool.desc,
-      images: ['/images/about.png'],
+      images: ['/images/about.jpg'],
     },
   };
 }
@@ -41,8 +42,22 @@ export default function ToolPage({ params }) {
   const tool = tools.find((t) => t.slug === params.slug);
   if (!tool) notFound();
 
+  const breadcrumbs = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: `${BASE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Инструменты', item: `${BASE_URL}/tools` },
+      { '@type': 'ListItem', position: 3, name: tool.title, item: `${BASE_URL}/tools/${tool.slug}` },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+      />
       <Navbar />
 
       <div className="pt-28 pb-16">

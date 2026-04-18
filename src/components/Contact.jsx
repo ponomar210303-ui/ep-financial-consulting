@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -61,6 +62,7 @@ const contactCards = [
 ];
 
 export default function Contact() {
+  const router = useRouter();
   const [sending, setSending] = useState(false);
   const {
     register,
@@ -101,6 +103,7 @@ export default function Contact() {
       if (data.success) {
         toast.success('Сообщение отправлено! Свяжусь с вами в ближайшее время.');
         reset();
+        router.push('/thank-you');
       } else {
         throw new Error(data.message || 'Ошибка отправки');
       }

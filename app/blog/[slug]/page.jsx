@@ -61,14 +61,14 @@ export default async function BlogPostPage({ params }) {
       })
     : '';
 
-  const jsonLd = {
+  const article = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
     description: post.excerpt,
     datePublished: post.date,
     dateModified: post.updated || post.date,
-    image: post.image ? absoluteUrl(post.image) : `${BASE_URL}/images/about.png`,
+    image: post.image ? absoluteUrl(post.image) : `${BASE_URL}/images/about.jpg`,
     author: { '@type': 'Person', name: 'Евгений Пономарёв', url: BASE_URL },
     publisher: {
       '@type': 'Organization',
@@ -78,11 +78,25 @@ export default async function BlogPostPage({ params }) {
     mainEntityOfPage: `${BASE_URL}/blog/${post.slug}`,
   };
 
+  const breadcrumbs = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: `${BASE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Блог', item: `${BASE_URL}/blog` },
+      { '@type': 'ListItem', position: 3, name: post.title, item: `${BASE_URL}/blog/${post.slug}` },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-700">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(article) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
       <Navbar />
 

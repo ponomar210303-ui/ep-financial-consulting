@@ -11,7 +11,8 @@ import Footer from '@/components/Footer';
 import { getAllPosts } from '@/lib/blog';
 import { BASE_URL } from '@/lib/site';
 
-const ABOUT_PHOTO = '/images/about.png';
+const ABOUT_PHOTO = '/images/about.webp';
+const OG_IMAGE = '/images/about.jpg';
 
 export const metadata = {
   title: 'EP. — Финансовый консалтинг в Словакии | Евгений Пономарёв',
@@ -26,14 +27,14 @@ export const metadata = {
     type: 'website',
     locale: 'ru_RU',
     siteName: 'EP. Финансовый консалтинг',
-    images: ['/images/about.png'],
+    images: [OG_IMAGE],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'EP. — Финансовый консалтинг в Словакии',
     description:
       'Открытие živnosť, ведение учёта, финансовая стратегия для русскоязычных предпринимателей в Словакии.',
-    images: ['/images/about.png'],
+    images: [OG_IMAGE],
   },
 };
 
@@ -48,10 +49,26 @@ export default async function LandingPage() {
     description:
       'Открытие živnosť, ведение учёта, финансовая стратегия для русскоязычных предпринимателей в Словакии',
     founder: { '@type': 'Person', name: 'Евгений Пономарёв' },
-    address: { '@type': 'PostalAddress', addressLocality: 'Bratislava', addressCountry: 'SK' },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Bratislava',
+      addressCountry: 'SK',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 48.1486,
+      longitude: 17.1077,
+    },
     areaServed: 'SK',
-    inLanguage: 'ru',
-    image: `${BASE_URL}/images/about.png`,
+    inLanguage: ['ru', 'sk', 'en'],
+    telephone: '+421910650045',
+    email: 'ponomarev.businessonly@gmail.com',
+    priceRange: '€€',
+    image: `${BASE_URL}${OG_IMAGE}`,
+    sameAs: [
+      'https://wa.me/421910650045',
+      'https://calendar.app.google/JmVTFpHUB3szUqoK7',
+    ],
   };
 
   return (
@@ -61,6 +78,7 @@ export default async function LandingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Navbar />
+      <main id="main-content">
       <Hero />
       <About photoUrl={ABOUT_PHOTO} />
       <WhyMe />
@@ -69,6 +87,7 @@ export default async function LandingPage() {
       <ToolsSection />
       <BlogSection posts={posts} />
       <Contact />
+      </main>
       <Footer />
     </div>
   );
