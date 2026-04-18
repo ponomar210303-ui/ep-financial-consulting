@@ -1,5 +1,9 @@
 'use client';
+import Link from 'next/link';
 import Logo from './Logo';
+
+// TODO: вписать реальный IČO после получения выписки из живности
+const ICO = '__IČO__';
 
 export default function Footer() {
   return (
@@ -19,7 +23,7 @@ export default function Footer() {
               Evgenii Ponomarev - Účtovníctvo a financie pre podnikateľov
             </p>
             <p className="text-sm text-muted-foreground">
-              Bratislava, Slovakia
+              Bratislava, Slovakia · IČO: {ICO}
             </p>
           </div>
 
@@ -44,6 +48,12 @@ export default function Footer() {
             >
               Блог
             </button>
+            <Link
+              href="/privacy"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Конфиденциальность
+            </Link>
           </div>
         </div>
 

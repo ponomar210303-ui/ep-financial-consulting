@@ -9,6 +9,7 @@ export default async function sitemap() {
     { url: `${BASE_URL}/`, changeFrequency: 'monthly', priority: 1.0 },
     { url: `${BASE_URL}/blog`, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${BASE_URL}/tools`, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${BASE_URL}/privacy`, changeFrequency: 'yearly', priority: 0.3 },
   ];
 
   const toolRoutes = tools.map((t) => ({
