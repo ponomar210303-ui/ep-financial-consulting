@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { getAllPosts, getPostBySlug } from '@/lib/blog';
 import { BASE_URL, absoluteUrl } from '@/lib/site';
 
@@ -105,13 +106,13 @@ export default async function BlogPostPage({ params }) {
       <Navbar />
 
       <article className="max-w-3xl mx-auto px-4 pt-28 pb-12">
-        <Link
-          href="/blog"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Назад к блогу
-        </Link>
+        <Breadcrumbs
+          items={[
+            { name: 'Главная', href: '/' },
+            { name: 'Блог', href: '/blog' },
+            { name: post.title },
+          ]}
+        />
 
         {post.category && (
           <div className="mb-4">

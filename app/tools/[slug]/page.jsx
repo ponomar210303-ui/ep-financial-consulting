@@ -1,8 +1,7 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import tools from '@/config/tools';
 import ToolLoader from './ToolLoader';
 import { BASE_URL } from '@/lib/site';
@@ -63,13 +62,13 @@ export default function ToolPage({ params }) {
       <div className="pt-28 pb-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
-            <Link
-              href="/tools"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Все инструменты
-            </Link>
+            <Breadcrumbs
+              items={[
+                { name: 'Главная', href: '/' },
+                { name: 'Инструменты', href: '/tools' },
+                { name: tool.title },
+              ]}
+            />
             <div className="flex items-center gap-4">
               <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${tool.color} flex items-center justify-center flex-shrink-0 text-2xl`}>
                 {tool.emoji}
