@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Clock, Calendar } from 'lucide-react';
+import { ArrowLeft, Clock, Calendar, RefreshCw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Navbar from '@/components/Navbar';
@@ -53,13 +53,17 @@ export default async function BlogPostPage({ params }) {
   const post = await getPostBySlug(params.slug);
   if (!post) notFound();
 
-  const formattedDate = post.date
-    ? new Date(post.date).toLocaleDateString('ru-RU', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : '';
+  const fmtDate = (iso) =>
+    iso
+      ? new Date(iso).toLocaleDateString('ru-RU', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
+      : '';
+  const formattedDate = fmtDate(post.date);
+  const formattedUpdated =
+    post.updated && post.updated !== post.date ? fmtDate(post.updated) : '';
 
   const article = {
     '@context': 'https://schema.org',
@@ -121,11 +125,20 @@ export default async function BlogPostPage({ params }) {
           {post.title}
         </h1>
 
-        <div className="flex items-center gap-5 text-sm text-muted-foreground mb-12 pb-8 border-b border-border/30">
+        <div className="flex items-center flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground mb-12 pb-8 border-b border-border/30">
           {formattedDate && (
             <div className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4" />
-              {formattedDate}
+              <time dateTime={post.date}>{formattedDate}</time>
+            </div>
+          )}
+          {formattedUpdated && (
+            <div
+              className="flex items-center gap-1.5"
+              title="Последнее обновление статьи"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Обновлено <time dateTime={post.updated}>{formattedUpdated}</time>
             </div>
           )}
           <div className="flex items-center gap-1.5">

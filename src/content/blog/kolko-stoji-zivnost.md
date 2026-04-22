@@ -2,6 +2,7 @@
 title: "Сколько реально стоит живность в 2026: полный расчёт по месяцам"
 slug: "skolko-stoit-zivnost-2026-raschet-po-mesyacam"
 date: "2026-04-10"
+updated: "2026-04-10"
 category: "Živnosť"
 image: "/images/blog/kolko-stoji-zivnost.webp"
 excerpt: "Открытие, odvody, налог за первый год — собрал всё в одну таблицу. С реальными цифрами и датами платежей, а не общими словами."

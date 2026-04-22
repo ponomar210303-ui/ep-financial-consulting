@@ -2,6 +2,7 @@
 title: "Как открыть живность в Словакии под ключ за 120 €"
 slug: "otkrytie-zivnosti-pod-klyuch-slovakia"
 date: "2026-04-14"
+updated: "2026-04-22"
 category: "Živnosť"
 excerpt: "Открою тебе живность за 120 €. От подбора кодов деятельности до получения IČO. Расскажу, какие документы нужны и откуда их брать — особенно справку о несудимости."
 image: "/images/blog/otkrytie-zivnosti-pod-klyuch-slovakia.jpg"

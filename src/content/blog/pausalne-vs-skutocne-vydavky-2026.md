@@ -2,6 +2,7 @@
 title: "Paušálne výdavky vs skutočné výdavky — что выгоднее в 2026"
 slug: "pausalne-vs-skutocne-vydavky-2026"
 date: "2026-02-20"
+updated: "2026-02-20"
 category: "Налоги"
 excerpt: "Считаем на реальных цифрах 2026 года: когда паушальные расходы выгоднее, а когда стоит учитывать реальные. Спойлер: для большинства консультантов и айтишников — paušálne."
 image: "/images/blog/pausalne-vs-skutocne-vydavky-2026.jpg"
