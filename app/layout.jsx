@@ -40,6 +40,13 @@ export const metadata = {
   icons: {
     icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
   },
+  alternates: {
+    types: {
+      'application/rss+xml': [
+        { url: '/rss.xml', title: 'EP. Блог — RSS' },
+      ],
+    },
+  },
 };
 
 export default function RootLayout({ children }) {
