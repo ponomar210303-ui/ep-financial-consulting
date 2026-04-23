@@ -34,6 +34,14 @@ export default function Footer() {
               WhatsApp
             </a>
             <a
+              href="https://t.me/EPFinanceblog"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Telegram
+            </a>
+            <a
               href="mailto:ponomarev.businessonly@gmail.com"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
