@@ -67,6 +67,7 @@ export default async function LandingPage() {
     image: `${BASE_URL}${OG_IMAGE}`,
     sameAs: [
       'https://wa.me/421910650045',
+      'https://t.me/EPFinanceblog',
       'https://calendar.app.google/JmVTFpHUB3szUqoK7',
     ],
   };

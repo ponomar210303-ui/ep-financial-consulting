@@ -53,6 +53,13 @@ const contactCards = [
     color: 'from-primary/20 to-primary/10',
   },
   {
+    icon: Send,
+    label: 'Telegram-блог',
+    value: '@EPFinanceblog',
+    href: 'https://t.me/EPFinanceblog',
+    color: 'from-sky-500/20 to-sky-600/20',
+  },
+  {
     icon: Mail,
     label: 'Email',
     value: 'ponomarev.businessonly@gmail.com',
