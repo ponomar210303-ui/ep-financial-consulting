@@ -192,10 +192,10 @@ export default function HomePage({ params }) {
                 return (
                   <span
                     key={chip}
-                    className={`keyword-cloud keyword-cloud-${i + 1} absolute inline-flex items-center gap-2 border border-white/60 bg-white/55 px-5 py-3 text-sm font-medium text-foreground shadow-[0_12px_40px_-12px_rgba(15,23,42,0.45)] backdrop-blur-md sm:px-6 sm:py-3.5 sm:text-[0.95rem] ${CHIP_POSITIONS[i]}`}
+                    className={`keyword-drift-${i + 1} absolute inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/60 py-1 pl-1 pr-3 text-xs font-medium text-foreground shadow-[0_8px_24px_-10px_rgba(15,23,42,0.5)] backdrop-blur-md sm:text-sm ${CHIP_POSITIONS[i]}`}
                   >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/90 text-white sm:h-8 sm:w-8">
-                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/90 text-white">
+                      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                     </span>
                     {chip}
                   </span>

@@ -60,40 +60,31 @@
   }
 }
 
-/* Hero keyword "clouds": each drifts on its own path and tempo and slowly
-   morphs its outline, so the three never move in sync. */
+/* Hero keywords: each drifts on its own path and tempo, so the three never
+   move in sync. */
 @layer components {
-  .keyword-cloud {
-    border-radius: 58% 42% 55% 45% / 52% 60% 40% 48%;
-    will-change: transform, border-radius;
-  }
-  .keyword-cloud-1 { animation: cloud-drift-1 9s ease-in-out infinite, cloud-morph 7s ease-in-out infinite; }
-  .keyword-cloud-2 { animation: cloud-drift-2 12.5s ease-in-out -3s infinite, cloud-morph 9s ease-in-out -2s infinite reverse; }
-  .keyword-cloud-3 { animation: cloud-drift-3 10.5s ease-in-out -6s infinite, cloud-morph 8s ease-in-out -5s infinite; }
+  .keyword-drift-1 { animation: keyword-drift-1 9s ease-in-out infinite; }
+  .keyword-drift-2 { animation: keyword-drift-2 12.5s ease-in-out -3s infinite; }
+  .keyword-drift-3 { animation: keyword-drift-3 10.5s ease-in-out -6s infinite; }
 
-  @keyframes cloud-drift-1 {
+  @keyframes keyword-drift-1 {
     0%, 100% { transform: translate(0, 0) rotate(-2deg); }
     30% { transform: translate(10px, -14px) rotate(1.5deg); }
     65% { transform: translate(-6px, -4px) rotate(-3deg); }
   }
-  @keyframes cloud-drift-2 {
+  @keyframes keyword-drift-2 {
     0%, 100% { transform: translate(0, 0) rotate(2deg); }
     25% { transform: translate(-12px, 8px) rotate(-1deg); }
     55% { transform: translate(-4px, -16px) rotate(3deg); }
     80% { transform: translate(8px, -6px) rotate(0deg); }
   }
-  @keyframes cloud-drift-3 {
+  @keyframes keyword-drift-3 {
     0%, 100% { transform: translate(0, 0) rotate(1deg); }
     40% { transform: translate(14px, -10px) rotate(-2.5deg); }
     70% { transform: translate(4px, 6px) rotate(2deg); }
   }
-  @keyframes cloud-morph {
-    0%, 100% { border-radius: 58% 42% 55% 45% / 52% 60% 40% 48%; }
-    33% { border-radius: 45% 55% 40% 60% / 60% 45% 55% 40%; }
-    66% { border-radius: 62% 38% 48% 52% / 42% 55% 45% 58%; }
-  }
 
   @media (prefers-reduced-motion: reduce) {
-    .keyword-cloud-1, .keyword-cloud-2, .keyword-cloud-3 { animation: none; }
+    .keyword-drift-1, .keyword-drift-2, .keyword-drift-3 { animation: none; }
   }
 }
