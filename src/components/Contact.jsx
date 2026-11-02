@@ -82,10 +82,10 @@ export default function Contact({ locale, t }) {
   const inputClass = 'h-11 bg-background border-input text-base sm:text-sm';
 
   return (
-    <section id="contact" className="scroll-mt-20 py-20 sm:py-24">
+    <section id="contact" className="scroll-mt-20 py-24 sm:py-32">
       <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
         <div>
-          <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">{t.title}</h2>
+          <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-6xl">{t.title}</h2>
           <p className="mt-4 max-w-md text-lg text-muted-foreground">{t.intro}</p>
           <ul className="mt-8 divide-y divide-border border-y border-border">
             {channels.map(({ icon: Icon, label, value, href, external }) => (

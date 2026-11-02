@@ -1,10 +1,11 @@
 export const BASE_URL = 'https://epfinance.sk';
 export const SITE_NAME = 'Evgenii Ponomarev';
 
-// Real photo of Evgenii goes here (e.g. '/images/evgenii.webp', 4:5 crop).
-// While it is null the site shows a neutral placeholder and the OG card is
+// Real photo of Evgenii, background removed (retouched in Higgsfield).
+// Set to null to show the neutral placeholder; the OG card is
 // generated from text (app/[locale]/opengraph-image.jsx).
-export const PROFILE_PHOTO = null;
+export const PROFILE_PHOTO = '/images/evgenii-suit.webp';
+// Alternative without the jacket: '/images/evgenii-casual.webp'.
 
 export const CONTACT = {
   email: 'e.ponomarev2003@gmail.com',
