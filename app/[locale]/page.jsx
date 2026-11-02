@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { Workflow, Bot, LineChart } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import About from '@/components/About';
@@ -49,6 +50,13 @@ const GRID_STYLE = {
   backgroundSize: '44px 32px',
 };
 
+const CHIP_ICONS = [Workflow, Bot, LineChart];
+const CHIP_POSITIONS = [
+  'left-0 top-[54%] sm:-left-4',
+  'right-0 top-[68%] [animation-delay:-3s] sm:-right-4',
+  'bottom-5 left-[8%] [animation-delay:-5s]',
+];
+
 const AGROSTIT_SHOTS = ['/images/projects/agrostit-home.webp', '/images/projects/agrostit-result.webp'];
 const CHERRYPICKER_SHOTS = ['/images/projects/cherrypicker-plan.webp', '/images/projects/cherrypicker-list.webp'];
 
@@ -62,6 +70,21 @@ function Points({ items, className = '' }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+function ProjectStats({ stats }) {
+  return (
+    <dl className="mt-8 grid max-w-xl gap-3 border-y border-white/15 py-6 sm:grid-cols-3 sm:gap-4">
+      {stats.map((s) => (
+        <div key={s.label} className="flex flex-row-reverse items-baseline justify-end gap-4 sm:flex-col-reverse sm:items-start sm:gap-1">
+          <dt className="text-xs leading-snug text-white/65 sm:text-sm">{s.label}</dt>
+          <dd className="w-28 shrink-0 font-mono text-2xl font-medium tabular-nums sm:w-auto sm:text-3xl">
+            <CountUp value={s.value} />
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
@@ -163,17 +186,21 @@ export default function HomePage({ params }) {
                   className="object-contain object-bottom"
                 />
               )}
-              {t.hero.chips.map((chip, i) => (
-                <div
-                  key={chip.label}
-                  className={`absolute rounded-2xl border border-border bg-background/95 px-4 py-3 shadow-xl backdrop-blur motion-safe:animate-float-slow ${
-                    i === 0 ? 'left-0 top-[34%] sm:-left-6' : 'bottom-10 right-0 [animation-delay:-4s] sm:-right-4'
-                  }`}
-                >
-                  <p className="font-mono text-lg font-medium tabular-nums">{chip.value}</p>
-                  <p className="text-xs text-muted-foreground">{chip.label}</p>
-                </div>
-              ))}
+              {/* Keyword chips sit over the shoulders and arms, never over the face. */}
+              {t.hero.chips.map((chip, i) => {
+                const Icon = CHIP_ICONS[i];
+                return (
+                  <span
+                    key={chip}
+                    className={`absolute inline-flex items-center gap-2 rounded-full border border-border bg-background/95 py-1.5 pl-1.5 pr-4 text-sm font-medium shadow-xl backdrop-blur motion-safe:animate-float-slow sm:py-2 sm:pl-2 sm:text-[0.95rem] ${CHIP_POSITIONS[i]}`}
+                  >
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white sm:h-8 sm:w-8">
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    </span>
+                    {chip}
+                  </span>
+                );
+              })}
             </Reveal>
           </div>
 
@@ -222,6 +249,7 @@ export default function HomePage({ params }) {
                     <h3 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">{p.agrostit.name}</h3>
                     <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">{p.agrostit.tagline}</p>
                     <p className="mt-4 inline-block rounded-lg bg-white/10 px-3 py-1.5 text-sm leading-snug text-white/80">{p.agrostit.status}</p>
+                    <ProjectStats stats={p.agrostit.stats} />
                     <div>
                       <a
                         href={AGROSTIT_SITE}
@@ -255,16 +283,7 @@ export default function HomePage({ params }) {
                     <h3 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">{p.cherrypicker.name}</h3>
                     <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">{p.cherrypicker.tagline}</p>
                     <p className="mt-4 inline-block rounded-lg bg-white/10 px-3 py-1.5 text-sm leading-snug text-white/80">{p.cherrypicker.status}</p>
-                    <dl className="mt-8 grid max-w-xl gap-3 border-y border-white/15 py-6 sm:grid-cols-3 sm:gap-4">
-                      {p.cherrypicker.stats.map((s) => (
-                        <div key={s.label} className="flex flex-row-reverse items-baseline justify-end gap-4 sm:flex-col-reverse sm:items-start sm:gap-1">
-                          <dt className="text-xs leading-snug text-white/65 sm:text-sm">{s.label}</dt>
-                          <dd className="w-28 shrink-0 font-mono text-2xl font-medium tabular-nums sm:w-auto sm:text-3xl">
-                            <CountUp value={s.value} />
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
+                    <ProjectStats stats={p.cherrypicker.stats} />
                     <a
                       href={CHERRYPICKER_APP_STORE}
                       target="_blank"
