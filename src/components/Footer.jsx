@@ -1,71 +1,15 @@
-'use client';
 import Link from 'next/link';
-import Logo from './Logo';
+import { CONTACT, SITE_NAME } from '@/lib/site';
 
-export default function Footer() {
+export default function Footer({ locale, t }) {
   return (
-    <footer className="relative py-16 border-t border-border/30 overflow-hidden">
-      {/* Background large EP. */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-        <span className="text-[25vw] font-black font-inter text-foreground/[0.02] leading-none">
-          EP<span className="text-primary/[0.05]">.</span>
-        </span>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          <div className="space-y-3">
-            <Logo size="text-3xl" />
-            <p className="text-sm text-muted-foreground max-w-sm">
-              Evgenii Ponomarev - Účtovníctvo a financie pre podnikateľov
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Bratislava, Slovakia
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-6 text-sm">
-            <a
-              href="https://wa.me/421910650045"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              WhatsApp
-            </a>
-            <a
-              href="https://t.me/EPFinanceblog"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Telegram
-            </a>
-            <a
-              href="mailto:ponomarev.businessonly@gmail.com"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Email
-            </a>
-            <button
-              onClick={() => document.querySelector('#blog')?.scrollIntoView({ behavior: 'smooth' })}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Блог
-            </button>
-            <Link
-              href="/privacy"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Конфиденциальность
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-12 pt-8 border-t border-border/20 text-center">
-          <p className="text-xs text-muted-foreground">
-            © 2026 EP. Všetky práva vyhradené.
-          </p>
+    <footer className="border-t border-border">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <p>© {new Date().getFullYear()} {SITE_NAME}</p>
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-5">
+          <a href={`mailto:${CONTACT.email}`} className="hover:text-foreground">{CONTACT.email}</a>
+          <a href={CONTACT.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">LinkedIn</a>
+          <Link href={`/${locale}/privacy`} className="hover:text-foreground">{t.privacy}</Link>
         </div>
       </div>
     </footer>

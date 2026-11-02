@@ -1,6 +1,6 @@
-export default function Logo({ size = "text-2xl" }) {
+export default function Logo({ size = 'text-2xl' }) {
   return (
-    <span className={`${size} font-inter font-black tracking-tight`}>
+    <span className={`${size} font-display font-bold tracking-tight`}>
       EP<span className="text-primary">.</span>
     </span>
   );

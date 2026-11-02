@@ -10,11 +10,11 @@ import { ChevronRight, Home } from 'lucide-react';
  *     Последний элемент (без href) — текущая страница, не ссылка.
  *   homeIcon?: boolean — показать иконку дома вместо слова «Главная».
  */
-export default function Breadcrumbs({ items, homeIcon = true }) {
+export default function Breadcrumbs({ items, homeIcon = true, label = 'Breadcrumb' }) {
   if (!items?.length) return null;
 
   return (
-    <nav aria-label="Хлебные крошки" className="mb-6">
+    <nav aria-label={label} className="mb-6">
       <ol className="flex items-center flex-wrap gap-1.5 text-sm text-muted-foreground">
         {items.map((item, i) => {
           const isLast = i === items.length - 1;

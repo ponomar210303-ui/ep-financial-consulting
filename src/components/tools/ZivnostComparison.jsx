@@ -1,7 +1,6 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useId, useState, useMemo } from 'react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
-import { CONSULTATION_URL } from '../../config/tools';
 
 // ═══════════════════════════════════════════════════════════════════════
 // 2026 SLOVAK TAX & INSURANCE RATES
@@ -74,10 +73,15 @@ const ER_TOTAL = ER_SOCIAL + ER_HEALTH;      // 36.2%
 // HELPER FUNCTIONS
 // ═══════════════════════════════════════════════════════════════════════
 
-function fmt(n) {
-  return new Intl.NumberFormat('sk-SK', {
+function makeFormatters(locale) {
+  const tag = locale === 'en' ? 'en-GB' : 'sk-SK';
+  const eur = new Intl.NumberFormat(tag, {
     style: 'currency', currency: 'EUR', maximumFractionDigits: 0,
-  }).format(Math.round(n));
+  });
+  const percent = (n, digits = 0) => new Intl.NumberFormat(tag, {
+    style: 'percent', minimumFractionDigits: digits, maximumFractionDigits: digits,
+  }).format(n);
+  return { fmt: (n) => eur.format(Math.round(n)), pct: percent };
 }
 
 function floorTo2(n) {
@@ -250,23 +254,216 @@ function calculateTpp(netMonthly) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// STRINGS
+// ═══════════════════════════════════════════════════════════════════════
+
+const STRINGS = {
+  sk: {
+    netLabel: 'Požadovaný čistý príjem za mesiac',
+    firstYear: 'Prvý rok živnosti (bez sociálneho poistenia)',
+    resultsTitle: 'Porovnanie ročných odvodov a daní',
+    totalCost: 'Odvody a dane za rok',
+    best: 'Najvýhodnejšie',
+    showDetails: 'Zobraziť detaily',
+    hideDetails: 'Skryť detaily',
+    help: 'Vysvetlenie',
+    conclusion: (net, best, saving, worst) => (
+      <>
+        Pri čistom príjme <strong className="font-mono tabular-nums">{net}</strong> mesačne vychádza najlepšie{' '}
+        <strong>{best}</strong>. Oproti variantu {worst} ušetríte{' '}
+        <strong className="font-mono tabular-nums">{saving}</strong> ročne.
+      </>
+    ),
+    savingLabel: 'Úspora za rok oproti najdrahšej možnosti',
+    taxRange: '19 – 35 %',
+    scenarios: {
+      zivnost: {
+        label: 'Živnosť + paušálne',
+        tooltip: 'Samostatne zárobkovo činná osoba (SZČO). Paušálne výdavky 60 % sa uplatňujú bez dokladov. Najjednoduchší spôsob, ako začať.',
+        required: 'Potrebné príjmy (obrat)',
+        expenses: (cap) => `Paušálne výdavky (60 %, max. ${cap})`,
+        health: (p) => `Zdravotné poistenie (${p})`,
+        social: (p) => `Sociálne poistenie (${p})`,
+        nczd: 'Nezdaniteľná časť základu dane (NČZD)',
+        tax: (r) => `Daň z príjmov (${r})`,
+        net: 'Čistý príjem za rok',
+      },
+      sro: {
+        label: 's.r.o. (mzda + dividendy)',
+        tooltip: 'Spoločnosť s ručením obmedzeným. Konateľ dostáva minimálnu mzdu (915 €), zvyšok sa vyplatí ako dividendy. Obmedzené ručenie.',
+        required: 'Potrebný obrat spoločnosti',
+        salary: (w) => `Mzda konateľa (${w} mesačne × 12)`,
+        ee: 'Odvody zamestnanca',
+        er: 'Odvody zamestnávateľa',
+        salaryTax: 'Daň z mzdy',
+        salaryNet: 'Čistá mzda konateľa',
+        corp: (r) => `Daň z príjmov právnickej osoby (${r})`,
+        div: (p) => `Daň z dividend (${p})`,
+        netDiv: 'Čisté dividendy',
+        net: 'Spolu na ruku',
+      },
+      tpp: {
+        label: 'TPP (zamestnanie)',
+        tooltip: 'Pracovná zmluva. Odvody platí zamestnávateľ aj zamestnanec. Najjednoduchšia možnosť, ale pre zamestnávateľa najdrahšia.',
+        required: 'Potrebná hrubá mzda za rok',
+        ee: (p) => `Odvody zamestnanca (${p})`,
+        er: (p) => `Odvody zamestnávateľa (${p})`,
+        tax: 'Daň z príjmov',
+        employerCost: 'Celkové náklady zamestnávateľa',
+        net: 'Čistý príjem za rok',
+      },
+    },
+    basis: (zm, avg, min, zp, sp, corp) =>
+      `Výpočet vychádza zo sadzieb pre rok 2026 (životné minimum ${zm}, priemerná mzda ${avg}, minimálna mzda ${min}). Zdravotné poistenie SZČO ${zp}, sociálne poistenie ${sp}, daň z príjmov právnických osôb do 100 000 €: ${corp}.`,
+    sources: 'Zdroje:',
+    disclaimer: 'Výpočet je orientačný a nenahrádza daňové poradenstvo.',
+  },
+  en: {
+    netLabel: 'Desired net income per month',
+    firstYear: 'First year of živnosť (no social insurance)',
+    resultsTitle: 'Comparison of annual contributions and taxes',
+    totalCost: 'Contributions and taxes per year',
+    best: 'Lowest cost',
+    showDetails: 'Show details',
+    hideDetails: 'Hide details',
+    help: 'Explanation',
+    conclusion: (net, best, saving, worst) => (
+      <>
+        For a net income of <strong className="font-mono tabular-nums">{net}</strong> per month, the best option is{' '}
+        <strong>{best}</strong>. Compared with {worst}, you save{' '}
+        <strong className="font-mono tabular-nums">{saving}</strong> per year.
+      </>
+    ),
+    savingLabel: 'Yearly saving vs. the most expensive option',
+    taxRange: '19–35%',
+    scenarios: {
+      zivnost: {
+        label: 'Živnosť + flat-rate expenses',
+        tooltip: 'Self-employed (SZČO) under a trade licence. The 60% flat-rate expense deduction needs no receipts. The simplest way to start.',
+        required: 'Required revenue (príjmy)',
+        expenses: (cap) => `Flat-rate expenses (60%, max. ${cap})`,
+        health: (p) => `Health insurance, Zdravotná poisťovňa (${p})`,
+        social: (p) => `Social insurance, Sociálna poisťovňa (${p})`,
+        nczd: 'Non-taxable part of the tax base (NČZD)',
+        tax: (r) => `Income tax (${r})`,
+        net: 'Net income per year',
+      },
+      sro: {
+        label: 's.r.o. (salary + dividends)',
+        tooltip: 'Limited liability company. The director draws the minimum wage (€915) and the rest is paid out as dividends. Liability is limited.',
+        required: 'Required company revenue',
+        salary: (w) => `Director salary (${w} per month × 12)`,
+        ee: 'Employee contributions (odvody)',
+        er: 'Employer contributions (odvody)',
+        salaryTax: 'Tax on salary',
+        salaryNet: 'Director net salary',
+        corp: (r) => `Corporate income tax (${r})`,
+        div: (p) => `Dividend tax (${p})`,
+        netDiv: 'Net dividends',
+        net: 'Total take-home',
+      },
+      tpp: {
+        label: 'TPP (employment)',
+        tooltip: 'Employment contract (TPP). Both employer and employee pay contributions. The simplest option, but the most expensive for the employer.',
+        required: 'Required gross salary per year',
+        ee: (p) => `Employee contributions (${p})`,
+        er: (p) => `Employer contributions (${p})`,
+        tax: 'Income tax',
+        employerCost: 'Total employer cost',
+        net: 'Net income per year',
+      },
+    },
+    basis: (zm, avg, min, zp, sp, corp) =>
+      `Based on 2026 rates (subsistence minimum ${zm}, average wage ${avg}, minimum wage ${min}). SZČO health insurance ${zp}, social insurance ${sp}, corporate income tax up to €100,000: ${corp}.`,
+    sources: 'Sources:',
+    disclaimer: 'This is an estimate, not tax advice.',
+  },
+  ru: {
+    netLabel: 'Желаемый доход на руки / мес',
+    firstYear: 'Первый год živnosť (без sociálne poistenie)',
+    resultsTitle: 'Сравнение годовых отчислений',
+    totalCost: 'Отчисления в год',
+    best: 'Выгоднее всего',
+    showDetails: 'Показать детали',
+    hideDetails: 'Скрыть детали',
+    help: 'Подсказка',
+    conclusion: (net, best, saving, worst) => (
+      <>
+        При доходе <strong>{net}/мес</strong> выгоднее всего{' '}
+        <strong>{best}</strong> — экономия{' '}
+        <strong>{saving} в год</strong>{' '}
+        по сравнению с {worst}.
+      </>
+    ),
+    savingLabel: 'Экономия в год',
+    taxRange: '19–35%',
+    scenarios: {
+      zivnost: {
+        label: 'Živnosť + paušálne',
+        tooltip: 'Самозанятость (ИП). Паушальные расходы 60% — не нужно собирать чеки. Проще всего начать.',
+        required: 'Нужный оборот (príjmy)',
+        expenses: (cap) => `Паушальные расходы (60%, макс. ${cap})`,
+        health: (p) => `Здравотное (${p})`,
+        social: (p) => `Социальное (${p})`,
+        nczd: 'НЧЗД',
+        tax: (r) => `Налог (${r})`,
+        net: 'Чистыми в год',
+      },
+      sro: {
+        label: 's.r.o. (ЗП + дивиденды)',
+        tooltip: 'ООО. Директор получает мин. зарплату (€915), остальное — дивиденды. Ограниченная ответственность.',
+        required: 'Нужный оборот компании',
+        salary: (w) => `ЗП директора (${w}/мес × 12)`,
+        ee: 'Odvody работника',
+        er: 'Odvody работодателя',
+        salaryTax: 'Налог на ЗП',
+        salaryNet: 'Чистая ЗП директора',
+        corp: (r) => `Корп. налог (${r})`,
+        div: (p) => `Налог на дивиденды (${p})`,
+        netDiv: 'Чистые дивиденды',
+        net: 'Итого на руки',
+      },
+      tpp: {
+        label: 'TPP (работа по найму)',
+        tooltip: 'Трудовой договор. Работодатель платит все odvody. Самый простой вариант — но и самый дорогой для работодателя.',
+        required: 'Нужная gross ЗП',
+        ee: (p) => `Odvody работника (${p})`,
+        er: (p) => `Odvody работодателя (${p})`,
+        tax: 'Налог на доход',
+        employerCost: 'Полная стоимость для работодателя',
+        net: 'Чистыми в год',
+      },
+    },
+    basis: (zm, avg, min, zp, sp, corp) =>
+      `* Расчёт на основе ставок 2026 г. (ŽM ${zm}, priem. mzda ${avg}, min. mzda ${min}). Здравотное SZČO ${zp}, социальное ${sp}, корп. налог ≤100k: ${corp}.`,
+    sources: 'Источники:',
+    disclaimer: 'Не является налоговой консультацией.',
+    // Old CTA text, kept for reference only (not rendered).
+    oldCta: 'Для точного анализа — запишись на консультацию',
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════════
 // UI COMPONENTS
 // ═══════════════════════════════════════════════════════════════════════
 
-function TooltipIcon({ text }) {
+function TooltipIcon({ text, label }) {
   const [open, setOpen] = useState(false);
   return (
     <span className="relative inline-block">
       <button
+        type="button"
+        aria-label={label}
+        aria-expanded={open}
         onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
-        className="text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+        className="text-muted-foreground hover:text-foreground transition-colors align-middle"
       >
         <HelpCircle className="h-3.5 w-3.5" />
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-50 w-56 p-3 rounded-xl glass border border-border/50 shadow-xl text-xs text-muted-foreground leading-relaxed">
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-50 w-56 max-w-[calc(100vw-3rem)] p-3 rounded-lg border border-border bg-background shadow-sm text-xs font-normal text-muted-foreground leading-relaxed">
             {text}
           </div>
         </>
@@ -275,13 +472,12 @@ function TooltipIcon({ text }) {
   );
 }
 
-function DetailRow({ label, value, bold, color, muted }) {
+function DetailRow({ label, value, bold, accent, muted, fmt }) {
   return (
-    <div className={`flex items-center justify-between py-1.5 ${bold ? 'font-bold' : ''}`}>
-      <span className={`text-xs ${muted ? 'text-muted-foreground/50 italic' : bold ? '' : 'text-muted-foreground'}`}>{label}</span>
+    <div className={`flex items-start justify-between gap-4 py-1.5 ${bold ? 'font-semibold' : ''}`}>
+      <span className={`text-xs ${muted ? 'text-muted-foreground italic' : bold ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</span>
       <span
-        className={`text-xs tabular-nums ${bold ? 'font-bold' : ''} ${muted ? 'text-muted-foreground/50' : ''} ${!muted && value < 0 ? 'text-red-400/70' : ''}`}
-        style={color ? { color } : undefined}
+        className={`font-mono text-xs tabular-nums whitespace-nowrap ${bold ? 'font-semibold' : ''} ${muted ? 'text-muted-foreground italic' : ''} ${accent ? 'text-primary' : ''}`}
       >
         {value < 0 ? '−' : ''}{fmt(Math.abs(value))}
       </span>
@@ -289,44 +485,44 @@ function DetailRow({ label, value, bold, color, muted }) {
   );
 }
 
-function ScenarioCard({ label, icon, tooltip, result, borderColor, badgeClass, isBest, expanded, onToggle, detailRows }) {
+function ScenarioCard({ id, label, tooltip, result, swatch, isBest, expanded, onToggle, detailRows, t, fmt }) {
+  const detailsId = `${id}-details`;
   return (
-    <div className={`glass rounded-xl border-l-4 ${borderColor} overflow-hidden transition-all`}>
+    <div className={`rounded-xl border bg-background overflow-hidden ${isBest ? 'border-primary' : 'border-border'}`}>
       <div className="p-4 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="text-xl flex-shrink-0">{icon}</span>
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              <span className="font-semibold text-sm">{label}</span>
-              <TooltipIcon text={tooltip} />
-            </div>
-            <div className="text-xs text-muted-foreground">Отчисления в год</div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ background: swatch }} />
+            <span className="font-semibold text-sm">{label}</span>
+            <TooltipIcon text={tooltip} label={t.help} />
           </div>
+          <div className="text-xs text-muted-foreground mt-0.5 pl-[18px]">{t.totalCost}</div>
         </div>
         <div className="text-right flex-shrink-0">
-          <div className="font-black text-lg">{fmt(result.totalCost)}</div>
+          <div className="font-mono tabular-nums font-semibold text-lg">{fmt(result.totalCost)}</div>
           {isBest && (
-            <div className={`text-xs font-semibold px-2 py-0.5 rounded-full ${badgeClass}`}>
-              Выгоднее всего
+            <div className="mt-1 inline-block text-xs font-medium px-2 py-0.5 rounded-full text-primary bg-primary/10">
+              {t.best}
             </div>
           )}
         </div>
       </div>
 
-      {/* Expand button */}
       <button
+        type="button"
         onClick={onToggle}
-        className="w-full flex items-center justify-center gap-1 py-2 border-t border-border/20 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        aria-expanded={expanded}
+        aria-controls={detailsId}
+        className="w-full flex items-center justify-center gap-1 h-9 border-t border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
       >
-        <span>{expanded ? 'Скрыть' : 'Показать'} детали</span>
+        <span>{expanded ? t.hideDetails : t.showDetails}</span>
         <ChevronDown className={`h-3 w-3 transition-transform ${expanded ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* Details */}
       {expanded && (
-        <div className="px-4 pb-4 pt-1 border-t border-border/10 space-y-0.5">
+        <div id={detailsId} className="px-4 pb-3 pt-2 border-t border-border space-y-0.5">
           {detailRows.map((row, i) => (
-            <DetailRow key={i} {...row} />
+            <DetailRow key={i} {...row} fmt={fmt} />
           ))}
         </div>
       )}
@@ -338,72 +534,71 @@ function ScenarioCard({ label, icon, tooltip, result, borderColor, badgeClass, i
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════
 
-export default function ZivnostComparison() {
+export default function ZivnostComparison({ locale = 'sk' }) {
+  const t = STRINGS[locale] ?? STRINGS.sk;
+  const { fmt, pct } = makeFormatters(locale);
+  const netId = useId();
+  const firstYearId = useId();
+
   const [netMonthly, setNetMonthly] = useState(2000);
   const [firstYear, setFirstYear] = useState(false);
   const [expanded, setExpanded] = useState({});
 
   const z = useMemo(() => calculateZivnost(netMonthly, firstYear), [netMonthly, firstYear]);
   const s = useMemo(() => calculateSro(netMonthly), [netMonthly]);
-  const t = useMemo(() => calculateTpp(netMonthly), [netMonthly]);
+  const tp = useMemo(() => calculateTpp(netMonthly), [netMonthly]);
 
   const toggle = (key) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const scenarios = [
     {
       key: 'zivnost',
-      label: 'Živnosť + paušálne',
-      icon: '🟢',
-      tooltip: 'Самозанятость (ИП). Паушальные расходы 60% — не нужно собирать чеки. Проще всего начать.',
+      label: t.scenarios.zivnost.label,
+      tooltip: t.scenarios.zivnost.tooltip,
       result: z,
-      borderColor: 'border-primary',
-      badgeClass: 'text-primary bg-primary/10',
+      swatch: 'hsl(var(--chart-1))',
       detailRows: [
-        { label: 'Нужный оборот (príjmy)', value: z.gross, bold: true },
-        { label: `Паушальные расходы (60%, макс. ${fmt(PAUSALNE_CAP)})`, value: -z.expenses },
-        { label: `Здравотное (${ZP_SZCO_RATE * 100}%)`, value: -z.zdravotna },
-        { label: `Социальное (${(SP_SZCO_RATE * 100).toFixed(2)}%)`, value: -z.socialna, muted: z.socialna === 0 },
-        { label: 'НЧЗД', value: z.nczd, muted: true },
-        { label: `Налог (${z.gross <= SMALL_BIZ_LIMIT ? '15%' : '19–35%'})`, value: -z.tax },
-        { label: 'Чистыми в год', value: z.net, bold: true, color: '#22c55e' },
+        { label: t.scenarios.zivnost.required, value: z.gross, bold: true },
+        { label: t.scenarios.zivnost.expenses(fmt(PAUSALNE_CAP)), value: -z.expenses },
+        { label: t.scenarios.zivnost.health(pct(ZP_SZCO_RATE, 0)), value: -z.zdravotna },
+        { label: t.scenarios.zivnost.social(pct(SP_SZCO_RATE, 2)), value: -z.socialna, muted: z.socialna === 0 },
+        { label: t.scenarios.zivnost.nczd, value: z.nczd, muted: true },
+        { label: t.scenarios.zivnost.tax(z.gross <= SMALL_BIZ_LIMIT ? pct(SMALL_BIZ_RATE, 0) : t.taxRange), value: -z.tax },
+        { label: t.scenarios.zivnost.net, value: z.net, bold: true, accent: true },
       ],
     },
     {
       key: 'sro',
-      label: 's.r.o. (ЗП + дивиденды)',
-      icon: '🟣',
-      tooltip: 'ООО. Директор получает мин. зарплату (€915), остальное — дивиденды. Ограниченная ответственность.',
+      label: t.scenarios.sro.label,
+      tooltip: t.scenarios.sro.tooltip,
       result: s,
-      borderColor: 'border-secondary',
-      badgeClass: 'text-secondary bg-secondary/10',
+      swatch: 'hsl(var(--chart-2))',
       detailRows: [
-        { label: 'Нужный оборот компании', value: s.gross, bold: true },
-        { label: `ЗП директора (${fmt(MIN_WAGE)}/мес × 12)`, value: s.salaryGross },
-        { label: 'Odvody работника', value: -s.eeContrib },
-        { label: 'Odvody работодателя', value: -s.erContrib },
-        { label: 'Налог на ЗП', value: -s.salaryTax },
-        { label: 'Чистая ЗП директора', value: s.salaryNet, muted: true },
-        { label: `Корп. налог (${(s.corpTaxRate * 100).toFixed(0)}%)`, value: -s.corpTax },
-        { label: `Налог на дивиденды (${DIVIDEND_TAX * 100}%)`, value: -s.divTax },
-        { label: 'Чистые дивиденды', value: s.netDividends, muted: true },
-        { label: 'Итого на руки', value: s.net, bold: true, color: '#22c55e' },
+        { label: t.scenarios.sro.required, value: s.gross, bold: true },
+        { label: t.scenarios.sro.salary(fmt(MIN_WAGE)), value: s.salaryGross },
+        { label: t.scenarios.sro.ee, value: -s.eeContrib },
+        { label: t.scenarios.sro.er, value: -s.erContrib },
+        { label: t.scenarios.sro.salaryTax, value: -s.salaryTax },
+        { label: t.scenarios.sro.salaryNet, value: s.salaryNet, muted: true },
+        { label: t.scenarios.sro.corp(pct(s.corpTaxRate, 0)), value: -s.corpTax },
+        { label: t.scenarios.sro.div(pct(DIVIDEND_TAX, 0)), value: -s.divTax },
+        { label: t.scenarios.sro.netDiv, value: s.netDividends, muted: true },
+        { label: t.scenarios.sro.net, value: s.net, bold: true, accent: true },
       ],
     },
     {
       key: 'tpp',
-      label: 'TPP (работа по найму)',
-      icon: '🟡',
-      tooltip: 'Трудовой договор. Работодатель платит все odvody. Самый простой вариант — но и самый дорогой для работодателя.',
-      result: t,
-      borderColor: 'border-amber-500',
-      badgeClass: 'text-amber-500 bg-amber-500/10',
+      label: t.scenarios.tpp.label,
+      tooltip: t.scenarios.tpp.tooltip,
+      result: tp,
+      swatch: 'hsl(var(--chart-4))',
       detailRows: [
-        { label: 'Нужная gross ЗП', value: t.gross, bold: true },
-        { label: `Odvody работника (${(EE_TOTAL * 100).toFixed(1)}%)`, value: -t.eeContrib },
-        { label: `Odvody работодателя (${(ER_TOTAL * 100).toFixed(1)}%)`, value: -t.erContrib },
-        { label: 'Налог на доход', value: -t.tax },
-        { label: 'Полная стоимость для работодателя', value: t.employerCost, muted: true },
-        { label: 'Чистыми в год', value: t.net, bold: true, color: '#22c55e' },
+        { label: t.scenarios.tpp.required, value: tp.gross, bold: true },
+        { label: t.scenarios.tpp.ee(pct(EE_TOTAL, 1)), value: -tp.eeContrib },
+        { label: t.scenarios.tpp.er(pct(ER_TOTAL, 1)), value: -tp.erContrib },
+        { label: t.scenarios.tpp.tax, value: -tp.tax },
+        { label: t.scenarios.tpp.employerCost, value: tp.employerCost, muted: true },
+        { label: t.scenarios.tpp.net, value: tp.net, bold: true, accent: true },
       ],
     },
   ];
@@ -414,75 +609,92 @@ export default function ZivnostComparison() {
   const saving = worst.result.totalCost - best.result.totalCost;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start">
+        {/* ───────── Inputs ───────── */}
+        <section className="rounded-xl border border-border bg-background p-5 sm:p-6 space-y-5">
+          <div>
+            <label htmlFor={netId} className="text-sm font-medium">{t.netLabel}</label>
+            <div className="font-mono tabular-nums text-3xl sm:text-4xl font-semibold mt-1 mb-3">{fmt(netMonthly)}</div>
+            <input
+              id={netId}
+              type="range" min={800} max={10000} step={100}
+              value={netMonthly} onChange={(e) => setNetMonthly(+e.target.value)}
+              className="w-full accent-primary"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground mt-0.5 font-mono tabular-nums">
+              <span>{fmt(800)}</span><span>{fmt(10000)}</span>
+            </div>
+          </div>
 
-      {/* ── Income slider ── */}
-      <div>
-        <div className="flex items-baseline justify-between mb-1">
-          <label className="text-sm font-semibold">Желаемый доход на руки / мес</label>
-          <span className="text-primary font-bold text-lg">{fmt(netMonthly)}</span>
-        </div>
-        <input
-          type="range" min={800} max={10000} step={100}
-          value={netMonthly} onChange={(e) => setNetMonthly(+e.target.value)}
-          className="w-full accent-primary"
-        />
-        <div className="flex justify-between text-xs text-muted-foreground mt-0.5">
-          <span>€800</span><span>€10 000</span>
-        </div>
+          <div className="flex items-center gap-3">
+            <button
+              id={firstYearId}
+              type="button"
+              role="switch"
+              aria-checked={firstYear}
+              onClick={() => setFirstYear(!firstYear)}
+              className={`w-11 h-6 shrink-0 rounded-full transition-colors flex items-center px-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 ${
+                firstYear ? 'bg-primary' : 'bg-border'
+              }`}
+            >
+              <span className={`block w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${
+                firstYear ? 'translate-x-5' : ''
+              }`} />
+            </button>
+            <label htmlFor={firstYearId} className="text-sm cursor-pointer">{t.firstYear}</label>
+          </div>
+        </section>
+
+        {/* ───────── Results ───────── */}
+        <section className="rounded-xl border border-border bg-muted p-5 sm:p-6 space-y-5">
+          <div>
+            <div className="text-sm text-muted-foreground">{t.savingLabel}</div>
+            <div className="font-mono tabular-nums text-3xl sm:text-4xl font-semibold mt-1">{fmt(saving)}</div>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+              {t.conclusion(fmt(netMonthly), best.label, fmt(saving), worst.label)}
+            </p>
+          </div>
+
+          <h3 className="font-display text-sm font-semibold">{t.resultsTitle}</h3>
+          <div className="space-y-3">
+            {sorted.map((sc, i) => (
+              <ScenarioCard
+                key={sc.key}
+                id={`${netId}-${sc.key}`}
+                label={sc.label}
+                tooltip={sc.tooltip}
+                result={sc.result}
+                swatch={sc.swatch}
+                detailRows={sc.detailRows}
+                isBest={i === 0}
+                expanded={!!expanded[sc.key]}
+                onToggle={() => toggle(sc.key)}
+                t={t}
+                fmt={fmt}
+              />
+            ))}
+          </div>
+        </section>
       </div>
 
-      {/* ── First year toggle ── */}
-      <label className="flex items-center gap-3 cursor-pointer">
-        <div
-          onClick={() => setFirstYear(!firstYear)}
-          className={`w-11 h-6 rounded-full transition-colors flex items-center px-0.5 ${
-            firstYear ? 'bg-primary' : 'bg-border'
-          }`}
-        >
-          <div className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${
-            firstYear ? 'translate-x-5' : ''
-          }`} />
-        </div>
-        <span className="text-sm">Первый год živnosť (без sociálne poistenie)</span>
-      </label>
-
-      {/* ── Scenario cards ── */}
-      <div className="space-y-3">
-        {sorted.map((sc, i) => (
-          <ScenarioCard
-            key={sc.key}
-            {...sc}
-            isBest={i === 0}
-            expanded={!!expanded[sc.key]}
-            onToggle={() => toggle(sc.key)}
-          />
-        ))}
-      </div>
-
-      {/* ── Conclusion ── */}
-      <div className="glass rounded-xl p-5 border border-primary/30 bg-primary/5">
-        <p className="text-sm font-semibold leading-relaxed">
-          При доходе <strong>{fmt(netMonthly)}/мес</strong> выгоднее всего{' '}
-          <strong>{best.label}</strong> — экономия{' '}
-          <strong className="text-green-500">{fmt(saving)} в год</strong>{' '}
-          по сравнению с {worst.label}.
+      {/* ── Basis + disclaimer ── */}
+      <div className="space-y-1 text-xs text-muted-foreground leading-relaxed">
+        <p>
+          {t.basis(
+            fmt(ZM),
+            fmt(AVG_SALARY_2024),
+            fmt(MIN_WAGE),
+            pct(ZP_SZCO_RATE, 0),
+            pct(SP_SZCO_RATE, 2),
+            pct(CORP_TAX_LOW_RATE, 0),
+          )}{' '}
+          {t.sources}{' '}
+          <a href="https://www.podnikajte.sk/dane/dolezite-cisla-v-podnikani-2026" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">podnikajte.sk</a>,{' '}
+          <a href="https://www.socpoist.sk/socialne-poistenie/platenie-poistneho/tabulky-platenia-poistneho/tabulky-platenia-poistneho-od-1-6" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">socpoist.sk</a>.
         </p>
+        <p>{t.disclaimer}</p>
       </div>
-
-      {/* ── Disclaimer ── */}
-      <p className="text-[11px] text-muted-foreground/60 leading-relaxed">
-        * Расчёт на основе ставок 2026 г. (ŽM {fmt(ZM)}, priem. mzda {fmt(AVG_SALARY_2024)}, min. mzda {fmt(MIN_WAGE)}).
-        Здравотное SZČO {ZP_SZCO_RATE * 100}%, социальное {(SP_SZCO_RATE * 100).toFixed(2)}%, корп. налог ≤100k: {CORP_TAX_LOW_RATE * 100}%.
-        Не является налоговой консультацией.
-        Источники:{' '}
-        <a href="https://www.podnikajte.sk/dane/dolezite-cisla-v-podnikani-2026" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">podnikajte.sk</a>,{' '}
-        <a href="https://www.socpoist.sk/socialne-poistenie/platenie-poistneho/tabulky-platenia-poistneho/tabulky-platenia-poistneho-od-1-6" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">socpoist.sk</a>.
-        {' '}Для точного анализа —{' '}
-        <a href={CONSULTATION_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline">
-          запишись на консультацию
-        </a>.
-      </p>
     </div>
   );
 }
