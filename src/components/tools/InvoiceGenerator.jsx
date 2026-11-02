@@ -1,9 +1,8 @@
 'use client';
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, useId, isValidElement, cloneElement } from 'react';
 import { Download, Save, Plus, Trash2, Upload, ChevronDown, ChevronUp } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import QRCode from 'qrcode';
-import { CONSULTATION_URL } from '../../config/tools';
 
 // ═══════════════════════════════════════════════════════════════════
 // 2026 SLOVAK INVOICE CONSTANTS
@@ -12,33 +11,33 @@ import { CONSULTATION_URL } from '../../config/tools';
 // ═══════════════════════════════════════════════════════════════════
 
 const VAT_RATES = [
-  { value: 23, label: '23% (základná)', desc: 'Консалтинг, IT, переводы, маркетинг' },
-  { value: 19, label: '19% (znížená)', desc: 'Электроэнергия, продукты, рестораны' },
-  { value: 5,  label: '5% (znížená)', desc: 'Книги, лекарства, проживание' },
-  { value: 0,  label: 'Oslobodené od DPH', desc: '§42 a nasl. zákona o DPH' },
+  { value: 23 },
+  { value: 19 },
+  { value: 5 },
+  { value: 0 },
 ];
 
 const UNITS = [
-  { value: 'ks', label: 'ks (шт.)' },
-  { value: 'hod', label: 'hod (час)' },
-  { value: 'služba', label: 'služba (услуга)' },
-  { value: 'm', label: 'm (метр)' },
-  { value: 'kg', label: 'kg (кг)' },
-  { value: 'deň', label: 'deň (день)' },
-  { value: 'mesiac', label: 'mesiac (месяц)' },
-  { value: 'projekt', label: 'projekt' },
+  { value: 'ks' },
+  { value: 'hod' },
+  { value: 'služba' },
+  { value: 'm' },
+  { value: 'kg' },
+  { value: 'deň' },
+  { value: 'mesiac' },
+  { value: 'projekt' },
 ];
 
 const PAYMENT_METHODS = [
-  { value: 'prevod', label: 'Bankový prevod' },
-  { value: 'hotovost', label: 'Hotovosť' },
-  { value: 'karta', label: 'Platobná karta' },
+  { value: 'prevod' },
+  { value: 'hotovost' },
+  { value: 'karta' },
 ];
 
 const LANG_OPTIONS = [
-  { value: 'sk', label: 'Slovenčina' },
-  { value: 'ru', label: 'Русский' },
-  { value: 'both', label: 'SK + RU' },
+  { value: 'sk' },
+  { value: 'ru' },
+  { value: 'both' },
 ];
 
 // Bilingual labels
@@ -115,7 +114,7 @@ const L = {
   },
 };
 
-function t(lang, key) {
+function pdfT(lang, key) {
   if (lang === 'both') return `${L.sk[key]} / ${L.ru[key]}`;
   return (L[lang] || L.sk)[key] || key;
 }
@@ -187,6 +186,256 @@ function calcVatAmount(base, rate) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// UI STRINGS (on-screen only; the PDF uses the L labels above)
+// ═══════════════════════════════════════════════════════════════════
+
+const STRINGS = {
+  sk: {
+    sectionSeller: '1. Moje údaje (dodávateľ)',
+    sectionBuyer: '2. Klient (odberateľ)',
+    sectionParams: '3. Parametre faktúry',
+    sectionVat: '4. Režim DPH',
+    sectionItems: '5. Položky',
+    sectionExtra: '6. Doplnkové nastavenia',
+    logo: 'Logo',
+    upload: 'Nahrať logo',
+    removeLogo: 'Odstrániť logo',
+    logoTooBig: 'Maximálna veľkosť súboru je 500 KB',
+    name: 'Názov / meno a priezvisko *',
+    namePlaceholder: 'Meno Priezvisko alebo Názov s.r.o.',
+    street: 'Ulica',
+    city: 'Mesto',
+    zip: 'PSČ',
+    country: 'Krajina',
+    ico: 'IČO',
+    dic: 'DIČ',
+    icDph: 'IČ DPH',
+    phone: 'Telefón',
+    email: 'E-mail',
+    bank: 'Banka',
+    iban: 'IBAN',
+    icoError: 'IČO: 8 číslic',
+    ibanError: 'Nesprávny IBAN (napr. SK89 0200 ... alebo LT38 3250 ...)',
+    pickSaved: 'Vybrať z uložených klientov',
+    choose: '— vyberte —',
+    invoiceNo: 'Číslo faktúry',
+    dateIssued: 'Dátum vystavenia',
+    dateDelivery: 'Dátum dodania',
+    dateDue: 'Dátum splatnosti',
+    plusDays: (d) => `+${d} dní`,
+    ks: 'Konštantný symbol',
+    paymentMethod: 'Spôsob úhrady',
+    invoiceLang: 'Jazyk faktúry',
+    payment: { prevod: 'Bankový prevod', hotovost: 'Hotovosť', karta: 'Platobná karta' },
+    langOptions: { sk: 'Slovenčina', ru: 'Ruština', both: 'Slovenčina + ruština' },
+    units: { ks: 'ks', hod: 'hod', 'služba': 'služba', m: 'm', kg: 'kg', 'deň': 'deň', mesiac: 'mesiac', projekt: 'projekt' },
+    vatNo: 'Nie som platiteľ DPH',
+    vatYes: 'Platiteľ DPH',
+    vatNote: 'Na faktúre bude uvedené: „Nie sme platiteľmi DPH“',
+    exemptReason: 'Dôvod oslobodenia od DPH',
+    exemptPlaceholder: '§42 zákona č. 222/2004 Z. z.',
+    vatRatesTitle: 'Sadzby DPH 2026',
+    vat: {
+      23: { label: '23 % (základná)', desc: 'Poradenstvo, IT, preklady, marketing' },
+      19: { label: '19 % (znížená)', desc: 'Elektrina, potraviny, reštaurácie' },
+      5: { label: '5 % (znížená)', desc: 'Knihy, lieky, ubytovanie' },
+      0: { label: 'Oslobodené od DPH', desc: '§42 a nasl. zákona o DPH' },
+    },
+    item: 'Položka',
+    desc: 'Popis',
+    descPlaceholder: 'Konzultácia / Vývoj / Preklad...',
+    qty: 'Množstvo',
+    unit: 'Jednotka',
+    priceNoVat: 'Cena bez DPH',
+    vatPct: 'DPH %',
+    lineNoVat: 'Bez DPH',
+    lineVat: 'DPH',
+    lineTotal: 'Spolu',
+    addItem: 'Pridať položku',
+    removeItem: 'Odstrániť položku',
+    note: 'Poznámka',
+    notePlaceholder: 'Ďakujeme za spoluprácu...',
+    qrToggle: 'QR kód Pay by Square (pre bankový prevod)',
+    summary: 'Súhrn',
+    totalDue: 'Spolu na úhradu',
+    amount: 'Suma',
+    baseLine: (rate) => `Základ dane (${rate} %)`,
+    vatLineLabel: (rate) => `DPH (${rate} %)`,
+    qrHint: 'QR kód sa zobrazí pri platbe bankovým prevodom, vyplnenom IBAN a nenulovej sume.',
+    download: 'Stiahnuť PDF',
+    save: 'Uložiť moje údaje',
+    saved: 'Uložené',
+    footnote: 'Faktúra obsahuje náležitosti podľa §74 zákona č. 222/2004 Z. z. o DPH. Sadzby DPH 2026: 23 % / 19 % / 5 %. Hranica pre registráciu DPH: 50 000 € / 62 500 €.',
+    disclaimer: 'Výpočet je orientačný a nenahrádza daňové poradenstvo.',
+  },
+  en: {
+    sectionSeller: '1. My details (supplier, dodávateľ)',
+    sectionBuyer: '2. Client (buyer, odberateľ)',
+    sectionParams: '3. Invoice settings',
+    sectionVat: '4. DPH (VAT) mode',
+    sectionItems: '5. Line items (položky)',
+    sectionExtra: '6. Additional options',
+    logo: 'Logo',
+    upload: 'Upload logo',
+    removeLogo: 'Remove logo',
+    logoTooBig: 'Maximum file size is 500 KB',
+    name: 'Company name / full name *',
+    namePlaceholder: 'Full name or company name s.r.o.',
+    street: 'Street',
+    city: 'City',
+    zip: 'Postcode (PSČ)',
+    country: 'Country',
+    ico: 'IČO (company ID)',
+    dic: 'DIČ (tax ID)',
+    icDph: 'IČ DPH (VAT ID)',
+    phone: 'Phone',
+    email: 'E-mail',
+    bank: 'Bank',
+    iban: 'IBAN',
+    icoError: 'IČO: 8 digits',
+    ibanError: 'Invalid IBAN (e.g. SK89 0200 ... or LT38 3250 ...)',
+    pickSaved: 'Choose from saved clients',
+    choose: '— select —',
+    invoiceNo: 'Invoice number',
+    dateIssued: 'Issue date',
+    dateDelivery: 'Delivery date',
+    dateDue: 'Due date',
+    plusDays: (d) => `+${d} days`,
+    ks: 'Constant symbol (KS)',
+    paymentMethod: 'Payment method',
+    invoiceLang: 'Invoice language',
+    payment: { prevod: 'Bank transfer', hotovost: 'Cash', karta: 'Payment card' },
+    langOptions: { sk: 'Slovak', ru: 'Russian', both: 'Slovak + Russian' },
+    units: { ks: 'ks (pcs)', hod: 'hod (hour)', 'služba': 'služba (service)', m: 'm (metre)', kg: 'kg', 'deň': 'deň (day)', mesiac: 'mesiac (month)', projekt: 'projekt (project)' },
+    vatNo: 'Not a DPH payer',
+    vatYes: 'DPH payer',
+    vatNote: 'The invoice will state: "Nie sme platiteľmi DPH" (we are not VAT payers)',
+    exemptReason: 'Reason for DPH exemption',
+    exemptPlaceholder: '§42 of Act No. 222/2004 Coll.',
+    vatRatesTitle: 'DPH rates 2026',
+    vat: {
+      23: { label: '23% (standard)', desc: 'Consulting, IT, translation, marketing' },
+      19: { label: '19% (reduced)', desc: 'Electricity, food, restaurants' },
+      5: { label: '5% (reduced)', desc: 'Books, medicines, accommodation' },
+      0: { label: 'Exempt from DPH', desc: '§42 et seq. of the DPH Act' },
+    },
+    item: 'Item',
+    desc: 'Description',
+    descPlaceholder: 'Consulting / Development / Translation...',
+    qty: 'Quantity',
+    unit: 'Unit',
+    priceNoVat: 'Price excl. DPH',
+    vatPct: 'DPH %',
+    lineNoVat: 'Excl. DPH',
+    lineVat: 'DPH',
+    lineTotal: 'Total',
+    addItem: 'Add item',
+    removeItem: 'Remove item',
+    note: 'Note',
+    notePlaceholder: 'Ďakujeme za spoluprácu...',
+    qrToggle: 'Pay by Square QR code (for bank transfer)',
+    summary: 'Summary',
+    totalDue: 'Total due',
+    amount: 'Amount',
+    baseLine: (rate) => `Tax base (${rate}%)`,
+    vatLineLabel: (rate) => `DPH (${rate}%)`,
+    qrHint: 'The QR code appears for bank transfer payments when an IBAN is filled in and the total is above zero.',
+    download: 'Download PDF',
+    save: 'Save my details',
+    saved: 'Saved',
+    footnote: 'The invoice contains the particulars required by §74 of Act No. 222/2004 Coll. on DPH. DPH rates 2026: 23% / 19% / 5%. DPH registration threshold: €50,000 / €62,500.',
+    disclaimer: 'This is an estimate, not tax advice.',
+  },
+  ru: {
+    sectionSeller: '1. Мои данные (dodávateľ)',
+    sectionBuyer: '2. Клиент (odberateľ)',
+    sectionParams: '3. Параметры фактуры',
+    sectionVat: '4. Режим DPH',
+    sectionItems: '5. Позиции (položky)',
+    sectionExtra: '6. Дополнительно',
+    logo: 'Логотип',
+    upload: 'Загрузить',
+    removeLogo: 'Удалить логотип',
+    logoTooBig: 'Максимум 500 KB',
+    name: 'Название / ФИО *',
+    namePlaceholder: 'EP. Financial Consulting',
+    street: 'Улица',
+    city: 'Город',
+    zip: 'PSČ',
+    country: 'Страна',
+    ico: 'IČO',
+    dic: 'DIČ',
+    icDph: 'IČ DPH',
+    phone: 'Телефон',
+    email: 'E-mail',
+    bank: 'Банк',
+    iban: 'IBAN',
+    icoError: 'IČO: 8 číslic',
+    ibanError: 'Nesprávny IBAN (napr. SK89 0200 ... alebo LT38 3250 ...)',
+    pickSaved: 'Выбрать из сохранённых',
+    choose: '— выберите —',
+    invoiceNo: 'Číslo faktúry',
+    dateIssued: 'Dátum vystavenia',
+    dateDelivery: 'Dátum dodania',
+    dateDue: 'Dátum splatnosti',
+    plusDays: (d) => `+${d} дн.`,
+    ks: 'Konšt. symbol',
+    paymentMethod: 'Способ оплаты',
+    invoiceLang: 'Язык фактуры',
+    payment: { prevod: 'Bankový prevod', hotovost: 'Hotovosť', karta: 'Platobná karta' },
+    langOptions: { sk: 'Slovenčina', ru: 'Русский', both: 'SK + RU' },
+    units: { ks: 'ks (шт.)', hod: 'hod (час)', 'služba': 'služba (услуга)', m: 'm (метр)', kg: 'kg (кг)', 'deň': 'deň (день)', mesiac: 'mesiac (месяц)', projekt: 'projekt' },
+    vatNo: 'Не плательщик DPH',
+    vatYes: 'Плательщик DPH',
+    vatNote: 'На фактуре будет указано: «Nie sme platiteľmi DPH»',
+    exemptReason: 'Основание освобождения от DPH',
+    exemptPlaceholder: '§42 zákona č. 222/2004 Z.z.',
+    vatRatesTitle: 'Ставки DPH 2026',
+    vat: {
+      23: { label: '23% (základná)', desc: 'Консалтинг, IT, переводы, маркетинг' },
+      19: { label: '19% (znížená)', desc: 'Электроэнергия, продукты, рестораны' },
+      5: { label: '5% (znížená)', desc: 'Книги, лекарства, проживание' },
+      0: { label: 'Oslobodené od DPH', desc: '§42 a nasl. zákona o DPH' },
+    },
+    item: 'Позиция',
+    desc: 'Описание',
+    descPlaceholder: 'Konzultácia / Vývoj / Preklad...',
+    qty: 'Кол-во',
+    unit: 'Ед.',
+    priceNoVat: 'Цена без DPH',
+    vatPct: 'DPH %',
+    lineNoVat: 'Без DPH',
+    lineVat: 'DPH',
+    lineTotal: 'Итого',
+    addItem: 'Добавить позицию',
+    removeItem: 'Удалить позицию',
+    note: 'Poznámka / Примечание',
+    notePlaceholder: 'Ďakujeme za spoluprácu...',
+    qrToggle: 'QR-код Pay by Square (для банковского перевода)',
+    summary: 'Сводка',
+    totalDue: 'К оплате',
+    amount: 'Сумма',
+    baseLine: (rate) => `Základ dane (${rate}%)`,
+    vatLineLabel: (rate) => `DPH (${rate}%)`,
+    qrHint: 'QR-код появится при оплате банковским переводом, указанном IBAN и сумме больше нуля.',
+    download: 'Скачать PDF',
+    save: 'Сохранить мои данные',
+    saved: 'Сохранено!',
+    footnote: 'Фактура соответствует §74 zákona č. 222/2004 Z.z. o DPH. Ставки DPH 2026: 23% / 19% / 5%. Лимит регистрации DPH: 50 000 € / 62 500 €.',
+    disclaimer: 'Не является налоговой консультацией.',
+    // Old CTA text, kept for reference only (not rendered).
+    oldCta: 'Нужна помощь? — запишись на консультацию',
+  },
+};
+
+function makeUiFormatter(locale) {
+  const nf = new Intl.NumberFormat(locale === 'en' ? 'en-GB' : 'sk-SK', {
+    style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2,
+  });
+  return (n) => nf.format(n);
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // DEFAULT DATA
 // ═══════════════════════════════════════════════════════════════════
 
@@ -209,12 +458,17 @@ function makeItem() {
 // SUB-COMPONENTS
 // ═══════════════════════════════════════════════════════════════════
 
+const FIELD_CLASS =
+  'w-full h-10 rounded-lg border border-border bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary';
+
 function Field({ label, error, children }) {
+  const id = useId();
+  const child = isValidElement(children) ? cloneElement(children, { id }) : children;
   return (
     <div>
-      <label className="text-xs font-medium text-muted-foreground">{label}</label>
-      {children}
-      {error && <p className="text-xs text-red-400 mt-0.5">{error}</p>}
+      <label htmlFor={id} className="text-sm font-medium">{label}</label>
+      <div className="mt-1.5">{child}</div>
+      {error && <p className="text-xs text-red-700 mt-1">{error}</p>}
     </div>
   );
 }
@@ -225,18 +479,19 @@ function Input({ value, onChange, placeholder, className = '', ...rest }) {
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className={`w-full bg-background/50 border border-border/50 rounded-lg h-9 px-3 text-sm focus:outline-none focus:border-primary/50 transition-colors ${className}`}
+      className={`${FIELD_CLASS} ${className}`}
       {...rest}
     />
   );
 }
 
-function Select({ value, onChange, options, className = '' }) {
+function Select({ value, onChange, options, className = '', ...rest }) {
   return (
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={`w-full bg-background/50 border border-border/50 rounded-lg h-9 px-2 text-sm focus:outline-none focus:border-primary/50 ${className}`}
+      className={`${FIELD_CLASS} ${className}`}
+      {...rest}
     >
       {options.map((o) => (
         <option key={o.value} value={o.value}>{o.label}</option>
@@ -246,17 +501,31 @@ function Select({ value, onChange, options, className = '' }) {
 }
 
 function Section({ title, open, onToggle, children }) {
+  const panelId = useId();
   return (
-    <div className="glass rounded-xl overflow-hidden">
+    <div>
       <button
+        type="button"
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm font-bold hover:bg-card/50 transition-colors"
+        aria-expanded={open}
+        aria-controls={panelId}
+        className="w-full flex items-center justify-between gap-3 px-5 sm:px-6 py-4 text-left font-display text-sm font-semibold hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-inset"
       >
         {title}
-        {open ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        {open ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
       </button>
-      {open && <div className="px-4 pb-4 space-y-3 border-t border-border/20 pt-3">{children}</div>}
+      {open && <div id={panelId} className="px-5 sm:px-6 pb-5 space-y-4">{children}</div>}
     </div>
+  );
+}
+
+function SecondaryButton({ className = '', ...props }) {
+  return (
+    <button
+      type="button"
+      className={`inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-lg border border-border bg-background text-sm font-medium hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 ${className}`}
+      {...props}
+    />
   );
 }
 
@@ -264,7 +533,11 @@ function Section({ title, open, onToggle, children }) {
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════
 
-export default function InvoiceGenerator() {
+export default function InvoiceGenerator({ locale = 'sk' }) {
+  const t = STRINGS[locale] ?? STRINGS.sk;
+  const fmtUi = makeUiFormatter(locale);
+  const qrSwitchId = useId();
+
   // ── State ──
   const [seller, setSeller] = useState(() => {
     try { return { ...defaultSeller, ...JSON.parse(localStorage.getItem(STORAGE.SELLER)) }; }
@@ -296,9 +569,9 @@ export default function InvoiceGenerator() {
   const vs = variabilnySymbol(invoiceNum);
 
   // ── Validation ──
-  const ibanError = seller.iban && !validateIBAN(seller.iban) ? 'Nesprávny IBAN (napr. SK89 0200 ... alebo LT38 3250 ...)' : '';
-  const icoSellerError = seller.ico && !validateICO(seller.ico) ? 'IČO: 8 číslic' : '';
-  const icoBuyerError = buyer.ico && !validateICO(buyer.ico) ? 'IČO: 8 číslic' : '';
+  const ibanError = seller.iban && !validateIBAN(seller.iban) ? t.ibanError : '';
+  const icoSellerError = seller.ico && !validateICO(seller.ico) ? t.icoError : '';
+  const icoBuyerError = buyer.ico && !validateICO(buyer.ico) ? t.icoError : '';
 
   // ── Calculations ──
   const calculations = useMemo(() => {
@@ -367,7 +640,7 @@ export default function InvoiceGenerator() {
     localStorage.setItem(STORAGE.SELLER, JSON.stringify(seller));
     if (logo) localStorage.setItem(STORAGE.LOGO, logo);
     else localStorage.removeItem(STORAGE.LOGO);
-    setSavedMsg('Сохранено!');
+    setSavedMsg(t.saved);
     setTimeout(() => setSavedMsg(''), 2000);
   };
 
@@ -389,7 +662,7 @@ export default function InvoiceGenerator() {
   const handleLogo = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 500_000) { alert('Максимум 500 KB'); return; }
+    if (file.size > 500_000) { alert(t.logoTooBig); return; }
     const reader = new FileReader();
     reader.onload = () => { setLogo(reader.result); };
     reader.readAsDataURL(file);
@@ -430,9 +703,9 @@ export default function InvoiceGenerator() {
       try { doc.addImage(logo, 'PNG', M, y, 30, 15, undefined, 'FAST'); } catch { /* skip */ }
     }
     setA(20);
-    doc.text(t(lang, 'invoice'), W - M, y + 8, { align: 'right' });
+    doc.text(pdfT(lang, 'invoice'), W - M, y + 8, { align: 'right' });
     setN(10);
-    doc.text(`${t(lang, 'invoiceNo')}: ${invoiceNum}`, W - M, y + 14, { align: 'right' });
+    doc.text(`${pdfT(lang, 'invoiceNo')}: ${invoiceNum}`, W - M, y + 14, { align: 'right' });
     y += 22;
     line(M, y, W - M, y, accent);
     y += 6;
@@ -449,16 +722,16 @@ export default function InvoiceGenerator() {
       if (data.country) { doc.text(data.country, x, py); py += 4; }
       py += 2;
       setM();
-      if (data.ico) { doc.text(`${t(lang, 'ico')}: ${data.ico}`, x, py); py += 3.5; }
-      if (data.dic) { doc.text(`${t(lang, 'dic')}: ${data.dic}`, x, py); py += 3.5; }
-      if (showVat && data.icDph) { doc.text(`${t(lang, 'icDph')}: ${data.icDph}`, x, py); py += 3.5; }
-      if (data.phone) { doc.text(`${t(lang, 'phone')}: ${data.phone}`, x, py); py += 3.5; }
-      if (data.email) { doc.text(`${t(lang, 'email')}: ${data.email}`, x, py); py += 3.5; }
+      if (data.ico) { doc.text(`${pdfT(lang, 'ico')}: ${data.ico}`, x, py); py += 3.5; }
+      if (data.dic) { doc.text(`${pdfT(lang, 'dic')}: ${data.dic}`, x, py); py += 3.5; }
+      if (showVat && data.icDph) { doc.text(`${pdfT(lang, 'icDph')}: ${data.icDph}`, x, py); py += 3.5; }
+      if (data.phone) { doc.text(`${pdfT(lang, 'phone')}: ${data.phone}`, x, py); py += 3.5; }
+      if (data.email) { doc.text(`${pdfT(lang, 'email')}: ${data.email}`, x, py); py += 3.5; }
       return py;
     };
 
-    const y1 = drawParty(M, t(lang, 'supplier'), seller, isVatPayer);
-    const y2 = drawParty(M + CW + 10, t(lang, 'buyer'), buyer, isVatPayer);
+    const y1 = drawParty(M, pdfT(lang, 'supplier'), seller, isVatPayer);
+    const y2 = drawParty(M + CW + 10, pdfT(lang, 'buyer'), buyer, isVatPayer);
     y = Math.max(y1, y2) + 4;
     line(M, y, W - M, y);
     y += 5;
@@ -478,19 +751,19 @@ export default function InvoiceGenerator() {
       }
     };
 
-    drawField(M, t(lang, 'dateIssued'), dateIssued);
-    drawField(M + col3, t(lang, 'dateDelivery'), dateDelivery);
-    drawField(M + col3 * 2, t(lang, 'dateDue'), dateDue);
+    drawField(M, pdfT(lang, 'dateIssued'), dateIssued);
+    drawField(M + col3, pdfT(lang, 'dateDelivery'), dateDelivery);
+    drawField(M + col3 * 2, pdfT(lang, 'dateDue'), dateDue);
     y += 12;
 
     if (paymentMethod === 'prevod' && seller.iban) {
-      drawField(M, t(lang, 'iban'), seller.iban.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim());
-      drawField(M + col3, t(lang, 'vs'), vs);
-      drawField(M + col3 * 2, t(lang, 'paymentMethod'), t(lang, 'bankTransfer'));
+      drawField(M, pdfT(lang, 'iban'), seller.iban.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim());
+      drawField(M + col3, pdfT(lang, 'vs'), vs);
+      drawField(M + col3 * 2, pdfT(lang, 'paymentMethod'), pdfT(lang, 'bankTransfer'));
     } else {
       const pmLabels = { prevod: 'bankTransfer', hotovost: 'cash', karta: 'card' };
-      drawField(M, t(lang, 'paymentMethod'), t(lang, pmLabels[paymentMethod]));
-      if (vs) drawField(M + col3, t(lang, 'vs'), vs);
+      drawField(M, pdfT(lang, 'paymentMethod'), pdfT(lang, pmLabels[paymentMethod]));
+      if (vs) drawField(M + col3, pdfT(lang, 'vs'), vs);
     }
     y += 12;
     line(M, y, W - M, y);
@@ -499,21 +772,21 @@ export default function InvoiceGenerator() {
     // ── Items table ──
     const cols = isVatPayer
       ? [
-          { label: t(lang, 'no'), w: 8, align: 'center' },
-          { label: t(lang, 'description'), w: 62 },
-          { label: t(lang, 'qty'), w: 15, align: 'right' },
-          { label: t(lang, 'unit'), w: 12, align: 'center' },
-          { label: t(lang, 'unitPrice'), w: 22, align: 'right' },
-          { label: t(lang, 'vatRate'), w: 16, align: 'right' },
-          { label: t(lang, 'total'), w: 25, align: 'right' },
+          { label: pdfT(lang, 'no'), w: 8, align: 'center' },
+          { label: pdfT(lang, 'description'), w: 62 },
+          { label: pdfT(lang, 'qty'), w: 15, align: 'right' },
+          { label: pdfT(lang, 'unit'), w: 12, align: 'center' },
+          { label: pdfT(lang, 'unitPrice'), w: 22, align: 'right' },
+          { label: pdfT(lang, 'vatRate'), w: 16, align: 'right' },
+          { label: pdfT(lang, 'total'), w: 25, align: 'right' },
         ]
       : [
-          { label: t(lang, 'no'), w: 8, align: 'center' },
-          { label: t(lang, 'description'), w: 78 },
-          { label: t(lang, 'qty'), w: 18, align: 'right' },
-          { label: t(lang, 'unit'), w: 15, align: 'center' },
-          { label: t(lang, 'unitPrice'), w: 22, align: 'right' },
-          { label: t(lang, 'total'), w: 25, align: 'right' },
+          { label: pdfT(lang, 'no'), w: 8, align: 'center' },
+          { label: pdfT(lang, 'description'), w: 78 },
+          { label: pdfT(lang, 'qty'), w: 18, align: 'right' },
+          { label: pdfT(lang, 'unit'), w: 15, align: 'center' },
+          { label: pdfT(lang, 'unitPrice'), w: 22, align: 'right' },
+          { label: pdfT(lang, 'total'), w: 25, align: 'right' },
         ];
 
     // Header row
@@ -588,19 +861,19 @@ export default function InvoiceGenerator() {
     if (isVatPayer) {
       Object.entries(calculations.vatGroups).forEach(([rate, group]) => {
         setM(8);
-        doc.text(`${t(lang, 'subtotal')} (${rate}%)`, totX, totY);
+        doc.text(`${pdfT(lang, 'subtotal')} (${rate}%)`, totX, totY);
         setN(9);
         doc.text(`${fmt(group.base)} €`, totX + totW, totY, { align: 'right' });
         totY += 4;
         setM(8);
-        doc.text(`${t(lang, 'vat')} (${rate}%)`, totX, totY);
+        doc.text(`${pdfT(lang, 'vat')} (${rate}%)`, totX, totY);
         setN(9);
         doc.text(`${fmt(group.vat)} €`, totX + totW, totY, { align: 'right' });
         totY += 5;
       });
     } else {
       setM(8);
-      doc.text(t(lang, 'subtotal'), totX, totY);
+      doc.text(pdfT(lang, 'subtotal'), totX, totY);
       setN(9);
       doc.text(`${fmt(calculations.totalBase)} €`, totX + totW, totY, { align: 'right' });
       totY += 5;
@@ -609,7 +882,7 @@ export default function InvoiceGenerator() {
     line(totX, totY, totX + totW, totY, accent);
     totY += 5;
     setA(12);
-    doc.text(t(lang, 'totalDue'), totX, totY);
+    doc.text(pdfT(lang, 'totalDue'), totX, totY);
     doc.text(`${fmt(calculations.totalDue)} €`, totX + totW, totY, { align: 'right' });
     totY += 4;
 
@@ -642,7 +915,7 @@ export default function InvoiceGenerator() {
     // ── Not VAT payer note ──
     if (!isVatPayer) {
       setM(8);
-      doc.text(t(lang, 'notVatPayer'), M, y);
+      doc.text(pdfT(lang, 'notVatPayer'), M, y);
       y += 5;
     }
 
@@ -656,7 +929,7 @@ export default function InvoiceGenerator() {
     // ── Note ──
     if (note) {
       y += 3;
-      setM(7); doc.text(t(lang, 'note') + ':', M, y); y += 4;
+      setM(7); doc.text(pdfT(lang, 'note') + ':', M, y); y += 4;
       setN(8);
       const noteLines = doc.splitTextToSize(note, W - M * 2);
       doc.text(noteLines, M, y);
@@ -685,254 +958,312 @@ export default function InvoiceGenerator() {
   // RENDER
   // ═══════════════════════════════════════════════════════════════════
 
+  const unitOptions = UNITS.map((u) => ({ value: u.value, label: t.units[u.value] ?? u.value }));
+  const paymentOptions = PAYMENT_METHODS.map((m) => ({ value: m.value, label: t.payment[m.value] }));
+  const langOptions = LANG_OPTIONS.map((o) => ({ value: o.value, label: t.langOptions[o.value] }));
+  const vatSelectOptions = VAT_RATES.map((r) => ({ value: r.value, label: locale === 'en' ? `${r.value}%` : `${r.value} %` }));
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start">
 
-      {/* ═══ SECTION: Seller ═══ */}
-      <Section title="1. Мои данные (dodávateľ)" open={sections.seller} onToggle={() => toggleSection('seller')}>
-        {/* Logo */}
-        <div>
-          <label className="text-xs font-medium text-muted-foreground">Логотип</label>
-          <div className="flex items-center gap-3 mt-1">
-            {logo ? (
-              <div className="relative">
-                <img src={logo} alt="Logo" className="h-10 rounded border border-border/30" />
-                <button onClick={() => setLogo('')} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">×</button>
-              </div>
-            ) : (
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs bg-card border border-border/50 text-muted-foreground hover:border-primary/40 transition-colors"
-              >
-                <Upload className="h-3 w-3" /> Загрузить
-              </button>
-            )}
-            <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/svg+xml" className="hidden" onChange={handleLogo} />
-          </div>
-        </div>
+        {/* ═══ INPUTS ═══ */}
+        <section className="rounded-xl border border-border bg-background divide-y divide-border overflow-hidden">
 
-        <div className="grid grid-cols-2 gap-2">
-          <div className="col-span-2">
-            <Field label="Название / ФИО *">
-              <Input value={seller.name} onChange={(v) => updateSeller('name', v)} placeholder="EP. Financial Consulting" />
-            </Field>
-          </div>
-          <Field label="Улица"><Input value={seller.street} onChange={(v) => updateSeller('street', v)} /></Field>
-          <Field label="Город"><Input value={seller.city} onChange={(v) => updateSeller('city', v)} /></Field>
-          <Field label="PSČ"><Input value={seller.zip} onChange={(v) => updateSeller('zip', v)} /></Field>
-          <Field label="Страна"><Input value={seller.country} onChange={(v) => updateSeller('country', v)} /></Field>
-          <Field label="IČO" error={icoSellerError}><Input value={seller.ico} onChange={(v) => updateSeller('ico', v)} placeholder="12345678" /></Field>
-          <Field label="DIČ"><Input value={seller.dic} onChange={(v) => updateSeller('dic', v)} placeholder="1234567890" /></Field>
-          {isVatPayer && (
-            <Field label="IČ DPH"><Input value={seller.icDph} onChange={(v) => updateSeller('icDph', v)} placeholder="SK1234567890" /></Field>
-          )}
-          <Field label="Телефон"><Input value={seller.phone} onChange={(v) => updateSeller('phone', v)} /></Field>
-          <Field label="E-mail"><Input value={seller.email} onChange={(v) => updateSeller('email', v)} type="email" /></Field>
-          <Field label="Банк"><Input value={seller.bank} onChange={(v) => updateSeller('bank', v)} /></Field>
-          <Field label="IBAN" error={ibanError}><Input value={seller.iban} onChange={(v) => updateSeller('iban', formatIBAN(v))} placeholder="SK89 0200 0000 0000 0000 0000" /></Field>
-        </div>
-
-        <button onClick={saveSeller} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
-          <Save className="h-3 w-3" /> Сохранить мои данные
-          {savedMsg && <span className="ml-2 text-green-300">{savedMsg}</span>}
-        </button>
-      </Section>
-
-      {/* ═══ SECTION: Buyer ═══ */}
-      <Section title="2. Клиент (odberateľ)" open={sections.buyer} onToggle={() => toggleSection('buyer')}>
-        {clients.length > 0 && (
-          <Field label="Выбрать из сохранённых">
-            <Select
-              value=""
-              onChange={(v) => { if (v) selectClient(v); }}
-              options={[{ value: '', label: '— выберите —' }, ...clients.map((c) => ({ value: c.name, label: c.name }))]}
-            />
-          </Field>
-        )}
-        <div className="grid grid-cols-2 gap-2">
-          <div className="col-span-2">
-            <Field label="Название / ФИО *"><Input value={buyer.name} onChange={(v) => updateBuyer('name', v)} /></Field>
-          </div>
-          <Field label="Улица"><Input value={buyer.street} onChange={(v) => updateBuyer('street', v)} /></Field>
-          <Field label="Город"><Input value={buyer.city} onChange={(v) => updateBuyer('city', v)} /></Field>
-          <Field label="PSČ"><Input value={buyer.zip} onChange={(v) => updateBuyer('zip', v)} /></Field>
-          <Field label="Страна"><Input value={buyer.country} onChange={(v) => updateBuyer('country', v)} /></Field>
-          <Field label="IČO" error={icoBuyerError}><Input value={buyer.ico} onChange={(v) => updateBuyer('ico', v)} /></Field>
-          <Field label="DIČ"><Input value={buyer.dic} onChange={(v) => updateBuyer('dic', v)} /></Field>
-          {isVatPayer && (
-            <Field label="IČ DPH"><Input value={buyer.icDph} onChange={(v) => updateBuyer('icDph', v)} /></Field>
-          )}
-        </div>
-      </Section>
-
-      {/* ═══ SECTION: Invoice params ═══ */}
-      <Section title="3. Параметры фактуры" open={sections.params} onToggle={() => toggleSection('params')}>
-        <div className="grid grid-cols-2 gap-2">
-          <Field label="Číslo faktúry"><Input value={invoiceNum} onChange={setInvoiceNum} /></Field>
-          <Field label="Dátum vystavenia"><Input type="date" value={dateIssued} onChange={(v) => { setDateIssued(v); setDateDue(addDays(v, 14)); }} /></Field>
-          <Field label="Dátum dodania"><Input type="date" value={dateDelivery} onChange={setDateDelivery} /></Field>
-          <div>
-            <Field label="Dátum splatnosti"><Input type="date" value={dateDue} onChange={setDateDue} /></Field>
-            <div className="flex gap-1 mt-1">
-              {[7, 14, 30].map((d) => (
-                <button key={d} onClick={() => setDueDays(d)} className="text-[10px] px-2 py-0.5 rounded-full bg-card border border-border/50 text-muted-foreground hover:border-primary/40">+{d} дн.</button>
-              ))}
-            </div>
-          </div>
-          <Field label="Konšt. symbol">
-            <Input value={ks} onChange={setKs} placeholder="0308" />
-          </Field>
-          <Field label="Способ оплаты">
-            <Select value={paymentMethod} onChange={setPaymentMethod} options={PAYMENT_METHODS} />
-          </Field>
-          <Field label="Язык фактуры">
-            <Select value={lang} onChange={setLang} options={LANG_OPTIONS} />
-          </Field>
-        </div>
-      </Section>
-
-      {/* ═══ SECTION: VAT mode ═══ */}
-      <Section title="4. Режим DPH" open={sections.vat} onToggle={() => toggleSection('vat')}>
-        <div className="flex gap-2">
-          {[
-            [false, 'Не плательщик DPH'],
-            [true, 'Плательщик DPH'],
-          ].map(([val, label]) => (
-            <button
-              key={String(val)}
-              onClick={() => setIsVatPayer(val)}
-              className={`flex-1 py-2 px-3 rounded-xl text-xs font-medium transition-all ${isVatPayer === val ? 'bg-primary text-primary-foreground shadow-md' : 'bg-card border border-border/50 text-muted-foreground hover:border-primary/40'}`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        {!isVatPayer && (
-          <p className="text-xs text-amber-500/80 bg-amber-500/10 rounded-lg p-2">
-            На фактуре будет указано: «Nie sme platiteľmi DPH»
-          </p>
-        )}
-        {isVatPayer && items.some((i) => i.vatRate === 0) && (
-          <Field label="Основание освобождения от DPH">
-            <Input value={exemptReason} onChange={setExemptReason} placeholder="§42 zákona č. 222/2004 Z.z." />
-          </Field>
-        )}
-      </Section>
-
-      {/* ═══ SECTION: Items ═══ */}
-      <Section title="5. Позиции (položky)" open={sections.items} onToggle={() => toggleSection('items')}>
-        <div className="space-y-3">
-          {items.map((item, idx) => (
-            <div key={item.id} className="glass rounded-xl p-3 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-muted-foreground">#{idx + 1}</span>
-                {items.length > 1 && (
-                  <button onClick={() => removeItem(item.id)} className="text-red-400 hover:text-red-300"><Trash2 className="h-3.5 w-3.5" /></button>
-                )}
-              </div>
-              <Field label="Описание">
-                <Input value={item.desc} onChange={(v) => updateItem(item.id, 'desc', v)} placeholder="Konzultácia / Vývoj / Preklad..." />
-              </Field>
-              <div className="grid grid-cols-4 gap-2">
-                <Field label="Кол-во"><Input type="number" min="0" step="0.5" value={item.qty} onChange={(v) => updateItem(item.id, 'qty', v)} /></Field>
-                <Field label="Ед."><Select value={item.unit} onChange={(v) => updateItem(item.id, 'unit', v)} options={UNITS} /></Field>
-                <Field label="Цена без DPH"><Input type="number" min="0" step="0.01" value={item.price} onChange={(v) => updateItem(item.id, 'price', v)} /></Field>
-                {isVatPayer ? (
-                  <Field label="DPH %">
-                    <Select
-                      value={item.vatRate}
-                      onChange={(v) => updateItem(item.id, 'vatRate', parseInt(v, 10))}
-                      options={VAT_RATES.map((r) => ({ value: r.value, label: `${r.value}%` }))}
-                    />
-                  </Field>
-                ) : (
-                  <div className="flex items-end pb-1">
-                    <span className="text-sm font-bold text-primary">{fmt(calcLineTotal(item.qty, item.price))} €</span>
+          {/* ═══ SECTION: Seller ═══ */}
+          <Section title={t.sectionSeller} open={sections.seller} onToggle={() => toggleSection('seller')}>
+            {/* Logo */}
+            <div>
+              <span className="text-sm font-medium">{t.logo}</span>
+              <div className="flex items-center gap-3 mt-1.5">
+                {logo ? (
+                  <div className="relative">
+                    <img src={logo} alt="Logo" className="h-10 rounded border border-border" />
+                    <button
+                      type="button"
+                      onClick={() => setLogo('')}
+                      aria-label={t.removeLogo}
+                      className="absolute -top-1.5 -right-1.5 bg-foreground text-background rounded-full w-4 h-4 flex items-center justify-center text-[10px] leading-none"
+                    >×</button>
                   </div>
+                ) : (
+                  <SecondaryButton onClick={() => fileInputRef.current?.click()}>
+                    <Upload className="h-3.5 w-3.5" /> {t.upload}
+                  </SecondaryButton>
                 )}
+                <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/svg+xml" className="hidden" onChange={handleLogo} aria-label={t.upload} />
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="sm:col-span-2">
+                <Field label={t.name}>
+                  <Input value={seller.name} onChange={(v) => updateSeller('name', v)} placeholder={t.namePlaceholder} />
+                </Field>
+              </div>
+              <Field label={t.street}><Input value={seller.street} onChange={(v) => updateSeller('street', v)} /></Field>
+              <Field label={t.city}><Input value={seller.city} onChange={(v) => updateSeller('city', v)} /></Field>
+              <Field label={t.zip}><Input value={seller.zip} onChange={(v) => updateSeller('zip', v)} /></Field>
+              <Field label={t.country}><Input value={seller.country} onChange={(v) => updateSeller('country', v)} /></Field>
+              <Field label={t.ico} error={icoSellerError}><Input value={seller.ico} onChange={(v) => updateSeller('ico', v)} placeholder="12345678" /></Field>
+              <Field label={t.dic}><Input value={seller.dic} onChange={(v) => updateSeller('dic', v)} placeholder="1234567890" /></Field>
               {isVatPayer && (
-                <div className="text-xs text-muted-foreground text-right">
-                  Без DPH: {fmt(calcLineTotal(item.qty, item.price))} € | DPH: {fmt(calcVatAmount(calcLineTotal(item.qty, item.price), item.vatRate))} € | <strong className="text-foreground">Итого: {fmt(calcLineTotal(item.qty, item.price) * (1 + item.vatRate / 100))} €</strong>
-                </div>
+                <Field label={t.icDph}><Input value={seller.icDph} onChange={(v) => updateSeller('icDph', v)} placeholder="SK1234567890" /></Field>
+              )}
+              <Field label={t.phone}><Input value={seller.phone} onChange={(v) => updateSeller('phone', v)} /></Field>
+              <Field label={t.email}><Input value={seller.email} onChange={(v) => updateSeller('email', v)} type="email" /></Field>
+              <Field label={t.bank}><Input value={seller.bank} onChange={(v) => updateSeller('bank', v)} /></Field>
+              <div className="sm:col-span-2">
+                <Field label={t.iban} error={ibanError}>
+                  <Input value={seller.iban} onChange={(v) => updateSeller('iban', formatIBAN(v))} placeholder="SK89 0200 0000 0000 0000 0000" className="font-mono tabular-nums" />
+                </Field>
+              </div>
+            </div>
+          </Section>
+
+          {/* ═══ SECTION: Buyer ═══ */}
+          <Section title={t.sectionBuyer} open={sections.buyer} onToggle={() => toggleSection('buyer')}>
+            {clients.length > 0 && (
+              <Field label={t.pickSaved}>
+                <Select
+                  value=""
+                  onChange={(v) => { if (v) selectClient(v); }}
+                  options={[{ value: '', label: t.choose }, ...clients.map((c) => ({ value: c.name, label: c.name }))]}
+                />
+              </Field>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="sm:col-span-2">
+                <Field label={t.name}><Input value={buyer.name} onChange={(v) => updateBuyer('name', v)} /></Field>
+              </div>
+              <Field label={t.street}><Input value={buyer.street} onChange={(v) => updateBuyer('street', v)} /></Field>
+              <Field label={t.city}><Input value={buyer.city} onChange={(v) => updateBuyer('city', v)} /></Field>
+              <Field label={t.zip}><Input value={buyer.zip} onChange={(v) => updateBuyer('zip', v)} /></Field>
+              <Field label={t.country}><Input value={buyer.country} onChange={(v) => updateBuyer('country', v)} /></Field>
+              <Field label={t.ico} error={icoBuyerError}><Input value={buyer.ico} onChange={(v) => updateBuyer('ico', v)} /></Field>
+              <Field label={t.dic}><Input value={buyer.dic} onChange={(v) => updateBuyer('dic', v)} /></Field>
+              {isVatPayer && (
+                <Field label={t.icDph}><Input value={buyer.icDph} onChange={(v) => updateBuyer('icDph', v)} /></Field>
               )}
             </div>
-          ))}
-        </div>
-        <button onClick={addItem} className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-card border border-border/50 text-muted-foreground hover:border-primary/40 transition-colors w-full justify-center">
-          <Plus className="h-3.5 w-3.5" /> Добавить позицию
-        </button>
-      </Section>
+          </Section>
 
-      {/* ═══ SECTION: Extra ═══ */}
-      <Section title="6. Дополнительно" open={sections.extra} onToggle={() => toggleSection('extra')}>
-        <Field label="Poznámka / Примечание">
-          <textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            rows={3}
-            className="w-full bg-background/50 border border-border/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 resize-none"
-            placeholder="Ďakujeme za spoluprácu..."
-          />
-        </Field>
-        <label className="flex items-center gap-3 cursor-pointer">
-          <div
-            onClick={() => setEnableQR(!enableQR)}
-            className={`w-10 h-5 rounded-full transition-colors flex items-center px-0.5 ${enableQR ? 'bg-primary' : 'bg-border'}`}
-          >
-            <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${enableQR ? 'translate-x-5' : ''}`} />
-          </div>
-          <span className="text-xs">QR-код Pay by Square (для банковского перевода)</span>
-        </label>
-      </Section>
+          {/* ═══ SECTION: Invoice params ═══ */}
+          <Section title={t.sectionParams} open={sections.params} onToggle={() => toggleSection('params')}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Field label={t.invoiceNo}><Input value={invoiceNum} onChange={setInvoiceNum} className="font-mono tabular-nums" /></Field>
+              <Field label={t.dateIssued}><Input type="date" value={dateIssued} onChange={(v) => { setDateIssued(v); setDateDue(addDays(v, 14)); }} /></Field>
+              <Field label={t.dateDelivery}><Input type="date" value={dateDelivery} onChange={setDateDelivery} /></Field>
+              <div>
+                <Field label={t.dateDue}><Input type="date" value={dateDue} onChange={setDateDue} /></Field>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {[7, 14, 30].map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => setDueDays(d)}
+                      className="text-xs px-2.5 py-1 rounded-full border border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+                    >{t.plusDays(d)}</button>
+                  ))}
+                </div>
+              </div>
+              <Field label={t.ks}>
+                <Input value={ks} onChange={setKs} placeholder="0308" className="font-mono tabular-nums" />
+              </Field>
+              <Field label={t.paymentMethod}>
+                <Select value={paymentMethod} onChange={setPaymentMethod} options={paymentOptions} />
+              </Field>
+              <Field label={t.invoiceLang}>
+                <Select value={lang} onChange={setLang} options={langOptions} />
+              </Field>
+            </div>
+          </Section>
 
-      {/* ═══ TOTALS ═══ */}
-      <div className="glass rounded-xl p-4 space-y-2">
-        {isVatPayer && Object.entries(calculations.vatGroups).map(([rate, group]) => (
-          <div key={rate} className="flex justify-between text-xs text-muted-foreground">
-            <span>Základ dane ({rate}%): {fmt(group.base)} € | DPH: {fmt(group.vat)} €</span>
+          {/* ═══ SECTION: VAT mode ═══ */}
+          <Section title={t.sectionVat} open={sections.vat} onToggle={() => toggleSection('vat')}>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                [false, t.vatNo],
+                [true, t.vatYes],
+              ].map(([val, label]) => (
+                <button
+                  key={String(val)}
+                  type="button"
+                  aria-pressed={isVatPayer === val}
+                  onClick={() => setIsVatPayer(val)}
+                  className={`min-h-10 py-2 px-3 rounded-lg text-sm font-medium border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 ${isVatPayer === val ? 'bg-primary text-white border-primary' : 'bg-background border-border text-foreground hover:border-primary/40'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {!isVatPayer && (
+              <p className="text-xs text-muted-foreground rounded-lg border border-border bg-muted p-3">
+                {t.vatNote}
+              </p>
+            )}
+            {isVatPayer && items.some((i) => i.vatRate === 0) && (
+              <Field label={t.exemptReason}>
+                <Input value={exemptReason} onChange={setExemptReason} placeholder={t.exemptPlaceholder} />
+              </Field>
+            )}
+            {isVatPayer && (
+              <div>
+                <p className="text-xs font-medium">{t.vatRatesTitle}</p>
+                <ul className="mt-1.5 space-y-1 text-xs text-muted-foreground">
+                  {VAT_RATES.map((r) => (
+                    <li key={r.value}>
+                      <span className="font-medium text-foreground">{t.vat[r.value].label}</span>
+                      {': '}{t.vat[r.value].desc}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </Section>
+
+          {/* ═══ SECTION: Items ═══ */}
+          <Section title={t.sectionItems} open={sections.items} onToggle={() => toggleSection('items')}>
+            <div className="space-y-3">
+              {items.map((item, idx) => (
+                <div key={item.id} className="rounded-xl border border-border bg-muted p-3 sm:p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground">{t.item} {idx + 1}</span>
+                    {items.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item.id)}
+                        aria-label={t.removeItem}
+                        className="text-muted-foreground hover:text-red-700 transition-colors"
+                      ><Trash2 className="h-4 w-4" /></button>
+                    )}
+                  </div>
+                  <Field label={t.desc}>
+                    <Input value={item.desc} onChange={(v) => updateItem(item.id, 'desc', v)} placeholder={t.descPlaceholder} />
+                  </Field>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <Field label={t.qty}><Input type="number" min="0" step="0.5" value={item.qty} onChange={(v) => updateItem(item.id, 'qty', v)} className="font-mono tabular-nums" /></Field>
+                    <Field label={t.unit}><Select value={item.unit} onChange={(v) => updateItem(item.id, 'unit', v)} options={unitOptions} /></Field>
+                    <Field label={t.priceNoVat}><Input type="number" min="0" step="0.01" value={item.price} onChange={(v) => updateItem(item.id, 'price', v)} className="font-mono tabular-nums" /></Field>
+                    {isVatPayer ? (
+                      <Field label={t.vatPct}>
+                        <Select
+                          value={item.vatRate}
+                          onChange={(v) => updateItem(item.id, 'vatRate', parseInt(v, 10))}
+                          options={vatSelectOptions}
+                        />
+                      </Field>
+                    ) : (
+                      <div className="flex items-end pb-2">
+                        <span className="font-mono tabular-nums text-sm font-semibold">{fmtUi(calcLineTotal(item.qty, item.price))}</span>
+                      </div>
+                    )}
+                  </div>
+                  {isVatPayer && (
+                    <div className="text-xs text-muted-foreground sm:text-right font-mono tabular-nums">
+                      {t.lineNoVat}: {fmtUi(calcLineTotal(item.qty, item.price))} | {t.lineVat}: {fmtUi(calcVatAmount(calcLineTotal(item.qty, item.price), item.vatRate))} | <strong className="text-foreground">{t.lineTotal}: {fmtUi(calcLineTotal(item.qty, item.price) * (1 + item.vatRate / 100))}</strong>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <SecondaryButton onClick={addItem} className="w-full">
+              <Plus className="h-4 w-4" /> {t.addItem}
+            </SecondaryButton>
+          </Section>
+
+          {/* ═══ SECTION: Extra ═══ */}
+          <Section title={t.sectionExtra} open={sections.extra} onToggle={() => toggleSection('extra')}>
+            <Field label={t.note}>
+              <textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                rows={3}
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary resize-none"
+                placeholder={t.notePlaceholder}
+              />
+            </Field>
+            <div className="flex items-center gap-3">
+              <button
+                id={qrSwitchId}
+                type="button"
+                role="switch"
+                aria-checked={enableQR}
+                onClick={() => setEnableQR(!enableQR)}
+                className={`w-10 h-5 shrink-0 rounded-full transition-colors flex items-center px-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 ${enableQR ? 'bg-primary' : 'bg-border'}`}
+              >
+                <span className={`block w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${enableQR ? 'translate-x-5' : ''}`} />
+              </button>
+              <label htmlFor={qrSwitchId} className="text-sm cursor-pointer">{t.qrToggle}</label>
+            </div>
+          </Section>
+        </section>
+
+        {/* ═══ SUMMARY ═══ */}
+        <section className="rounded-xl border border-border bg-muted p-5 sm:p-6 lg:sticky lg:top-24 space-y-5">
+          <div>
+            <div className="text-sm text-muted-foreground">{t.totalDue}</div>
+            <div className="font-mono tabular-nums text-3xl sm:text-4xl font-semibold mt-1 break-words">{fmtUi(calculations.totalDue)}</div>
+            <div className="text-xs text-muted-foreground mt-1">{t.invoiceNo}: <span className="font-mono tabular-nums">{invoiceNum}</span></div>
           </div>
-        ))}
-        {!isVatPayer && (
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Сумма</span>
-            <span className="font-semibold">{fmt(calculations.totalBase)} €</span>
+
+          <div className="space-y-1.5 border-t border-border pt-4">
+            {isVatPayer && Object.entries(calculations.vatGroups).map(([rate, group]) => (
+              <div key={rate} className="space-y-1.5">
+                <div className="flex justify-between gap-3 text-sm">
+                  <span className="text-muted-foreground">{t.baseLine(rate)}</span>
+                  <span className="font-mono tabular-nums">{fmtUi(group.base)}</span>
+                </div>
+                <div className="flex justify-between gap-3 text-sm">
+                  <span className="text-muted-foreground">{t.vatLineLabel(rate)}</span>
+                  <span className="font-mono tabular-nums">{fmtUi(group.vat)}</span>
+                </div>
+              </div>
+            ))}
+            {!isVatPayer && (
+              <div className="flex justify-between gap-3 text-sm">
+                <span className="text-muted-foreground">{t.amount}</span>
+                <span className="font-mono tabular-nums">{fmtUi(calculations.totalBase)}</span>
+              </div>
+            )}
           </div>
-        )}
-        <div className="flex justify-between items-baseline pt-2 border-t border-border/30">
-          <span className="text-sm font-bold">{t(lang, 'totalDue')}</span>
-          <span className="text-2xl font-black text-primary">{fmt(calculations.totalDue)} €</span>
-        </div>
+
+          {/* QR PREVIEW */}
+          {qrPreviewUrl ? (
+            <div className="flex justify-center">
+              <div className="inline-flex flex-col items-center rounded-xl border-2 border-[#5b9bd5] bg-white p-3">
+                <img src={qrPreviewUrl} alt="Pay by Square QR" className="w-44 h-44" />
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-sm font-bold" style={{ color: '#5b9bd5' }}>PAY</span>
+                  <span className="text-sm" style={{ color: '#8b8b8b' }}>by square</span>
+                  <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><rect x="0.5" y="0.5" width="17" height="13" rx="2" stroke="#5b9bd5" /><rect y="3" width="18" height="3" fill="#5b9bd5" /></svg>
+                </div>
+              </div>
+            </div>
+          ) : (
+            enableQR && <p className="text-xs text-muted-foreground">{t.qrHint}</p>
+          )}
+
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={generatePDF}
+              className="w-full inline-flex items-center justify-center gap-2 h-10 px-4 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
+            >
+              <Download className="h-4 w-4" /> {t.download}
+            </button>
+            <SecondaryButton onClick={saveSeller} className="w-full">
+              <Save className="h-4 w-4" /> {t.save}
+              {savedMsg && <span className="ml-1 text-muted-foreground">{savedMsg}</span>}
+            </SecondaryButton>
+          </div>
+        </section>
       </div>
 
-      {/* ═══ QR PREVIEW ═══ */}
-      {qrPreviewUrl && (
-        <div className="flex justify-center">
-          <div className="inline-flex flex-col items-center rounded-xl border-2 border-[#5b9bd5] bg-white p-3 shadow-sm">
-            <img src={qrPreviewUrl} alt="Pay by Square QR" className="w-44 h-44" />
-            <div className="flex items-center gap-2 mt-2">
-              <span className="text-sm font-bold" style={{ color: '#5b9bd5' }}>PAY</span>
-              <span className="text-sm" style={{ color: '#8b8b8b' }}>by square</span>
-              <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><rect x="0.5" y="0.5" width="17" height="13" rx="2" stroke="#5b9bd5" /><rect y="3" width="18" height="3" fill="#5b9bd5" /></svg>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ═══ DOWNLOAD BUTTON ═══ */}
-      <button
-        onClick={generatePDF}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-      >
-        <Download className="h-4 w-4" /> Скачать PDF
-      </button>
-
-      <p className="text-[10px] text-muted-foreground/50 leading-relaxed text-center">
-        Фактура соответствует §74 zákona č. 222/2004 Z.z. o DPH. Ставки DPH 2026: 23% / 19% / 5%.
-        Лимит регистрации DPH: 50 000 € / 62 500 €.
-        {' '}Нужна помощь? —{' '}
-        <a href={CONSULTATION_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline">запишись на консультацию</a>.
-      </p>
+      <div className="space-y-1 text-xs text-muted-foreground leading-relaxed">
+        <p>{t.footnote}</p>
+        <p>{t.disclaimer}</p>
+      </div>
     </div>
   );
 }
