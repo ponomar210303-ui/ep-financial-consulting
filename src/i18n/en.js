@@ -24,7 +24,7 @@ const en = {
     secondaryCta: 'Write to me',
     facts: [
       { value: '8', label: 'processes moved from manual Excel to Python and VBA in 5 months' },
-      { value: '~40 h', label: 'of manual work saved per month (estimate)' },
+      { value: '~40 h', label: 'of manual work saved per month' },
       { value: '2', label: 'AI apps I built myself: AgroŠtít and CherryPicker' },
     ],
     status: 'Open to roles in AI automation',

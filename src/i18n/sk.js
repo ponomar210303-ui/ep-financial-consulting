@@ -24,7 +24,7 @@ const sk = {
     secondaryCta: 'Napísať mi',
     facts: [
       { value: '8', label: 'procesov z ručného Excelu do Pythonu a VBA za 5 mesiacov' },
-      { value: '~40 h', label: 'ručnej práce mesačne ušetrených (odhad)' },
+      { value: '~40 h', label: 'ručnej práce mesačne ušetrených' },
       { value: '2', label: 'vlastné aplikácie s AI: AgroŠtít a CherryPicker' },
     ],
     status: 'Otvorený novým výzvam v AI automatizácii',
