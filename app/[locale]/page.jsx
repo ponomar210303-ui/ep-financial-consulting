@@ -51,10 +51,11 @@ const GRID_STYLE = {
 };
 
 const CHIP_ICONS = [Workflow, Bot, LineChart];
+// Full class names (no string building) so Tailwind keeps the drift styles.
 const CHIP_POSITIONS = [
-  'left-0 top-[54%] sm:-left-4',
-  'right-0 top-[68%] sm:-right-4',
-  'bottom-5 left-[8%]',
+  'keyword-drift-1 left-0 top-[54%] sm:-left-4',
+  'keyword-drift-2 right-0 top-[68%] sm:-right-4',
+  'keyword-drift-3 bottom-5 left-[8%]',
 ];
 
 const AGROSTIT_SHOTS = ['/images/projects/agrostit-home.webp', '/images/projects/agrostit-result.webp'];
@@ -192,7 +193,7 @@ export default function HomePage({ params }) {
                 return (
                   <span
                     key={chip}
-                    className={`keyword-drift-${i + 1} absolute inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/60 py-1 pl-1 pr-3 text-xs font-medium text-foreground shadow-[0_8px_24px_-10px_rgba(15,23,42,0.5)] backdrop-blur-md sm:text-sm ${CHIP_POSITIONS[i]}`}
+                    className={`absolute inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/60 py-1 pl-1 pr-3 text-xs font-medium text-foreground shadow-[0_8px_24px_-10px_rgba(15,23,42,0.5)] backdrop-blur-md sm:text-sm ${CHIP_POSITIONS[i]}`}
                   >
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/90 text-white">
                       <Icon className="h-3.5 w-3.5" aria-hidden="true" />
