@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Play } from 'lucide-react';
 
 // Shows a poster image; the YouTube player (youtube-nocookie) loads only after a click.
-export default function ProjectVideo({ id, title, playLabel, caption, poster, posterAlt, className = '' }) {
+export default function ProjectVideo({ id, title, playLabel, caption, poster, posterAlt, className = '', posterClassName = 'object-center' }) {
   const [playing, setPlaying] = useState(false);
 
   return (
@@ -24,7 +24,7 @@ export default function ProjectVideo({ id, title, playLabel, caption, poster, po
             alt={posterAlt}
             fill
             sizes="(min-width: 1024px) 1100px, 100vw"
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            className={`object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] ${posterClassName}`}
           />
           <button
             type="button"

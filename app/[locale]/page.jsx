@@ -217,6 +217,7 @@ export default function HomePage({ params }) {
                   caption={p.agrostit.videoLabel}
                   poster="/images/projects/agrostit-scene.webp"
                   posterAlt={p.agrostit.sceneAlt}
+                  posterClassName="object-[center_12%]"
                   className="aspect-[4/3] sm:aspect-[16/9] lg:aspect-[2.3/1]"
                 />
                 <div className="grid gap-10 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14 lg:p-14">
