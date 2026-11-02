@@ -10,7 +10,7 @@ import Reveal from '@/components/motion/Reveal';
 import CountUp from '@/components/motion/CountUp';
 import Marquee from '@/components/motion/Marquee';
 import { Stagger, StaggerItem } from '@/components/motion/Stagger';
-import tools, { toolText } from '@/config/tools';
+import ToolCards from '@/components/ToolCards';
 import { getDictionary } from '@/i18n/dictionaries';
 import { alternatesFor, ogLocales } from '@/i18n/config';
 import {
@@ -46,12 +46,12 @@ const GRID_STYLE = {
   backgroundSize: '44px 32px',
 };
 
-const AGROSTIT_SHOTS = ['/images/projects/agrostit-rules.webp', '/images/projects/agrostit-call.webp', '/images/projects/agrostit-verify.webp'];
+const AGROSTIT_SHOTS = ['/images/projects/agrostit-home.webp', '/images/projects/agrostit-result.webp', '/images/projects/agrostit-whatnow.webp'];
 const CHERRYPICKER_SHOTS = ['/images/projects/cherrypicker-plan.webp', '/images/projects/cherrypicker-list.webp', '/images/projects/cherrypicker-budget.webp'];
 
 function Points({ items, className = '' }) {
   return (
-    <ul className={`space-y-3 text-[0.95rem] leading-relaxed ${className}`}>
+    <ul className={`text-[0.95rem] leading-relaxed ${className}`}>
       {items.map((item) => (
         <li key={item.slice(0, 24)} className="relative pl-5">
           <span className="absolute left-0 top-[0.7em] h-px w-2.5 bg-current opacity-50" aria-hidden="true" />
@@ -66,7 +66,7 @@ function Points({ items, className = '' }) {
 function Shots({ srcs, alts, framed }) {
   const tilt = ['-rotate-3', 'rotate-0 -translate-y-4', 'rotate-3'];
   return (
-    <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:-mt-48 lg:flex lg:items-end lg:gap-4">
+    <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:-mt-48 lg:flex lg:items-start lg:gap-4 lg:self-start">
       {srcs.map((src, i) => (
         <div
           key={src}
@@ -223,10 +223,10 @@ export default function HomePage({ params }) {
                   <div>
                     <h3 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">{p.agrostit.name}</h3>
                     <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">{p.agrostit.tagline}</p>
-                    <p className="mt-4 inline-flex rounded-full bg-white/10 px-3 py-1 text-sm text-white/80">{p.agrostit.status}</p>
-                    <Points items={p.agrostit.points} className="mt-8 max-w-2xl text-white/75" />
+                    <p className="mt-4 inline-block rounded-lg bg-white/10 px-3 py-1.5 text-sm leading-snug text-white/80">{p.agrostit.status}</p>
                   </div>
                   <Shots srcs={AGROSTIT_SHOTS} alts={p.agrostit.shotsAlt} framed />
+                  <Points items={p.agrostit.points} className="grid gap-x-12 gap-y-4 space-y-0 border-t border-white/15 pt-8 text-white/75 md:grid-cols-2 lg:col-span-2" />
                 </div>
               </article>
             </Reveal>
@@ -246,7 +246,7 @@ export default function HomePage({ params }) {
                   <div>
                     <h3 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">{p.cherrypicker.name}</h3>
                     <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">{p.cherrypicker.tagline}</p>
-                    <p className="mt-4 inline-flex rounded-full bg-white/10 px-3 py-1 text-sm text-white/80">{p.cherrypicker.status}</p>
+                    <p className="mt-4 inline-block rounded-lg bg-white/10 px-3 py-1.5 text-sm leading-snug text-white/80">{p.cherrypicker.status}</p>
                     <dl className="mt-8 grid max-w-xl grid-cols-3 gap-4 border-y border-white/15 py-6">
                       {p.cherrypicker.stats.map((s) => (
                         <div key={s.label} className="flex flex-col-reverse gap-1">
@@ -257,7 +257,6 @@ export default function HomePage({ params }) {
                         </div>
                       ))}
                     </dl>
-                    <Points items={p.cherrypicker.points} className="mt-8 max-w-2xl text-white/75" />
                     <a
                       href={CHERRYPICKER_APP_STORE}
                       target="_blank"
@@ -268,6 +267,7 @@ export default function HomePage({ params }) {
                     </a>
                   </div>
                   <Shots srcs={CHERRYPICKER_SHOTS} alts={p.cherrypicker.shotsAlt} />
+                  <Points items={p.cherrypicker.points} className="grid gap-x-12 gap-y-4 space-y-0 border-t border-white/15 pt-8 text-white/75 md:grid-cols-2 lg:col-span-2" />
                 </div>
               </article>
             </Reveal>
@@ -294,29 +294,9 @@ export default function HomePage({ params }) {
               <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">{t.tools.title}</h2>
               <p className="mt-4 max-w-2xl text-lg text-muted-foreground">{t.tools.intro}</p>
             </Reveal>
-            <ul className="mt-12 grid gap-4 sm:grid-cols-2">
-              {tools.map((tool, i) => {
-                const text = toolText(tool, locale);
-                const Icon = tool.icon;
-                return (
-                  <Reveal as="li" key={tool.slug} delay={i * 0.06}>
-                    <Link
-                      href={`/${locale}/tools/${tool.slug}`}
-                      className="group flex h-full gap-5 rounded-2xl border border-border bg-background p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-7"
-                    >
-                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
-                        <Icon className="h-5 w-5" aria-hidden="true" />
-                      </span>
-                      <span>
-                        <span className="block font-display text-xl font-semibold">{text.title}</span>
-                        <span className="mt-1.5 block text-sm leading-relaxed text-muted-foreground">{text.desc}</span>
-                        <span className="mt-4 block text-sm font-medium text-primary">{t.tools.open}</span>
-                      </span>
-                    </Link>
-                  </Reveal>
-                );
-              })}
-            </ul>
+            <div className="mt-12">
+              <ToolCards locale={locale} openLabel={t.tools.open} />
+            </div>
           </div>
         </section>
 
