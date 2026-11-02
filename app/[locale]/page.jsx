@@ -53,8 +53,8 @@ const GRID_STYLE = {
 const CHIP_ICONS = [Workflow, Bot, LineChart];
 const CHIP_POSITIONS = [
   'left-0 top-[54%] sm:-left-4',
-  'right-0 top-[68%] [animation-delay:-3s] sm:-right-4',
-  'bottom-5 left-[8%] [animation-delay:-5s]',
+  'right-0 top-[68%] sm:-right-4',
+  'bottom-5 left-[8%]',
 ];
 
 const AGROSTIT_SHOTS = ['/images/projects/agrostit-home.webp', '/images/projects/agrostit-result.webp'];
@@ -192,9 +192,9 @@ export default function HomePage({ params }) {
                 return (
                   <span
                     key={chip}
-                    className={`absolute inline-flex items-center gap-2 rounded-full border border-border bg-background/95 py-1.5 pl-1.5 pr-4 text-sm font-medium shadow-xl backdrop-blur motion-safe:animate-float-slow sm:py-2 sm:pl-2 sm:text-[0.95rem] ${CHIP_POSITIONS[i]}`}
+                    className={`keyword-cloud keyword-cloud-${i + 1} absolute inline-flex items-center gap-2 border border-white/60 bg-white/55 px-5 py-3 text-sm font-medium text-foreground shadow-[0_12px_40px_-12px_rgba(15,23,42,0.45)] backdrop-blur-md sm:px-6 sm:py-3.5 sm:text-[0.95rem] ${CHIP_POSITIONS[i]}`}
                   >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white sm:h-8 sm:w-8">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/90 text-white sm:h-8 sm:w-8">
                       <Icon className="h-4 w-4" aria-hidden="true" />
                     </span>
                     {chip}
