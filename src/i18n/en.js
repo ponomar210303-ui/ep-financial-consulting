@@ -19,7 +19,7 @@ const en = {
     role: 'Business Controller at Timac Agro Slovakia, Bratislava',
     headline: 'I automate finance processes and build tools with AI agents.',
     lead:
-      'I run controlling for two entities, one Slovak and one Czech. I move recurring Excel work into Python and VBA, and after hours I build my own apps with Claude. I am looking at roles in AI automation and AI agent development.',
+      'I run controlling for two entities, one Czech {cz} and one Slovak {sk}. I automate recurring Excel work with Python, VBA and a range of AI tools, and in my free time I build my own apps. I believe the future belongs to AI automation and AI agents, and that is where I want to work.',
     primaryCta: 'See projects',
     secondaryCta: 'Write to me',
     facts: [
@@ -40,11 +40,19 @@ const en = {
   about: {
     title: 'About',
     paragraphs: [
-      'Since May 2026 I have been Business Controller at Timac Agro Slovakia, part of Groupe Roullier. I handle month-end close and group reporting for the Slovak and the Czech entity.',
-      'I started by automating my own work, then built tools for colleagues in logistics, HR and office administration. Every tool has a control total that has to reconcile to zero. Where money, customers or personal data are involved, a person makes the final call.',
+      'Since May 2026 I have been Business Controller at Timac Agro Slovakia, part of Groupe Roullier {fr}. I handle month-end close and group reporting for the Czech {cz} and the Slovak {sk} entity, and help the CFO get a clearer view of how the business runs.',
+      'I started by automating my own work, then built tools for colleagues in logistics, HR and office administration. Every tool is easy to use, properly documented and verifiable: its output has to reconcile to a control total with zero difference.',
       'Before that I worked in finance at Deutsche Telekom Cloud Services and Arval Slovakia, built pricing models for the staffing company ATALIS, and co-founded Coffee Corner, a network of self-service coffee stations, where I owned the P&L and cash flow.',
     ],
-    timelineTitle: 'Where I have worked',
+    principlesTitle: 'How I work with AI',
+    principles: [
+      { title: 'Human in the loop', text: 'Where money, customers or personal data are involved, a person always has the final say. AI drafts e-mails and payments for approval, it does not send them.' },
+      { title: 'People first, then code', text: 'I start by talking to the people who do the work and fit the tool to their process, not the other way round.' },
+      { title: 'Verifiable results', text: 'Control totals, golden tests and evals instead of a feeling that it looks right.' },
+      { title: 'Data protection', text: 'I send only the data that is needed, mask personal data and transcribe speech locally where possible.' },
+      { title: 'Test before go-live', text: 'A new tool runs in test mode or in parallel with the old process first.' },
+    ],
+    timelineTitle: 'Experience',
     timeline: [
       { period: '2026 – now', role: 'Business Controller (SK and CZ)', org: 'Timac Agro Slovakia, Groupe Roullier', current: true },
       { period: '2025', role: 'Pricing models for staffing deals', org: 'ATALIS, contractor' },
@@ -63,7 +71,7 @@ const en = {
   },
   projects: {
     title: 'Projects',
-    intro: 'Two apps I built in my own time, and the tools that run in my day job every week.',
+    intro: 'Outside work I build my own apps in React Native, write TypeScript and Python, and use AI agents throughout development. Here are two of them, plus the tools that run in my day job every week.',
     agrostit: {
       name: 'AgroŠtít',
       tagline:
@@ -73,7 +81,6 @@ const en = {
         'Expo / React Native in TypeScript with a FastAPI backend. Claude returns a risk level, the warning signs it found, quoted, and what to do next.',
         'Personal data is masked before anything is sent. Outputs follow a JSON Schema, companies are checked against the Czech VAT registry and ARES, and inputs are screened for prompt injection.',
         'A 55-case eval set scored by an LLM judge and around 5,000 automated tests. Speech-to-text runs on a self-hosted whisper.cpp, the backend on an EU VPS.',
-        'Built in two weeks. I ran several Claude Code sessions in parallel and let a change through only after its tests passed.',
       ],
       videoLabel: 'Demo video, 3 minutes',
       videoPlay: 'Play the AgroŠtít demo video',
@@ -89,7 +96,7 @@ const en = {
       points: [
         'A Python pipeline (pdfplumber, pydantic) pulls promotions out of PDF leaflets and matches products to recipes using rules and cached LLM decisions.',
         'An Expo / React Native app for iOS, Android and the web. Basket maths lives in both Python and TypeScript, and a golden test keeps them equal to the cent.',
-        'An MCP server with six read-only tools so AI agents can use the planner. A 15-case tool-selection eval found two search bugs.',
+        'An MCP server with six read-only tools so AI agents can use the planner. A 15-case tool-selection eval catches problems and bugs in how agents use it.',
       ],
       stats: [
         { value: '5,800+', label: 'promotions from leaflets' },
@@ -106,12 +113,12 @@ const en = {
         'Python and VBA tools that my colleagues and I use at Timac Agro. Figures come from my work there since May 2026.',
       columns: { process: 'Process', before: 'Before', after: 'Now' },
       rows: [
-        { process: 'Payment reminders from SAP Business One for two entities', before: '4–5 h a week', after: '~15 min', ratio: 0.06 },
-        { process: 'Commissions for ~36 sales reps in two countries, one PDF each', before: '1–1.5 days', after: '3–4 h', ratio: 0.33 },
-        { process: 'Mileage check for HR, 4,700+ GPS trips', before: '1 day a month', after: '1 click', ratio: 0.03 },
-        { process: 'Credit insurance deadline tracking', before: '2 h per cycle', after: '20 min', ratio: 0.17 },
-        { process: 'SOP manuals from recorded walkthroughs, local speech-to-text', before: '5–8 h each', after: '0.5–1 h', ratio: 0.12 },
-        { process: 'Sales visit check: CRM against GPS, 4,000+ visits', before: '53 unexplained', after: '21', ratio: 0.4 },
+        { process: '“E-reminders”: a Python pipeline that checks, generates and sends payment reminders to customers', before: '4–5 h a week', after: '~15 min', ratio: 0.06 },
+        { process: 'VBA macro that calculates sales team commissions in two countries (~40 reps)', before: '1–1.5 days', after: '3–4 h', ratio: 0.33 },
+        { process: 'Pipeline that checks business trips for HR, analysing 4,700+ GPS trips', before: '1 day a month', after: '1 click', ratio: 0.03 },
+        { process: 'Credit controlling', before: '2 h per cycle', after: '20 min', ratio: 0.17 },
+        { process: 'Work procedures (SOPs) from recordings: local speech-to-text and an LLM draft', before: '5–8 h each', after: '0.5–1 h', ratio: 0.12 },
+        { process: 'Automated comparison and check of sales visits: CRM against GPS', before: '53 unexplained', after: '21', ratio: 0.4 },
       ],
       stack: 'Python (pandas, python-docx), VBA, Power Query, SAP Business One, an LLM review agent',
     },

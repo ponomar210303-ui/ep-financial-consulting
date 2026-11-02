@@ -34,3 +34,23 @@ export function FlagGB({ className }) {
     </svg>
   );
 }
+
+export function FlagCZ({ className }) {
+  return (
+    <svg viewBox="0 0 9 6" className={className} aria-hidden="true">
+      <rect width="9" height="6" fill="#D7141A" />
+      <rect width="9" height="3" fill="#FFFFFF" />
+      <path d="M0 0 4.5 3 0 6z" fill="#11457E" />
+    </svg>
+  );
+}
+
+export function FlagFR({ className }) {
+  return (
+    <svg viewBox="0 0 9 6" className={className} aria-hidden="true">
+      <rect width="3" height="6" fill="#0055A4" />
+      <rect x="3" width="3" height="6" fill="#FFFFFF" />
+      <rect x="6" width="3" height="6" fill="#EF4135" />
+    </svg>
+  );
+}

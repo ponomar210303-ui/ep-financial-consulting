@@ -10,6 +10,7 @@ import Reveal from '@/components/motion/Reveal';
 import CountUp from '@/components/motion/CountUp';
 import Marquee from '@/components/motion/Marquee';
 import { Stagger, StaggerItem } from '@/components/motion/Stagger';
+import FlagText from '@/components/FlagText';
 import ToolCards from '@/components/ToolCards';
 import { getDictionary } from '@/i18n/dictionaries';
 import { alternatesFor, ogLocales } from '@/i18n/config';
@@ -62,17 +63,15 @@ function Points({ items, className = '' }) {
   );
 }
 
-// Three screenshots in a row; the fan tilt and the overlap with the image above
-// apply on desktop only. `ratio` is the screenshots' own width/height, so
-// nothing gets cropped.
+// Three screenshots in an even row. `ratio` is the screenshots' own
+// width/height, so nothing gets cropped.
 function Shots({ srcs, alts, ratio, framed = false }) {
-  const tilt = ['lg:-rotate-3', 'lg:-translate-y-4', 'lg:rotate-3'];
   return (
-    <div className="grid grid-cols-3 items-start gap-3 sm:gap-5 lg:-mt-48 lg:flex lg:gap-4 lg:self-start">
+    <div className="grid grid-cols-3 items-start gap-3 sm:gap-5 lg:w-[492px] lg:gap-4 lg:self-start">
       {srcs.map((src, i) => (
         <div
           key={src}
-          className={`shadow-2xl transition-transform duration-500 lg:w-[150px] lg:group-hover:rotate-0 ${tilt[i]} ${
+          className={`shadow-xl ${
             framed ? 'rounded-[1.1rem] bg-slate-900 p-[3px] sm:rounded-[1.4rem] sm:p-1' : ''
           }`}
         >
@@ -80,7 +79,7 @@ function Shots({ srcs, alts, ratio, framed = false }) {
             className={`relative w-full overflow-hidden ${framed ? 'rounded-[0.9rem] sm:rounded-[1.15rem]' : 'rounded-xl ring-1 ring-white/20 sm:rounded-2xl'}`}
             style={{ aspectRatio: ratio }}
           >
-            <Image src={src} alt={alts[i]} fill sizes="(min-width: 1024px) 150px, 30vw" className="object-cover object-top" />
+            <Image src={src} alt={alts[i]} fill sizes="(min-width: 1024px) 160px, 30vw" className="object-cover object-top" />
           </div>
         </div>
       ))}
@@ -141,7 +140,9 @@ export default function HomePage({ params }) {
                 </p>
               </StaggerItem>
               <StaggerItem>
-                <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">{t.hero.lead}</p>
+                <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+                  <FlagText text={t.hero.lead} />
+                </p>
               </StaggerItem>
               <StaggerItem>
                 <div className="mt-8 flex flex-wrap gap-3">

@@ -19,7 +19,7 @@ const sk = {
     role: 'Business Controller v Timac Agro Slovakia, Bratislava',
     headline: 'Automatizujem finančné procesy a staviam nástroje s AI agentmi.',
     lead:
-      'Mám na starosti controlling pre dve spoločnosti, slovenskú a českú. Opakovanú prácu v Exceli prepisujem do Pythonu a VBA a po práci vyvíjam vlastné aplikácie s Claude. Zaujímajú ma pozície v AI automatizácii a vývoji AI agentov.',
+      'Mám na starosti controlling pre dve spoločnosti, českú {cz} a slovenskú {sk}. Opakovanú prácu v Exceli automatizujem v Pythone, VBA a s pomocou rôznych AI nástrojov. Vo voľnom čase vyvíjam vlastné aplikácie. Som presvedčený, že budúcnosť patrí AI automatizácii a AI agentom, a práve na nich chcem pracovať.',
     primaryCta: 'Pozrieť projekty',
     secondaryCta: 'Napísať mi',
     facts: [
@@ -40,11 +40,19 @@ const sk = {
   about: {
     title: 'O mne',
     paragraphs: [
-      'Od mája 2026 pracujem ako Business Controller v Timac Agro Slovakia (skupina Roullier). Robím mesačnú uzávierku a reporting pre skupinu za slovenskú aj českú spoločnosť.',
-      'Najprv som automatizoval vlastnú prácu, potom nástroje pre kolegov z logistiky, HR a administratívy. Každý nástroj má kontrolný súčet, ktorý musí sedieť na nulový rozdiel. Kde ide o peniaze, zákazníkov alebo osobné údaje, posledné slovo má človek.',
+      'Od mája 2026 pracujem ako Business Controller v Timac Agro Slovakia (Groupe Roullier {fr}). Robím mesačnú uzávierku a reporting pre skupinu za českú {cz} aj slovenskú {sk} spoločnosť a pomáham CFO mať lepší prehľad o prevádzke firmy.',
+      'Najprv som automatizoval vlastnú prácu, potom nástroje pre kolegov z logistiky, HR a administratívy. Každý nástroj je jednoduchý na používanie, riadne zdokumentovaný a overiteľný: výsledok musí sedieť s kontrolným súčtom na nulový rozdiel.',
       'Predtým som pracoval vo financiách v Deutsche Telekom Cloud Services a v Arval Slovakia, robil cenové modely pre personálnu agentúru ATALIS a spoluzakladal sieť samoobslužných kávových staníc Coffee Corner, kde som mal na starosti P&L a cash flow.',
     ],
-    timelineTitle: 'Kde som pracoval',
+    principlesTitle: 'Ako pracujem s AI',
+    principles: [
+      { title: 'Človek v slučke (human-in-the-loop)', text: 'Kde ide o peniaze, zákazníkov alebo osobné údaje, posledné slovo má vždy človek. E-maily a platby AI len pripraví na schválenie.' },
+      { title: 'Najprv ľudia, potom kód', text: 'Začínam rozhovorom s tými, ktorí prácu robia, a nástroj staviam podľa ich procesu, nie naopak.' },
+      { title: 'Overiteľné výsledky', text: 'Kontrolné súčty, golden testy a evaly namiesto pocitu, že to vyzerá dobre.' },
+      { title: 'Ochrana dát', text: 'Posielam len nevyhnutné údaje, osobné údaje maskujem a reč prepisujem lokálne, kde sa dá.' },
+      { title: 'Test pred ostrou prevádzkou', text: 'Nový nástroj beží najprv v testovacom režime alebo súbežne so starým postupom.' },
+    ],
+    timelineTitle: 'Profesionálne skúsenosti',
     timeline: [
       { period: '2026 – teraz', role: 'Business Controller (SK a CZ)', org: 'Timac Agro Slovakia, skupina Roullier', current: true },
       { period: '2025', role: 'Cenové modely pre personálne zákazky', org: 'ATALIS, externe' },
@@ -64,7 +72,7 @@ const sk = {
   projects: {
     title: 'Projekty',
     intro:
-      'Dve aplikácie, ktoré som postavil vo voľnom čase, a nástroje, ktoré každý týždeň bežia v mojej práci.',
+      'Mimo práce vyvíjam vlastné aplikácie v React Native, píšem v TypeScripte a Pythone a pri vývoji naplno využívam AI agentov. Tu sú dve z nich a nástroje, ktoré každý týždeň bežia v mojej práci.',
     agrostit: {
       name: 'AgroŠtít',
       tagline:
@@ -74,7 +82,6 @@ const sk = {
         'Expo / React Native v TypeScripte a backend vo FastAPI. Claude vráti mieru rizika, citované varovné znaky a čo robiť ďalej.',
         'Osobné údaje sa pred odoslaním maskujú. Výstupy idú cez JSON Schema, firmy sa overujú v registri DPH (MFČR) a v ARES, vstupy sa kontrolujú na prompt injection.',
         '55 testovacích scenárov hodnotených LLM a asi 5 000 automatických testov. Prepis reči cez vlastný whisper.cpp, beh na VPS v EÚ.',
-        'Hotové za dva týždne. Pracoval som s viacerými paralelnými sedeniami Claude Code a každú zmenu pustil ďalej až po testoch.',
       ],
       videoLabel: 'Demo video, 3 minúty',
       videoPlay: 'Prehrať demo video AgroŠtít',
@@ -90,7 +97,7 @@ const sk = {
       points: [
         'Pipeline v Pythone (pdfplumber, pydantic) vytiahne akcie z PDF letákov a priradí produkty k receptom podľa pravidiel a uložených rozhodnutí LLM.',
         'Aplikácia v Expo / React Native pre iOS, Android aj web. Výpočet košíka je v Pythone aj v TypeScripte a oba stráži golden test s presnosťou na cent.',
-        'MCP server so šiestimi nástrojmi na čítanie, cez ktorý môžu plánovač používať AI agenti. Eval výberu nástrojov (15 prípadov) našiel dve chyby vo vyhľadávaní.',
+        'MCP server so šiestimi nástrojmi na čítanie, cez ktorý môžu plánovač používať AI agenti. Eval výberu nástrojov (15 prípadov) zachytáva problémy a chyby v práci agentov.',
       ],
       stats: [
         { value: '5 800+', label: 'akcií z letákov' },
@@ -107,12 +114,12 @@ const sk = {
         'Nástroje v Pythone a VBA, ktoré používam ja a moji kolegovia v Timac Agro. Údaje pochádzajú z mojej práce od mája 2026.',
       columns: { process: 'Proces', before: 'Predtým', after: 'Teraz' },
       rows: [
-        { process: 'Pripomienky splatnosti zo SAP Business One pre dve spoločnosti', before: '4–5 h týždenne', after: '~15 min', ratio: 0.06 },
-        { process: 'Provízie pre ~36 obchodníkov v dvoch krajinách, PDF pre každého', before: '1–1,5 dňa', after: '3–4 h', ratio: 0.33 },
-        { process: 'Kontrola služobných jázd pre HR, 4 700+ jázd z GPS', before: '1 deň mesačne', after: '1 klik', ratio: 0.03 },
-        { process: 'Sledovanie lehôt úverového poistenia', before: '2 h za cyklus', after: '20 min', ratio: 0.17 },
-        { process: 'Návody (SOP) z nahrávok procesov, lokálny prepis reči', before: '5–8 h na návod', after: '0,5–1 h', ratio: 0.12 },
-        { process: 'Kontrola návštev obchodníkov: CRM oproti GPS, 4 000+ návštev', before: '53 nevysvetlených', after: '21', ratio: 0.4 },
+        { process: '„E-upomienky“: pipeline v Pythone na kontrolu, generovanie a odoslanie upomienok zákazníkom', before: '4–5 h týždenne', after: '~15 min', ratio: 0.06 },
+        { process: 'VBA makro na výpočet provízií obchodného tímu v dvoch krajinách (~40 obchodníkov)', before: '1–1,5 dňa', after: '3–4 h', ratio: 0.33 },
+        { process: 'Pipeline na kontrolu služobných jázd pre HR, analýza 4 700+ jázd z GPS', before: '1 deň mesačne', after: '1 klik', ratio: 0.03 },
+        { process: 'Credit controlling', before: '2 h za cyklus', after: '20 min', ratio: 0.17 },
+        { process: 'Pracovné postupy (SOP) z nahrávok: lokálny prepis reči a návrh textu cez LLM', before: '5–8 h na návod', after: '0,5–1 h', ratio: 0.12 },
+        { process: 'Automatizované porovnanie a kontrola návštev obchodníkov: CRM oproti GPS', before: '53 nevysvetlených', after: '21', ratio: 0.4 },
       ],
       stack: 'Python (pandas, python-docx), VBA, Power Query, SAP Business One, LLM agent na revíziu',
     },

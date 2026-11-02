@@ -1,6 +1,7 @@
 import { CONTACT } from '@/lib/site';
 import Reveal from './motion/Reveal';
 import Timeline from './Timeline';
+import FlagText from './FlagText';
 
 export default function About({ t }) {
   return (
@@ -10,7 +11,9 @@ export default function About({ t }) {
           <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">{t.title}</h2>
           <div className="mt-8 max-w-[62ch] space-y-5 text-lg leading-relaxed text-foreground/85">
             {t.paragraphs.map((p) => (
-              <p key={p.slice(0, 24)}>{p}</p>
+              <p key={p.slice(0, 24)}>
+                <FlagText text={p} />
+              </p>
             ))}
           </div>
           <dl className="mt-10 grid gap-x-8 gap-y-4 border-t border-border pt-8 sm:grid-cols-2">
@@ -35,6 +38,18 @@ export default function About({ t }) {
           <div className="rounded-2xl border border-border bg-background p-6 shadow-sm sm:p-8">
             <Timeline title={t.timelineTitle} items={t.timeline} />
           </div>
+        </Reveal>
+
+        <Reveal className="lg:col-span-2">
+          <h3 className="font-display text-2xl font-semibold tracking-tight">{t.principlesTitle}</h3>
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {t.principles.map((pr) => (
+              <li key={pr.title} className="rounded-xl border border-border bg-background p-5">
+                <p className="font-medium leading-snug">{pr.title}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{pr.text}</p>
+              </li>
+            ))}
+          </ul>
         </Reveal>
       </div>
     </section>
