@@ -29,9 +29,9 @@ export default function ProjectVideo({ id, title, playLabel, caption, poster, po
           <button
             type="button"
             onClick={() => setPlaying(true)}
-            className="absolute bottom-5 left-5 inline-flex items-center gap-3 rounded-full bg-white/95 py-2 pl-2 pr-5 text-sm font-medium text-foreground shadow-lg backdrop-blur transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="absolute bottom-3 left-3 inline-flex items-center gap-2.5 rounded-full bg-white/95 py-1.5 pl-1.5 pr-4 text-xs font-medium sm:bottom-5 sm:left-5 sm:gap-3 sm:py-2 sm:pl-2 sm:pr-5 sm:text-sm text-foreground shadow-lg backdrop-blur transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white sm:h-10 sm:w-10">
               <Play className="ml-0.5 h-4 w-4 fill-current" aria-hidden="true" />
             </span>
             <span className="sr-only">{playLabel}. </span>

@@ -80,7 +80,7 @@ const sk = {
       videoPlay: 'Prehrať demo video AgroŠtít',
       videoTitle: 'AgroŠtít: demo',
       sceneAlt: 'AgroŠtít v telefóne na kuchynskom stole vedľa faktúry',
-      shotsAlt: ['Tri pravidlá pri telefonáte', 'Pripomienka počas hovoru', 'Overenie správy'],
+      shotsAlt: ['Úvodná obrazovka: overiť správu', 'Výsledok kontroly s varovnými znakmi', 'Čo robiť, ak ste už zaplatili'],
     },
     cherrypicker: {
       name: 'CherryPicker',

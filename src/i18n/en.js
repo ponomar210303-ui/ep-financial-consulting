@@ -79,7 +79,7 @@ const en = {
       videoPlay: 'Play the AgroŠtít demo video',
       videoTitle: 'AgroŠtít demo',
       sceneAlt: 'AgroŠtít on a phone at a kitchen table next to an invoice',
-      shotsAlt: ['Three rules for phone calls', 'Reminder during a call', 'Checking a message'],
+      shotsAlt: ['Home screen: check a message', 'Check result with warning signs', 'What to do if you already paid'],
     },
     cherrypicker: {
       name: 'CherryPicker',

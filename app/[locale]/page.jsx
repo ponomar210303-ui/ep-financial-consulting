@@ -62,19 +62,26 @@ function Points({ items, className = '' }) {
   );
 }
 
-// Three screenshots in a slightly fanned row; on desktop they overlap the image above.
-function Shots({ srcs, alts, framed }) {
-  const tilt = ['-rotate-3', 'rotate-0 -translate-y-4', 'rotate-3'];
+// Three screenshots in a row; the fan tilt and the overlap with the image above
+// apply on desktop only. `ratio` is the screenshots' own width/height, so
+// nothing gets cropped.
+function Shots({ srcs, alts, ratio, framed = false }) {
+  const tilt = ['lg:-rotate-3', 'lg:-translate-y-4', 'lg:rotate-3'];
   return (
-    <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:-mt-48 lg:flex lg:items-start lg:gap-4 lg:self-start">
+    <div className="grid grid-cols-3 items-start gap-3 sm:gap-5 lg:-mt-48 lg:flex lg:gap-4 lg:self-start">
       {srcs.map((src, i) => (
         <div
           key={src}
-          className={`relative aspect-[9/19.5] overflow-hidden shadow-2xl transition-transform duration-500 lg:w-[150px] lg:group-hover:rotate-0 ${tilt[i]} ${
-            framed ? 'rounded-[1.4rem] border-[5px] border-slate-900 bg-slate-900' : 'rounded-2xl ring-1 ring-white/20'
+          className={`shadow-2xl transition-transform duration-500 lg:w-[150px] lg:group-hover:rotate-0 ${tilt[i]} ${
+            framed ? 'rounded-[1.1rem] bg-slate-900 p-[3px] sm:rounded-[1.4rem] sm:p-1' : ''
           }`}
         >
-          <Image src={src} alt={alts[i]} fill sizes="(min-width: 1024px) 150px, 30vw" className="object-cover object-top" />
+          <div
+            className={`relative w-full overflow-hidden ${framed ? 'rounded-[0.9rem] sm:rounded-[1.15rem]' : 'rounded-xl ring-1 ring-white/20 sm:rounded-2xl'}`}
+            style={{ aspectRatio: ratio }}
+          >
+            <Image src={src} alt={alts[i]} fill sizes="(min-width: 1024px) 150px, 30vw" className="object-cover object-top" />
+          </div>
         </div>
       ))}
     </div>
@@ -185,10 +192,10 @@ export default function HomePage({ params }) {
               {t.hero.facts.map((fact) => (
                 <div
                   key={fact.label}
-                  className="flex flex-col-reverse gap-2 border-b border-border py-7 last:border-b-0 sm:border-b-0 sm:border-l sm:px-8 sm:first:border-l-0 sm:first:pl-0"
+                  className="flex flex-row-reverse items-center justify-end gap-5 border-b border-border py-5 last:border-b-0 sm:flex-col-reverse sm:items-start sm:gap-2 sm:border-b-0 sm:border-l sm:px-8 sm:py-7 sm:first:border-l-0 sm:first:pl-0"
                 >
                   <dt className="max-w-[28ch] text-sm leading-snug text-muted-foreground">{fact.label}</dt>
-                  <dd className="font-mono text-5xl font-medium tracking-tight tabular-nums">
+                  <dd className="w-28 shrink-0 whitespace-nowrap font-mono text-3xl font-medium tracking-tight tabular-nums sm:w-auto sm:text-5xl">
                     <CountUp value={fact.value} />
                   </dd>
                 </div>
@@ -222,11 +229,11 @@ export default function HomePage({ params }) {
                 />
                 <div className="grid gap-10 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14 lg:p-14">
                   <div>
-                    <h3 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">{p.agrostit.name}</h3>
+                    <h3 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">{p.agrostit.name}</h3>
                     <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">{p.agrostit.tagline}</p>
                     <p className="mt-4 inline-block rounded-lg bg-white/10 px-3 py-1.5 text-sm leading-snug text-white/80">{p.agrostit.status}</p>
                   </div>
-                  <Shots srcs={AGROSTIT_SHOTS} alts={p.agrostit.shotsAlt} framed />
+                  <Shots srcs={AGROSTIT_SHOTS} alts={p.agrostit.shotsAlt} ratio="600 / 1221" framed />
                   <Points items={p.agrostit.points} className="grid gap-x-12 gap-y-4 space-y-0 border-t border-white/15 pt-8 text-white/75 md:grid-cols-2 lg:col-span-2" />
                 </div>
               </article>
@@ -245,14 +252,14 @@ export default function HomePage({ params }) {
                 </div>
                 <div className="grid gap-10 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14 lg:p-14">
                   <div>
-                    <h3 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">{p.cherrypicker.name}</h3>
+                    <h3 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">{p.cherrypicker.name}</h3>
                     <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">{p.cherrypicker.tagline}</p>
                     <p className="mt-4 inline-block rounded-lg bg-white/10 px-3 py-1.5 text-sm leading-snug text-white/80">{p.cherrypicker.status}</p>
-                    <dl className="mt-8 grid max-w-xl grid-cols-3 gap-4 border-y border-white/15 py-6">
+                    <dl className="mt-8 grid max-w-xl gap-3 border-y border-white/15 py-6 sm:grid-cols-3 sm:gap-4">
                       {p.cherrypicker.stats.map((s) => (
-                        <div key={s.label} className="flex flex-col-reverse gap-1">
+                        <div key={s.label} className="flex flex-row-reverse items-baseline justify-end gap-4 sm:flex-col-reverse sm:items-start sm:gap-1">
                           <dt className="text-xs leading-snug text-white/65 sm:text-sm">{s.label}</dt>
-                          <dd className="font-mono text-2xl font-medium tabular-nums sm:text-3xl">
+                          <dd className="w-28 shrink-0 font-mono text-2xl font-medium tabular-nums sm:w-auto sm:text-3xl">
                             <CountUp value={s.value} />
                           </dd>
                         </div>
@@ -267,7 +274,7 @@ export default function HomePage({ params }) {
                       {p.cherrypicker.storeLink}
                     </a>
                   </div>
-                  <Shots srcs={CHERRYPICKER_SHOTS} alts={p.cherrypicker.shotsAlt} />
+                  <Shots srcs={CHERRYPICKER_SHOTS} alts={p.cherrypicker.shotsAlt} ratio="640 / 1391" />
                   <Points items={p.cherrypicker.points} className="grid gap-x-12 gap-y-4 space-y-0 border-t border-white/15 pt-8 text-white/75 md:grid-cols-2 lg:col-span-2" />
                 </div>
               </article>
@@ -276,7 +283,7 @@ export default function HomePage({ params }) {
             <Reveal className="mt-10">
               <article className="rounded-[2rem] border border-border bg-background p-6 shadow-sm sm:p-10 lg:p-14">
                 <div className="max-w-3xl">
-                  <h3 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">{p.automation.name}</h3>
+                  <h3 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">{p.automation.name}</h3>
                   <p className="mt-4 text-lg leading-relaxed text-foreground/85">{p.automation.tagline}</p>
                 </div>
                 <div className="mt-10">

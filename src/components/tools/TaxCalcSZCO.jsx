@@ -511,7 +511,7 @@ export default function TaxCalcSZCO({ locale = 'sk' }) {
           </div>
 
           {/* Legend */}
-          <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {chartData.map((d) => (
               <div key={d.id} className="flex items-center gap-2 rounded-lg border border-border bg-background p-2.5">
                 <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: d.color }} />
