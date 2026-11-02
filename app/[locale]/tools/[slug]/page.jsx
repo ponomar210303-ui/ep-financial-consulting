@@ -64,8 +64,15 @@ export default function ToolPage({ params }) {
             { name: title },
           ]}
         />
-        <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground">{desc}</p>
+        <div className="flex items-start gap-4">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-border bg-muted text-[1.75rem] leading-none" aria-hidden="true">
+            {tool.emoji}
+          </span>
+          <div>
+            <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
+            <p className="mt-2 max-w-2xl text-muted-foreground">{desc}</p>
+          </div>
+        </div>
         <div className="mt-8">
           <ToolLoader slug={tool.slug} locale={locale} loadingText={t.tools.loading} />
         </div>

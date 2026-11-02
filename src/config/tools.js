@@ -7,6 +7,7 @@ const tools = [
   {
     id: 'tax',
     slug: 'tax-calc',
+    emoji: '🧮',
     icon: Calculator,
     text: {
       sk: {
@@ -26,6 +27,7 @@ const tools = [
   {
     id: 'comparison',
     slug: 'comparison',
+    emoji: '⚖️',
     icon: GitCompare,
     text: {
       sk: {
@@ -45,6 +47,7 @@ const tools = [
   {
     id: 'invoice',
     slug: 'invoice',
+    emoji: '📄',
     icon: FileText,
     text: {
       sk: {
@@ -64,6 +67,7 @@ const tools = [
   {
     id: 'penalty',
     slug: 'penalty',
+    emoji: '⚠️',
     icon: AlertTriangle,
     text: {
       sk: {
