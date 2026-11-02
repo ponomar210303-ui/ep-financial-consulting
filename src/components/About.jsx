@@ -1,71 +1,37 @@
-import Image from 'next/image';
-import { GraduationCap, Globe, MapPin } from 'lucide-react';
-import AnimatedSection from './AnimatedSection';
+import { CONTACT } from '@/lib/site';
 
-const stats = [
-  { icon: GraduationCap, label: 'Магистр финансов, FM UK', emoji: '🎓' },
-  { icon: Globe, label: 'RU / SK / EN', emoji: '🌍' },
-  { icon: MapPin, label: 'Братислава', emoji: '📍' },
-];
-
-export default function About({ photoUrl }) {
+export default function About({ t }) {
   return (
-    <section id="about" className="py-24 relative">
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[150px] -z-10" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Photo */}
-          <AnimatedSection>
-            <div className="relative max-w-md mx-auto lg:mx-0">
-              <div className="aspect-square rounded-3xl overflow-hidden glow-blue">
-                <Image
-                  src={photoUrl}
-                  alt="Евгений Пономарёв — финансовый консультант"
-                  width={800}
-                  height={800}
-                  sizes="(max-width: 1024px) 90vw, 448px"
-                  className="w-full h-full object-cover"
-                  priority={false}
-                />
-              </div>
-              {/* Decorative elements */}
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl -z-10 blur-sm" />
-              <div className="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-secondary/20 to-primary/20 rounded-xl -z-10 blur-sm" />
-            </div>
-          </AnimatedSection>
-
-          {/* Text */}
-          <div className="space-y-6">
-            <AnimatedSection>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
-                Привет, я Евгений 👋
-              </h2>
-            </AnimatedSection>
-
-            <AnimatedSection delay={100}>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Финансист, выпускник Univerzity Komenského, с опытом работы как в корпорациях (Deutsche Telekom, Arval Slovakia), так и в стартапах.
-                Прошёл через весь процесс сам — от регистрации первой živnosťi до daňového priznania. 
-                Теперь помогаю другим не наступать на те же грабли.
-              </p>
-            </AnimatedSection>
-
-            <AnimatedSection delay={200}>
-              <div className="flex flex-wrap gap-3 pt-2">
-                {stats.map((s, i) => (
-                  <div
-                    key={i}
-                    className="glass rounded-full px-5 py-2.5 flex items-center gap-2 text-sm font-medium"
-                  >
-                    <span>{s.emoji}</span>
-                    {s.label}
-                  </div>
-                ))}
-              </div>
-            </AnimatedSection>
+    <section id="about" className="scroll-mt-20 border-y border-border bg-muted py-20 sm:py-24">
+      <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <div>
+          <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">{t.title}</h2>
+          <div className="mt-6 max-w-[65ch] space-y-5 text-lg leading-relaxed text-foreground/85">
+            {t.paragraphs.map((p) => (
+              <p key={p.slice(0, 24)}>{p}</p>
+            ))}
           </div>
         </div>
+
+        <aside className="self-start rounded-2xl border border-border bg-background p-6 shadow-sm sm:p-8">
+          <h3 className="font-display text-lg font-semibold">{t.factsTitle}</h3>
+          <dl className="mt-4 divide-y divide-border">
+            {t.facts.map((f) => (
+              <div key={f.term} className="grid gap-1 py-3 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-4">
+                <dt className="text-sm text-muted-foreground">{f.term}</dt>
+                <dd className="text-sm">{f.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <a
+            href={CONTACT.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex h-10 items-center rounded-lg border border-border px-4 text-sm font-medium transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {t.cv}
+          </a>
+        </aside>
       </div>
     </section>
   );

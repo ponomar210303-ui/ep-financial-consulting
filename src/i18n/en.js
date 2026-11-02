@@ -1,0 +1,175 @@
+const en = {
+  meta: {
+    title: 'Evgenii Ponomarev | Business Controller, automation and AI agents',
+    description:
+      'Business Controller in Bratislava. I automate finance processes in Python and VBA and build apps with AI agents.',
+  },
+  skipLink: 'Skip to content',
+  nav: {
+    about: 'About',
+    projects: 'Projects',
+    tools: 'Calculators',
+    contact: 'Contact',
+    menu: 'Open menu',
+    close: 'Close menu',
+    home: 'Home',
+  },
+  languages: { label: 'Language', sk: 'Slovenčina', en: 'English' },
+  hero: {
+    role: 'Business Controller at Timac Agro Slovakia, Bratislava',
+    headline: 'I automate finance processes and build tools with AI agents.',
+    lead:
+      'I run controlling for two entities, one Slovak and one Czech. I move recurring Excel work into Python and VBA, and after hours I build my own apps with Claude. I am looking at roles in AI automation and AI agent development.',
+    primaryCta: 'See projects',
+    secondaryCta: 'Write to me',
+    facts: [
+      { value: '8', label: 'processes moved from manual Excel to Python and VBA in 5 months' },
+      { value: '~40 h', label: 'of manual work saved per month (estimate)' },
+      { value: '2', label: 'AI apps I built myself: AgroŠtít and CherryPicker' },
+    ],
+    photoAlt: 'Evgenii Ponomarev',
+    photoPlaceholder: 'Photo coming soon',
+  },
+  about: {
+    title: 'About',
+    paragraphs: [
+      'Since May 2026 I have been Business Controller at Timac Agro Slovakia, part of Groupe Roullier. I handle month-end close and group reporting for the Slovak and the Czech entity.',
+      'I started by automating my own work, then built tools for colleagues in logistics, HR and office administration. Every tool has a control total that has to reconcile to zero. Where money, customers or personal data are involved, a person makes the final call.',
+      'Before that I worked in finance at Deutsche Telekom Cloud Services and Arval Slovakia, built pricing models for the staffing company ATALIS, and co-founded Coffee Corner, a network of self-service coffee stations, where I owned the P&L and cash flow.',
+    ],
+    factsTitle: 'In short',
+    facts: [
+      { term: 'Based in', value: 'Bratislava, Slovakia' },
+      { term: 'Languages', value: 'Slovak C2, English C1, Russian (native)' },
+      { term: 'Studies', value: 'MSc Financial Management, Comenius University (2027)' },
+      { term: 'Tools', value: 'Python, TypeScript, VBA, SQL, Claude Code, MCP, SAP Business One, Power BI' },
+    ],
+    cv: 'LinkedIn profile',
+  },
+  projects: {
+    title: 'Projects',
+    intro: 'Two apps I built in my own time, and the tools that run in my day job every week.',
+    agrostit: {
+      name: 'AgroŠtít',
+      tagline:
+        'A mobile app that uses AI to check a suspicious invoice, text message, e-mail or phone call. It is made for farmers and older people in Czechia and Slovakia.',
+      status: 'iOS and Android in closed testing. Entered in the AI výzva pro Česko 2026 competition.',
+      points: [
+        'Expo / React Native in TypeScript with a FastAPI backend. Claude returns a risk level, the warning signs it found, quoted, and what to do next.',
+        'Personal data is masked before anything is sent. Outputs follow a JSON Schema, companies are checked against the Czech VAT registry and ARES, and inputs are screened for prompt injection.',
+        'A 55-case eval set scored by an LLM judge and around 5,000 automated tests. Speech-to-text runs on a self-hosted whisper.cpp, the backend on an EU VPS.',
+        'Built in two weeks. I ran several Claude Code sessions in parallel and let a change through only after its tests passed.',
+      ],
+      videoLabel: 'Demo video, 3 minutes',
+      videoPlay: 'Play the AgroŠtít demo video',
+      videoTitle: 'AgroŠtít demo',
+    },
+    cherrypicker: {
+      name: 'CherryPicker',
+      tagline:
+        'A week of dinners planned from the promo leaflets of Lidl, Kaufland, Tesco and Billa.',
+      status: 'iOS on the App Store, Android in closed testing, web app.',
+      points: [
+        'A Python pipeline (pdfplumber, pydantic) pulls promotions out of PDF leaflets and matches products to recipes using rules and cached LLM decisions.',
+        'An Expo / React Native app for iOS, Android and the web. Basket maths lives in both Python and TypeScript, and a golden test keeps them equal to the cent.',
+        'An MCP server with six read-only tools so AI agents can use the planner. A 15-case tool-selection eval found two search bugs.',
+      ],
+      stats: [
+        { value: '5,800+', label: 'promotions from leaflets' },
+        { value: '4', label: 'grocery chains' },
+        { value: '1,680', label: 'weekly plans precomputed' },
+      ],
+      storeLink: 'CherryPicker on the App Store',
+    },
+    automation: {
+      name: 'Finance process automation',
+      tagline:
+        'Python and VBA tools that my colleagues and I use at Timac Agro. Figures come from my work there since May 2026.',
+      columns: { process: 'Process', before: 'Before', after: 'Now' },
+      rows: [
+        { process: 'Payment reminders from SAP Business One for two entities', before: '4–5 h a week', after: '~15 min' },
+        { process: 'Commissions for ~36 sales reps in two countries, one PDF each', before: '1–1.5 days', after: '3–4 h' },
+        { process: 'Mileage check for HR, 4,700+ GPS trips', before: '1 day a month', after: '1 click' },
+        { process: 'Credit insurance deadline tracking', before: '2 h per cycle', after: '20 min' },
+        { process: 'SOP manuals from recorded walkthroughs, local speech-to-text', before: '5–8 h each', after: '0.5–1 h' },
+        { process: 'Sales visit check: CRM against GPS, 4,000+ visits', before: '53 unexplained', after: '21' },
+      ],
+      stack: 'Python (pandas, python-docx), VBA, Power Query, SAP Business One, an LLM review agent',
+    },
+  },
+  tools: {
+    title: 'Calculators',
+    intro: 'Four calculators for self-employed people in Slovakia. Everything is calculated in your browser.',
+    open: 'Open calculator',
+    all: 'All calculators',
+    pageTitle: 'Calculators for the self-employed in Slovakia',
+    pageDescription:
+      'SZČO tax and contributions, živnosť vs s.r.o. vs employment, an invoice generator and late-filing penalties.',
+    loading: 'Loading calculator…',
+    breadcrumb: 'Breadcrumb',
+  },
+  contact: {
+    title: 'Contact',
+    intro: 'If you would like to talk about a role or one of the projects, write to me.',
+    channels: { email: 'E-mail', linkedin: 'LinkedIn', phone: 'Phone and WhatsApp' },
+    form: {
+      name: 'Name',
+      email: 'E-mail',
+      message: 'Message',
+      consentBefore: 'I agree to my data being processed under the ',
+      consentLink: 'privacy policy',
+      submit: 'Send message',
+      sending: 'Sending…',
+      success: 'Thank you, your message is on its way. I will reply by e-mail.',
+      failure: 'The message could not be sent. Please write to me directly at',
+      errors: {
+        name: 'Enter at least 2 characters.',
+        email: 'Check the e-mail address.',
+        message: 'Write at least 10 characters.',
+        consent: 'I can only send the message with your consent.',
+      },
+      subject: 'Message from epfinance.sk from',
+    },
+  },
+  footer: {
+    privacy: 'Privacy',
+  },
+  privacy: {
+    title: 'Privacy',
+    updated: 'Updated 2 November 2026',
+    sections: [
+      {
+        heading: 'Who processes your data',
+        body: 'epfinance.sk is run by Evgenii Ponomarev, Bratislava. Contact: e.ponomarev2003@gmail.com.',
+      },
+      {
+        heading: 'Contact form',
+        body: 'Your name, e-mail and message are sent to my e-mail through the Web3Forms service. I use them only to reply and keep them for as long as our conversation lasts. The legal basis is your consent, which you can withdraw at any time by e-mail.',
+      },
+      {
+        heading: 'Analytics',
+        body: 'The site uses Vercel Web Analytics. It counts visits in aggregate, sets no cookies and does not store IP addresses.',
+      },
+      {
+        heading: 'Calculators and video',
+        body: 'The calculators run in your browser. The invoice generator keeps supplier details only in your browser storage (localStorage). The video thumbnail loads from YouTube servers; the video itself starts only after you click, via youtube-nocookie.com.',
+      },
+      {
+        heading: 'Your rights',
+        body: 'You have the right to access, correct and erase your data and to restrict its processing. You can complain to the Slovak Office for Personal Data Protection.',
+      },
+    ],
+  },
+  notFound: {
+    title: 'Page not found',
+    body: 'This address does not exist or has moved.',
+    back: 'Back to home',
+  },
+  error: {
+    title: 'Something went wrong',
+    body: 'The page could not be shown. Please try again.',
+    retry: 'Try again',
+  },
+};
+
+export default en;

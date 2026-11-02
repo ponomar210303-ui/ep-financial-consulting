@@ -1,76 +1,42 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import Link from 'next/link';
-import { Send, MessageCircle, Calendar, Mail } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Mail, Linkedin, Phone } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from 'sonner';
-import AnimatedSection from './AnimatedSection';
+import { CONTACT } from '@/lib/site';
 
-// Получи бесплатный ключ на https://web3forms.com → Enter your email
+// Public Web3Forms key (delivers to the e-mail registered at web3forms.com).
 const WEB3FORMS_KEY = '929e8f83-7c01-4eea-a57e-0e73be12b604';
 
-const schema = z.object({
-  name: z.string().trim().min(2, 'Минимум 2 символа'),
-  email: z.string().trim().email('Неверный формат email'),
-  phone: z
-    .string()
-    .trim()
-    .optional()
-    .refine(
-      (v) => !v || /^[+\d\s\-()]{6,}$/.test(v),
-      'Похоже, телефон введён неправильно'
-    ),
-  message: z.string().trim().min(10, 'Расскажи чуть подробнее (минимум 10 символов)'),
-  consent: z.literal(true, {
-    errorMap: () => ({ message: 'Нужно согласие на обработку данных' }),
-  }),
-  // Honeypot: реальные люди не заполняют скрытое поле, боты — заполняют.
-  // Web3Forms сам отбрасывает submissions с непустым botcheck.
-  botcheck: z.string().max(0, 'Поле должно быть пустым'),
-});
+function makeSchema(e) {
+  return z.object({
+    name: z.string().trim().min(2, e.name),
+    email: z.string().trim().email(e.email),
+    message: z.string().trim().min(10, e.message),
+    consent: z.literal(true, { errorMap: () => ({ message: e.consent }) }),
+    // Honeypot: Web3Forms drops submissions where botcheck is filled in.
+    botcheck: z.string().max(0),
+  });
+}
 
-const contactCards = [
-  {
-    icon: MessageCircle,
-    label: 'WhatsApp',
-    value: '+421 910 650 045',
-    href: 'https://wa.me/421910650045',
-    color: 'from-green-500/20 to-green-600/20',
-  },
-  {
-    icon: Calendar,
-    label: 'Google Calendar',
-    value: 'Забронировать звонок',
-    href: 'https://calendar.app.google/JmVTFpHUB3szUqoK7',
-    color: 'from-primary/20 to-primary/10',
-  },
-  {
-    icon: Send,
-    label: 'Telegram-блог',
-    value: '@EPFinanceblog',
-    href: 'https://t.me/EPFinanceblog',
-    color: 'from-sky-500/20 to-sky-600/20',
-  },
-  {
-    icon: Mail,
-    label: 'Email',
-    value: 'ponomarev.businessonly@gmail.com',
-    href: 'mailto:ponomarev.businessonly@gmail.com',
-    color: 'from-secondary/20 to-secondary/10',
-  },
-];
+function FieldError({ id, message }) {
+  if (!message) return null;
+  return (
+    <p id={id} className="text-sm text-destructive">
+      {message}
+    </p>
+  );
+}
 
-export default function Contact() {
-  const router = useRouter();
-  const [sending, setSending] = useState(false);
+export default function Contact({ locale, t }) {
+  const f = t.form;
+  const [status, setStatus] = useState('idle'); // idle | sent | failed
   const {
     register,
     handleSubmit,
@@ -78,20 +44,13 @@ export default function Contact() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(makeSchema(f.errors)),
     mode: 'onTouched',
-    defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      message: '',
-      consent: false,
-      botcheck: '',
-    },
+    defaultValues: { name: '', email: '', message: '', consent: false, botcheck: '' },
   });
 
   const onSubmit = async (values) => {
-    setSending(true);
+    setStatus('idle');
     try {
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -100,259 +59,148 @@ export default function Contact() {
           access_key: WEB3FORMS_KEY,
           name: values.name,
           email: values.email,
-          phone: values.phone || '—',
           message: values.message,
-          subject: `Новое сообщение от ${values.name} — epfinance.sk`,
-          botcheck: values.botcheck, // Web3Forms drop spam if non-empty
+          subject: `${f.subject} ${values.name}`,
+          botcheck: values.botcheck,
         }),
       });
       const data = await res.json();
-      if (data.success) {
-        toast.success('Сообщение отправлено! Свяжусь с вами в ближайшее время.');
-        reset();
-        router.push('/thank-you');
-      } else {
-        throw new Error(data.message || 'Ошибка отправки');
-      }
+      if (!data.success) throw new Error(data.message);
+      reset();
+      setStatus('sent');
     } catch {
-      toast.error(
-        'Не удалось отправить. Напишите напрямую на ponomarev.businessonly@gmail.com'
-      );
+      setStatus('failed');
     }
-    setSending(false);
   };
 
-  const errId = (name) => (errors[name] ? `${name}-error` : undefined);
+  const channels = [
+    { icon: Mail, label: t.channels.email, value: CONTACT.email, href: `mailto:${CONTACT.email}` },
+    { icon: Linkedin, label: t.channels.linkedin, value: 'evgenii-ponomarev', href: CONTACT.linkedin, external: true },
+    { icon: Phone, label: t.channels.phone, value: CONTACT.phone, href: CONTACT.phoneHref, external: true },
+  ];
+
+  const inputClass = 'h-11 bg-background border-input text-base sm:text-sm';
 
   return (
-    <section id="contact" className="py-24 relative">
-      <div className="absolute bottom-0 left-0 w-[600px] h-[400px] bg-primary/5 rounded-full blur-[150px] -z-10" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <AnimatedSection>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4">
-              Давай <span className="gradient-text">поговорим</span>
-            </h2>
-            <p className="text-muted-foreground text-lg">
-              Первая консультация — бесплатно. Серьёзно.
-            </p>
-          </div>
-        </AnimatedSection>
-
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 max-w-5xl mx-auto">
-          {/* Form */}
-          <AnimatedSection>
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              noValidate
-              className="glass rounded-2xl p-8 space-y-5"
-              aria-label="Контактная форма"
-            >
-              {/* Name */}
-              <div className="space-y-1.5">
-                <Label htmlFor="contact-name" className="text-sm font-medium">
-                  Имя <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="contact-name"
-                  autoComplete="name"
-                  aria-required="true"
-                  aria-invalid={!!errors.name}
-                  aria-describedby={errId('name')}
-                  className="bg-background/50 border-border/50 rounded-xl h-12"
-                  {...register('name')}
-                />
-                {errors.name && (
-                  <p id="name-error" role="alert" className="text-xs text-destructive">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Email */}
-              <div className="space-y-1.5">
-                <Label htmlFor="contact-email" className="text-sm font-medium">
-                  Email <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="contact-email"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  aria-required="true"
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errId('email')}
-                  className="bg-background/50 border-border/50 rounded-xl h-12"
-                  {...register('email')}
-                />
-                {errors.email && (
-                  <p id="email-error" role="alert" className="text-xs text-destructive">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Phone */}
-              <div className="space-y-1.5">
-                <Label htmlFor="contact-phone" className="text-sm font-medium">
-                  Телефон{' '}
-                  <span className="text-muted-foreground font-normal">
-                    (необязательно)
-                  </span>
-                </Label>
-                <Input
-                  id="contact-phone"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  aria-invalid={!!errors.phone}
-                  aria-describedby={errId('phone')}
-                  className="bg-background/50 border-border/50 rounded-xl h-12"
-                  {...register('phone')}
-                />
-                {errors.phone && (
-                  <p id="phone-error" role="alert" className="text-xs text-destructive">
-                    {errors.phone.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Message */}
-              <div className="space-y-1.5">
-                <Label htmlFor="contact-message" className="text-sm font-medium">
-                  Сообщение <span className="text-destructive">*</span>
-                </Label>
-                <Textarea
-                  id="contact-message"
-                  rows={4}
-                  placeholder="Расскажи коротко о своей ситуации..."
-                  aria-required="true"
-                  aria-invalid={!!errors.message}
-                  aria-describedby={errId('message')}
-                  className="bg-background/50 border-border/50 rounded-xl resize-none"
-                  {...register('message')}
-                />
-                {errors.message && (
-                  <p
-                    id="message-error"
-                    role="alert"
-                    className="text-xs text-destructive"
-                  >
-                    {errors.message.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Honeypot — visually hidden, hidden from AT */}
-              <div
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  left: '-9999px',
-                  width: '1px',
-                  height: '1px',
-                  overflow: 'hidden',
-                }}
-              >
-                <label htmlFor="botcheck">
-                  Не заполняй это поле, если ты человек
-                </label>
-                <input
-                  id="botcheck"
-                  type="text"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  {...register('botcheck')}
-                />
-              </div>
-
-              {/* GDPR consent */}
-              <div className="space-y-1.5">
-                <div className="flex items-start gap-3">
-                  <Controller
-                    control={control}
-                    name="consent"
-                    render={({ field }) => (
-                      <Checkbox
-                        id="contact-consent"
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        aria-required="true"
-                        aria-invalid={!!errors.consent}
-                        aria-describedby={errId('consent')}
-                        className="mt-0.5"
-                      />
-                    )}
-                  />
-                  <Label
-                    htmlFor="contact-consent"
-                    className="text-xs text-muted-foreground leading-relaxed font-normal cursor-pointer"
-                  >
-                    Согласен на обработку персональных данных согласно{' '}
-                    <Link
-                      href="/privacy"
-                      className="underline hover:text-foreground"
-                    >
-                      Политике конфиденциальности
-                    </Link>
-                    .
-                  </Label>
-                </div>
-                {errors.consent && (
-                  <p
-                    id="consent-error"
-                    role="alert"
-                    className="text-xs text-destructive"
-                  >
-                    {errors.consent.message}
-                  </p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold"
-                disabled={sending || isSubmitting}
-              >
-                {sending ? (
-                  <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <Send className="mr-2 h-4 w-4" />
-                    Отправить
-                  </>
-                )}
-              </Button>
-            </form>
-          </AnimatedSection>
-
-          {/* Quick contact cards */}
-          <AnimatedSection delay={100}>
-            <div className="space-y-4 lg:pt-4">
-              {contactCards.map((card, i) => (
+    <section id="contact" className="scroll-mt-20 py-20 sm:py-24">
+      <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+        <div>
+          <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">{t.title}</h2>
+          <p className="mt-4 max-w-md text-lg text-muted-foreground">{t.intro}</p>
+          <ul className="mt-8 divide-y divide-border border-y border-border">
+            {channels.map(({ icon: Icon, label, value, href, external }) => (
+              <li key={label}>
                 <a
-                  key={i}
-                  href={card.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center gap-5 glass rounded-2xl p-6 hover:border-primary/30 transition-all duration-300 hover:glow-blue"
+                  href={href}
+                  {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  className="flex items-center gap-4 py-4 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  <div
-                    className={`w-14 h-14 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <card.icon className="h-6 w-6 text-foreground" />
-                  </div>
-                  <div>
-                    <div className="font-semibold">{card.label}</div>
-                    <div className="text-sm text-muted-foreground">{card.value}</div>
-                  </div>
+                  <Icon className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                  <span className="min-w-0">
+                    <span className="block text-sm text-muted-foreground">{label}</span>
+                    <span className="block truncate font-medium">{value}</span>
+                  </span>
                 </a>
-              ))}
-            </div>
-          </AnimatedSection>
+              </li>
+            ))}
+          </ul>
         </div>
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          className="space-y-5 rounded-2xl border border-border bg-background p-5 shadow-sm sm:p-8"
+        >
+          <input type="text" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" {...register('botcheck')} />
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="c-name">{f.name}</Label>
+              <Input
+                id="c-name"
+                autoComplete="name"
+                className={inputClass}
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? 'c-name-err' : undefined}
+                {...register('name')}
+              />
+              <FieldError id="c-name-err" message={errors.name?.message} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="c-email">{f.email}</Label>
+              <Input
+                id="c-email"
+                type="email"
+                autoComplete="email"
+                className={inputClass}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'c-email-err' : undefined}
+                {...register('email')}
+              />
+              <FieldError id="c-email-err" message={errors.email?.message} />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="c-message">{f.message}</Label>
+            <Textarea
+              id="c-message"
+              rows={5}
+              className="bg-background border-input text-base sm:text-sm"
+              aria-invalid={!!errors.message}
+              aria-describedby={errors.message ? 'c-message-err' : undefined}
+              {...register('message')}
+            />
+            <FieldError id="c-message-err" message={errors.message?.message} />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-start gap-3">
+              <Controller
+                name="consent"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    id="c-consent"
+                    checked={field.value}
+                    onCheckedChange={(v) => field.onChange(v === true)}
+                    onBlur={field.onBlur}
+                    aria-invalid={!!errors.consent}
+                    className="mt-0.5"
+                  />
+                )}
+              />
+              <Label htmlFor="c-consent" className="text-sm font-normal leading-relaxed text-muted-foreground">
+                {f.consentBefore}
+                <Link href={`/${locale}/privacy`} className="text-foreground underline underline-offset-2 hover:text-primary">
+                  {f.consentLink}
+                </Link>
+                .
+              </Label>
+            </div>
+            <FieldError message={errors.consent?.message} />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60 sm:w-auto"
+          >
+            {isSubmitting ? f.sending : f.submit}
+          </button>
+
+          <div aria-live="polite">
+            {status === 'sent' && (
+              <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{f.success}</p>
+            )}
+            {status === 'failed' && (
+              <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                {f.failure}{' '}
+                <a href={`mailto:${CONTACT.email}`} className="font-medium underline">{CONTACT.email}</a>.
+              </p>
+            )}
+          </div>
+        </form>
       </div>
     </section>
   );

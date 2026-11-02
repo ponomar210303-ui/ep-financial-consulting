@@ -2,75 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light only: white page, #F5F7FA sections, #0F172A text, one blue accent #2563EB. */
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 215 28% 10%;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 215 28% 10%;
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 215 28% 10%;
+    --popover-foreground: 222 47% 11%;
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 263 70% 50%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 214 32% 91%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 214 32% 91%;
-    --accent-foreground: 215 28% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --secondary: 216 33% 97%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 216 33% 97%;
+    --muted-foreground: 215 19% 35%;
+    --accent: 214 32% 95%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
     --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --input: 213 27% 84%;
     --ring: 221 83% 53%;
     --chart-1: 221 83% 53%;
-    --chart-2: 263 70% 50%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.75rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 221 83% 53%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 221 83% 53%;
-  }
-
-  .dark {
-    --background: 240 10% 4%;
-    --foreground: 210 40% 98%;
-    --card: 240 6% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 240 6% 8%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 263 70% 50%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 240 4% 16%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 240 4% 16%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 4% 16%;
-    --input: 240 4% 16%;
-    --ring: 221 83% 53%;
-    --chart-1: 221 83% 53%;
-    --chart-2: 263 70% 50%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 6% 8%;
-    --sidebar-foreground: 240 4.8% 95.9%;
+    --chart-2: 213 94% 68%;
+    --chart-3: 224 64% 33%;
+    --chart-4: 215 20% 65%;
+    --chart-5: 215 25% 27%;
+    --radius: 0.625rem;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
     --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-accent: 216 33% 97%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
     --sidebar-ring: 221 83% 53%;
   }
 }
@@ -79,28 +45,17 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground font-inter;
-  }
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
   }
-}
-
-@layer utilities {
-  .glass {
-    @apply bg-card/60 backdrop-blur-xl border border-border/50;
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: 'cv11', 'ss03';
   }
-  .glass-strong {
-    @apply bg-card/80 backdrop-blur-2xl border border-border/60;
-  }
-  .glow-blue {
-    box-shadow: 0 0 30px rgba(37, 99, 235, 0.15), 0 0 60px rgba(37, 99, 235, 0.05);
-  }
-  .glow-purple {
-    box-shadow: 0 0 30px rgba(124, 58, 237, 0.15), 0 0 60px rgba(124, 58, 237, 0.05);
-  }
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 }

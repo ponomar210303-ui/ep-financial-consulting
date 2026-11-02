@@ -1,12 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    darkMode: ["class"],
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}", "./app/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
   		fontFamily: {
-  			inter: ['var(--font-inter)'],
-  			mono: ['var(--font-mono)'],
+  			sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+  			inter: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+  			display: ['var(--font-display)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
+  			mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
