@@ -21,7 +21,7 @@ export default function AutomationChart({ rows, columns }) {
               <div className="relative h-7 flex-1">
                 <motion.div
                   className="absolute inset-y-0 left-0 rounded-md bg-primary"
-                  initial={reduce ? false : { width: '100%' }}
+                  initial={reduce ? false : { width: 0 }}
                   whileInView={{ width: `${Math.max(row.ratio * 100, 2)}%` }}
                   viewport={{ once: true, margin: '-15% 0px' }}
                   transition={{ duration: 1.1, delay: 0.1 * i, ease: [0.65, 0, 0.35, 1] }}
