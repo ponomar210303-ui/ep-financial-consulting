@@ -2,6 +2,7 @@ import { CONTACT } from '@/lib/site';
 import Reveal from './motion/Reveal';
 import Timeline from './Timeline';
 import FlagText from './FlagText';
+import Principles from './Principles';
 
 export default function About({ t }) {
   return (
@@ -40,17 +41,9 @@ export default function About({ t }) {
           </div>
         </Reveal>
 
-        <Reveal className="lg:col-span-2">
-          <h3 className="font-display text-2xl font-semibold tracking-tight">{t.principlesTitle}</h3>
-          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {t.principles.map((pr) => (
-              <li key={pr.title} className="rounded-xl border border-border bg-background p-5">
-                <p className="font-medium leading-snug">{pr.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{pr.text}</p>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
+        <div className="lg:col-span-2">
+          <Principles title={t.principlesTitle} items={t.principles} />
+        </div>
       </div>
     </section>
   );

@@ -19,7 +19,7 @@ const sk = {
     role: 'Business Controller v Timac Agro Slovakia, Bratislava',
     headline: 'Automatizujem finančné procesy a staviam nástroje s AI agentmi.',
     lead:
-      'Mám na starosti controlling pre dve spoločnosti, českú {cz} a slovenskú {sk}. Opakovanú prácu v Exceli automatizujem v Pythone, VBA a s pomocou rôznych AI nástrojov. Vo voľnom čase vyvíjam vlastné aplikácie. Som presvedčený, že budúcnosť patrí AI automatizácii a AI agentom, a práve na nich chcem pracovať.',
+      'Mám na starosti controlling pre dve entity {cz}{sk}. Opakovanú prácu v Exceli automatizujem v Pythone, VBA a pomocou rôznych AI nástrojov. Vo voľnom čase vyvíjam vlastné aplikácie. Som presvedčený, že budúcnosť patrí AI automatizácii a AI agentom, a práve na nich chcem pracovať.',
     primaryCta: 'Pozrieť projekty',
     secondaryCta: 'Napísať mi',
     facts: [
@@ -40,7 +40,7 @@ const sk = {
   about: {
     title: 'O mne',
     paragraphs: [
-      'Od mája 2026 pracujem ako Business Controller v Timac Agro Slovakia (Groupe Roullier {fr}). Robím mesačnú uzávierku a reporting pre skupinu za českú {cz} aj slovenskú {sk} spoločnosť a pomáham CFO mať lepší prehľad o prevádzke firmy.',
+      'Od mája 2026 pracujem ako Business Controller v Timac Agro Slovakia (Groupe Roullier {fr}). Robím mesačné uzávierky a reporting pre skupinu za českú {cz} aj slovenskú {sk} spoločnosti a pomáham CFO mať lepší prehľad o prevádzke firmy.',
       'Najprv som automatizoval vlastnú prácu, potom nástroje pre kolegov z logistiky, HR a administratívy. Každý nástroj je jednoduchý na používanie, riadne zdokumentovaný a overiteľný: výsledok musí sedieť s kontrolným súčtom na nulový rozdiel.',
       'Predtým som pracoval vo financiách v Deutsche Telekom Cloud Services a v Arval Slovakia, robil cenové modely pre personálnu agentúru ATALIS a spoluzakladal sieť samoobslužných kávových staníc Coffee Corner, kde som mal na starosti P&L a cash flow.',
     ],
@@ -86,8 +86,9 @@ const sk = {
       videoLabel: 'Demo video, 3 minúty',
       videoPlay: 'Prehrať demo video AgroŠtít',
       videoTitle: 'AgroŠtít: demo',
+      siteLink: 'Web projektu AgroŠtít',
       sceneAlt: 'AgroŠtít v telefóne na kuchynskom stole vedľa faktúry',
-      shotsAlt: ['Úvodná obrazovka: overiť správu', 'Výsledok kontroly s varovnými znakmi', 'Čo robiť, ak ste už zaplatili'],
+      shotsAlt: ['Úvodná obrazovka: overiť správu', 'Výsledok kontroly s varovnými znakmi'],
     },
     cherrypicker: {
       name: 'CherryPicker',
@@ -106,7 +107,7 @@ const sk = {
       ],
       storeLink: 'CherryPicker v App Store',
       sceneAlt: 'CherryPicker v telefóne vedľa akciových letákov a zeleniny',
-      shotsAlt: ['Jedálniček na týždeň z akcií', 'Nákupný zoznam podľa obchodov', 'Recepty podľa rozpočtu'],
+      shotsAlt: ['Jedálniček na týždeň z akcií', 'Nákupný zoznam podľa obchodov'],
     },
     automation: {
       name: 'Automatizácia finančných procesov',

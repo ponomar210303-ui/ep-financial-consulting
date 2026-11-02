@@ -15,6 +15,7 @@ export const CONTACT = {
 };
 
 export const AGROSTIT_VIDEO_ID = 'ztkJkWzBfTk';
+export const AGROSTIT_SITE = 'https://agrostit.vercel.app/';
 export const CHERRYPICKER_APP_STORE = 'https://apps.apple.com/sk/app/id6817686801';
 
 // Returns absolute URL for OG/canonical fields. Accepts absolute http(s) URLs

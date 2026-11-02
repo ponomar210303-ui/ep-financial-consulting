@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import About from '@/components/About';
 import Contact from '@/components/Contact';
 import ProjectVideo from '@/components/ProjectVideo';
+import PhoneFrame from '@/components/PhoneFrame';
 import AutomationChart from '@/components/AutomationChart';
 import Reveal from '@/components/motion/Reveal';
 import CountUp from '@/components/motion/CountUp';
@@ -20,6 +21,7 @@ import {
   CONTACT,
   PROFILE_PHOTO,
   AGROSTIT_VIDEO_ID,
+  AGROSTIT_SITE,
   CHERRYPICKER_APP_STORE,
 } from '@/lib/site';
 
@@ -47,8 +49,8 @@ const GRID_STYLE = {
   backgroundSize: '44px 32px',
 };
 
-const AGROSTIT_SHOTS = ['/images/projects/agrostit-home.webp', '/images/projects/agrostit-result.webp', '/images/projects/agrostit-whatnow.webp'];
-const CHERRYPICKER_SHOTS = ['/images/projects/cherrypicker-plan.webp', '/images/projects/cherrypicker-list.webp', '/images/projects/cherrypicker-budget.webp'];
+const AGROSTIT_SHOTS = ['/images/projects/agrostit-home.webp', '/images/projects/agrostit-result.webp'];
+const CHERRYPICKER_SHOTS = ['/images/projects/cherrypicker-plan.webp', '/images/projects/cherrypicker-list.webp'];
 
 function Points({ items, className = '' }) {
   return (
@@ -63,25 +65,12 @@ function Points({ items, className = '' }) {
   );
 }
 
-// Three screenshots in an even row. `ratio` is the screenshots' own
-// width/height, so nothing gets cropped.
-function Shots({ srcs, alts, ratio, framed = false }) {
+// Two phones side by side, the second one set a little lower.
+function Shots({ srcs, alts, ratio, island = false }) {
   return (
-    <div className="grid grid-cols-3 items-start gap-3 sm:gap-5 lg:w-[492px] lg:gap-4 lg:self-start">
+    <div className="mx-auto grid w-full max-w-[420px] grid-cols-2 items-start gap-6 sm:gap-8 lg:mx-0 lg:w-[440px] lg:max-w-none lg:self-start">
       {srcs.map((src, i) => (
-        <div
-          key={src}
-          className={`shadow-xl ${
-            framed ? 'rounded-[1.1rem] bg-slate-900 p-[3px] sm:rounded-[1.4rem] sm:p-1' : ''
-          }`}
-        >
-          <div
-            className={`relative w-full overflow-hidden ${framed ? 'rounded-[0.9rem] sm:rounded-[1.15rem]' : 'rounded-xl ring-1 ring-white/20 sm:rounded-2xl'}`}
-            style={{ aspectRatio: ratio }}
-          >
-            <Image src={src} alt={alts[i]} fill sizes="(min-width: 1024px) 160px, 30vw" className="object-cover object-top" />
-          </div>
-        </div>
+        <PhoneFrame key={src} src={src} alt={alts[i]} ratio={ratio} island={island} className={i === 1 ? 'mt-10' : ''} />
       ))}
     </div>
   );
@@ -233,8 +222,18 @@ export default function HomePage({ params }) {
                     <h3 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">{p.agrostit.name}</h3>
                     <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">{p.agrostit.tagline}</p>
                     <p className="mt-4 inline-block rounded-lg bg-white/10 px-3 py-1.5 text-sm leading-snug text-white/80">{p.agrostit.status}</p>
+                    <div>
+                      <a
+                        href={AGROSTIT_SITE}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-8 inline-flex h-11 items-center rounded-full bg-white px-5 text-sm font-medium text-[#0B2545] transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B2545]"
+                      >
+                        {p.agrostit.siteLink}
+                      </a>
+                    </div>
                   </div>
-                  <Shots srcs={AGROSTIT_SHOTS} alts={p.agrostit.shotsAlt} ratio="600 / 1221" framed />
+                  <Shots srcs={AGROSTIT_SHOTS} alts={p.agrostit.shotsAlt} ratio="600 / 1300" />
                   <Points items={p.agrostit.points} className="grid gap-x-12 gap-y-4 space-y-0 border-t border-white/15 pt-8 text-white/75 md:grid-cols-2 lg:col-span-2" />
                 </div>
               </article>
@@ -275,7 +274,7 @@ export default function HomePage({ params }) {
                       {p.cherrypicker.storeLink}
                     </a>
                   </div>
-                  <Shots srcs={CHERRYPICKER_SHOTS} alts={p.cherrypicker.shotsAlt} ratio="640 / 1391" />
+                  <Shots srcs={CHERRYPICKER_SHOTS} alts={p.cherrypicker.shotsAlt} ratio="600 / 1304" island />
                   <Points items={p.cherrypicker.points} className="grid gap-x-12 gap-y-4 space-y-0 border-t border-white/15 pt-8 text-white/75 md:grid-cols-2 lg:col-span-2" />
                 </div>
               </article>

@@ -19,7 +19,7 @@ const en = {
     role: 'Business Controller at Timac Agro Slovakia, Bratislava',
     headline: 'I automate finance processes and build tools with AI agents.',
     lead:
-      'I run controlling for two entities, one Czech {cz} and one Slovak {sk}. I automate recurring Excel work with Python, VBA and a range of AI tools, and in my free time I build my own apps. I believe the future belongs to AI automation and AI agents, and that is where I want to work.',
+      'I run controlling for two entities {cz}{sk}. I automate recurring Excel work with Python, VBA and various AI tools, and in my free time I build my own apps. I believe the future belongs to AI automation and AI agents, and that is where I want to work.',
     primaryCta: 'See projects',
     secondaryCta: 'Write to me',
     facts: [
@@ -40,7 +40,7 @@ const en = {
   about: {
     title: 'About',
     paragraphs: [
-      'Since May 2026 I have been Business Controller at Timac Agro Slovakia, part of Groupe Roullier {fr}. I handle month-end close and group reporting for the Czech {cz} and the Slovak {sk} entity, and help the CFO get a clearer view of how the business runs.',
+      'Since May 2026 I have been Business Controller at Timac Agro Slovakia, part of Groupe Roullier {fr}. I handle month-end closes and group reporting for the Czech {cz} and the Slovak {sk} entities, and help the CFO get a clearer view of how the business runs.',
       'I started by automating my own work, then built tools for colleagues in logistics, HR and office administration. Every tool is easy to use, properly documented and verifiable: its output has to reconcile to a control total with zero difference.',
       'Before that I worked in finance at Deutsche Telekom Cloud Services and Arval Slovakia, built pricing models for the staffing company ATALIS, and co-founded Coffee Corner, a network of self-service coffee stations, where I owned the P&L and cash flow.',
     ],
@@ -85,8 +85,9 @@ const en = {
       videoLabel: 'Demo video, 3 minutes',
       videoPlay: 'Play the AgroŠtít demo video',
       videoTitle: 'AgroŠtít demo',
+      siteLink: 'AgroŠtít project website',
       sceneAlt: 'AgroŠtít on a phone at a kitchen table next to an invoice',
-      shotsAlt: ['Home screen: check a message', 'Check result with warning signs', 'What to do if you already paid'],
+      shotsAlt: ['Home screen: check a message', 'Check result with warning signs'],
     },
     cherrypicker: {
       name: 'CherryPicker',
@@ -105,7 +106,7 @@ const en = {
       ],
       storeLink: 'CherryPicker on the App Store',
       sceneAlt: 'CherryPicker on a phone next to promo leaflets and vegetables',
-      shotsAlt: ['Weekly meal plan from promotions', 'Shopping list by store', 'Recipes for your budget'],
+      shotsAlt: ['Weekly meal plan from promotions', 'Shopping list by store'],
     },
     automation: {
       name: 'Finance process automation',
