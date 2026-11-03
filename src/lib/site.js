@@ -4,8 +4,9 @@ export const SITE_NAME = 'Evgenii Ponomarev';
 // Real photo of Evgenii, background removed (retouched in Higgsfield).
 // Set to null to show the neutral placeholder; the OG card is
 // generated from text (app/[locale]/opengraph-image.jsx).
-export const PROFILE_PHOTO = '/images/evgenii-suit.webp';
-// Alternative without the jacket: '/images/evgenii-casual.webp'.
+// Real studio photo on pure white; it blends into the white hero.
+export const PROFILE_PHOTO = '/images/evgenii.webp';
+export const PROFILE_PHOTO_JPG = '/images/evgenii.jpg';
 
 export const CONTACT = {
   email: 'e.ponomarev2003@gmail.com',

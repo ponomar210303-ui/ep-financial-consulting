@@ -21,6 +21,7 @@ import {
   SITE_NAME,
   CONTACT,
   PROFILE_PHOTO,
+  PROFILE_PHOTO_JPG,
   AGROSTIT_VIDEO_ID,
   AGROSTIT_SITE,
   CHERRYPICKER_APP_STORE,
@@ -42,13 +43,6 @@ export function generateMetadata({ params }) {
     },
   };
 }
-
-// Spreadsheet-like grid behind the portrait: a nod to where the work starts.
-const GRID_STYLE = {
-  backgroundImage:
-    'linear-gradient(to right, rgba(255,255,255,0.09) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.09) 1px, transparent 1px)',
-  backgroundSize: '44px 32px',
-};
 
 const CHIP_ICONS = [Workflow, Bot, LineChart];
 // Full class names (no string building) so Tailwind keeps the drift styles.
@@ -111,7 +105,7 @@ export default function HomePage({ params }) {
     '@type': 'Person',
     name: SITE_NAME,
     url: `${BASE_URL}/${locale}`,
-    image: PROFILE_PHOTO ? `${BASE_URL}${PROFILE_PHOTO}` : undefined,
+    image: `${BASE_URL}${PROFILE_PHOTO_JPG}`,
     jobTitle: 'Business Controller',
     worksFor: { '@type': 'Organization', name: 'Timac Agro Slovakia s.r.o.' },
     address: { '@type': 'PostalAddress', addressLocality: 'Bratislava', addressCountry: 'SK' },
@@ -176,7 +170,6 @@ export default function HomePage({ params }) {
             </Stagger>
 
             <Reveal y={40} className="relative h-[440px] sm:h-[540px] lg:h-auto lg:min-h-[600px]">
-              <div className="absolute inset-x-0 bottom-0 top-[14%] rounded-t-[2.5rem] bg-primary" style={GRID_STYLE} aria-hidden="true" />
               {PROFILE_PHOTO && (
                 <Image
                   src={PROFILE_PHOTO}
