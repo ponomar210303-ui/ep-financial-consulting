@@ -1,4 +1,5 @@
-import { CONTACT } from '@/lib/site';
+import { ArrowUpRight } from 'lucide-react';
+import { CONTACT, CERTIFICATE_URLS } from '@/lib/site';
 import Reveal from './motion/Reveal';
 import Timeline from './Timeline';
 import FlagText from './FlagText';
@@ -20,7 +21,7 @@ export default function About({ t }) {
           </div>
           <dl className="mt-10 grid gap-x-8 gap-y-4 border-t border-border pt-8 sm:grid-cols-2">
             {t.facts.map((f) => (
-              <div key={f.term}>
+              <div key={f.term} className={f.wide ? 'sm:col-span-2' : undefined}>
                 <dt className="text-sm text-muted-foreground">{f.term}</dt>
                 <dd className="mt-0.5 text-sm">{f.value}</dd>
               </div>
@@ -30,7 +31,7 @@ export default function About({ t }) {
             <h3 className="text-sm text-muted-foreground">{t.certificatesTitle}</h3>
             <ul className="mt-3 space-y-3">
               {t.certificates.map((c) => (
-                <li key={c.name} className="flex items-center gap-3">
+                <li key={c.name} className="flex items-start gap-3">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-background">
                     <IssuerLogo issuer={c.logo} className="h-6 w-6" />
                   </span>
@@ -39,6 +40,17 @@ export default function About({ t }) {
                     <p className="mt-0.5 text-muted-foreground">
                       {c.issuer}, {c.date}
                     </p>
+                    {CERTIFICATE_URLS[c.logo] && (
+                      <a
+                        href={CERTIFICATE_URLS[c.logo]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-flex items-center gap-0.5 rounded text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        {t.credential}
+                        <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+                      </a>
+                    )}
                   </div>
                 </li>
               ))}

@@ -63,12 +63,19 @@ const en = {
       { term: 'Languages', value: 'Slovak C2, English C1, Russian (native)' },
       { term: 'Studies', value: 'MSc Financial Management, Comenius University (2027)' },
       { term: 'Tools', value: 'Python, TypeScript, VBA, SQL, Claude Code, MCP, SAP Business One, Power BI' },
+      {
+        term: "Master's thesis",
+        value:
+          'Application of Accounting Fraud Detection Models in the Energy Sector. Beneish M-Score, Altman Z-Score and Dechow F-Score on a sample of energy companies, calculated in Python.',
+        wide: true,
+      },
     ],
     certificatesTitle: 'Certifications',
     certificates: [
       { logo: 'microsoft', name: 'Microsoft Azure AI Essentials Professional Certificate', issuer: 'Microsoft and LinkedIn', date: 'November 2026' },
       { logo: 'anaconda', name: 'Machine Learning with Python Professional Certificate', issuer: 'Anaconda and LinkedIn', date: 'November 2026' },
     ],
+    credential: 'Show credential',
     cv: 'LinkedIn profile',
   },
   projects: {
