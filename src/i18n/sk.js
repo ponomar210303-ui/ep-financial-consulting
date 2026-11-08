@@ -66,7 +66,7 @@ const sk = {
       {
         term: 'Diplomová práca',
         value:
-          'Application of Accounting Fraud Detection Models in the Energy Sector (píšem po anglicky). Beneish M-Score, Altman Z-Score a Dechow F-Score na vzorke energetických spoločností, výpočty v Pythone.',
+          'Aplikácia modelov na detekciu účtovných podvodov v energetickom sektore. V Pythone počítam Beneish M-Score, Altman Z-Score a Dechow F-Score na vzorke energetických spoločností.',
         wide: true,
       },
     ],

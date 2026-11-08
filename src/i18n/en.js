@@ -66,7 +66,7 @@ const en = {
       {
         term: "Master's thesis",
         value:
-          'Application of Accounting Fraud Detection Models in the Energy Sector. Beneish M-Score, Altman Z-Score and Dechow F-Score on a sample of energy companies, calculated in Python.',
+          'Application of Accounting Fraud Detection Models in the Energy Sector. In Python I calculate the Beneish M-Score, Altman Z-Score and Dechow F-Score for a sample of energy companies.',
         wide: true,
       },
     ],
