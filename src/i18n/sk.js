@@ -64,6 +64,11 @@ const sk = {
       { term: 'Štúdium', value: 'Finančný manažment, Fakulta managementu UK (Mgr., 2027)' },
       { term: 'Nástroje', value: 'Python, TypeScript, VBA, SQL, Claude Code, MCP, SAP Business One, Power BI' },
     ],
+    certificatesTitle: 'Certifikáty',
+    certificates: [
+      { name: 'Microsoft Azure AI Essentials Professional Certificate', issuer: 'Microsoft a LinkedIn', date: 'november 2026' },
+      { name: 'Machine Learning with Python Professional Certificate', issuer: 'Anaconda a LinkedIn', date: 'november 2026' },
+    ],
     cv: 'LinkedIn profil',
   },
   projects: {

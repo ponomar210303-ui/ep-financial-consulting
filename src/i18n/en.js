@@ -64,6 +64,11 @@ const en = {
       { term: 'Studies', value: 'MSc Financial Management, Comenius University (2027)' },
       { term: 'Tools', value: 'Python, TypeScript, VBA, SQL, Claude Code, MCP, SAP Business One, Power BI' },
     ],
+    certificatesTitle: 'Certifications',
+    certificates: [
+      { name: 'Microsoft Azure AI Essentials Professional Certificate', issuer: 'Microsoft and LinkedIn', date: 'November 2026' },
+      { name: 'Machine Learning with Python Professional Certificate', issuer: 'Anaconda and LinkedIn', date: 'November 2026' },
+    ],
     cv: 'LinkedIn profile',
   },
   projects: {

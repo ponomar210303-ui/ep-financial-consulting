@@ -1,3 +1,4 @@
+import { Award } from 'lucide-react';
 import { CONTACT } from '@/lib/site';
 import Reveal from './motion/Reveal';
 import Timeline from './Timeline';
@@ -25,6 +26,24 @@ export default function About({ t }) {
               </div>
             ))}
           </dl>
+          <div className="mt-8 border-t border-border pt-8">
+            <h3 className="text-sm text-muted-foreground">{t.certificatesTitle}</h3>
+            <ul className="mt-3 space-y-3">
+              {t.certificates.map((c) => (
+                <li key={c.name} className="flex gap-3">
+                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border bg-background text-primary">
+                    <Award className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <div className="text-sm">
+                    <p className="font-medium leading-snug">{c.name}</p>
+                    <p className="mt-0.5 text-muted-foreground">
+                      {c.issuer}, {c.date}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
           <a
             href={CONTACT.linkedin}
             target="_blank"
