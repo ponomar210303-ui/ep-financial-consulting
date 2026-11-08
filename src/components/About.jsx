@@ -1,9 +1,9 @@
-import { Award } from 'lucide-react';
 import { CONTACT } from '@/lib/site';
 import Reveal from './motion/Reveal';
 import Timeline from './Timeline';
 import FlagText from './FlagText';
 import Principles from './Principles';
+import IssuerLogo from './IssuerLogo';
 
 export default function About({ t }) {
   return (
@@ -30,9 +30,9 @@ export default function About({ t }) {
             <h3 className="text-sm text-muted-foreground">{t.certificatesTitle}</h3>
             <ul className="mt-3 space-y-3">
               {t.certificates.map((c) => (
-                <li key={c.name} className="flex gap-3">
-                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border bg-background text-primary">
-                    <Award className="h-4 w-4" aria-hidden="true" />
+                <li key={c.name} className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-background">
+                    <IssuerLogo issuer={c.logo} className="h-6 w-6" />
                   </span>
                   <div className="text-sm">
                     <p className="font-medium leading-snug">{c.name}</p>

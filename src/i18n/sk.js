@@ -66,8 +66,8 @@ const sk = {
     ],
     certificatesTitle: 'Certifikáty',
     certificates: [
-      { name: 'Microsoft Azure AI Essentials Professional Certificate', issuer: 'Microsoft a LinkedIn', date: 'november 2026' },
-      { name: 'Machine Learning with Python Professional Certificate', issuer: 'Anaconda a LinkedIn', date: 'november 2026' },
+      { logo: 'microsoft', name: 'Microsoft Azure AI Essentials Professional Certificate', issuer: 'Microsoft a LinkedIn', date: 'november 2026' },
+      { logo: 'anaconda', name: 'Machine Learning with Python Professional Certificate', issuer: 'Anaconda a LinkedIn', date: 'november 2026' },
     ],
     cv: 'LinkedIn profil',
   },
