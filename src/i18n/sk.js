@@ -63,7 +63,19 @@ const sk = {
       { term: 'Jazyky', value: 'slovenčina C2, angličtina C1, ruština (materinský jazyk)' },
       { term: 'Štúdium', value: 'Finančný manažment, Fakulta managementu UK (Mgr., 2027)' },
       { term: 'Nástroje', value: 'Python, TypeScript, VBA, SQL, Claude Code, MCP, SAP Business One, Power BI' },
+      {
+        term: 'Diplomová práca',
+        value:
+          'Aplikácia modelov na detekciu účtovných podvodov v energetickom sektore. V Pythone počítam Beneish M-Score, Altman Z-Score a Dechow F-Score na vzorke energetických spoločností.',
+        wide: true,
+      },
     ],
+    certificatesTitle: 'Certifikáty',
+    certificates: [
+      { logo: 'microsoft', name: 'Microsoft Azure AI Essentials Professional Certificate', issuer: 'Microsoft a LinkedIn', date: 'november 2026' },
+      { logo: 'anaconda', name: 'Machine Learning with Python Professional Certificate', issuer: 'Anaconda a LinkedIn', date: 'november 2026' },
+    ],
+    credential: 'Zobraziť certifikát',
     cv: 'LinkedIn profil',
   },
   projects: {

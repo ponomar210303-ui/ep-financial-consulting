@@ -25,3 +25,9 @@ export function absoluteUrl(pathOrUrl) {
   if (pathOrUrl.startsWith('http')) return pathOrUrl;
   return `${BASE_URL}${pathOrUrl.startsWith('/') ? '' : '/'}${pathOrUrl}`;
 }
+
+// Public LinkedIn Learning certificate pages, keyed by issuer logo.
+export const CERTIFICATE_URLS = {
+  microsoft: 'https://www.linkedin.com/learning/certificates/13cc70c5b1e8d2f6fe8e66d2b0a83ec09076f62009125a0100d38e2835b3f846',
+  anaconda: 'https://www.linkedin.com/learning/certificates/b638f6836f4daef98bb94df48330995d4a91770becbb7b710d6ef0758dced2c6',
+};
