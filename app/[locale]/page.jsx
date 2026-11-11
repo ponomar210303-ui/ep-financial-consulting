@@ -21,7 +21,8 @@ import {
   SITE_NAME,
   CONTACT,
   PROFILE_PHOTO,
-  AGROSTIT_VIDEO_ID,
+  AGROSTIT_VIDEO_IDS,
+  CHERRYPICKER_VIDEO_ID,
   AGROSTIT_SITE,
   CHERRYPICKER_APP_STORE,
 } from '@/lib/site';
@@ -236,7 +237,7 @@ export default function HomePage({ params }) {
             <Reveal className="mt-14">
               <article className="group overflow-hidden rounded-[2rem] bg-[#0B2545] text-white">
                 <ProjectVideo
-                  id={AGROSTIT_VIDEO_ID}
+                  id={AGROSTIT_VIDEO_IDS[locale]}
                   title={p.agrostit.videoTitle}
                   playLabel={p.agrostit.videoPlay}
                   caption={p.agrostit.videoLabel}
@@ -270,15 +271,15 @@ export default function HomePage({ params }) {
 
             <Reveal className="mt-10">
               <article className="group overflow-hidden rounded-[2rem] bg-[#6D1A33] text-white">
-                <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/9] lg:aspect-[2.3/1]">
-                  <Image
-                    src="/images/projects/cherrypicker-scene.webp"
-                    alt={p.cherrypicker.sceneAlt}
-                    fill
-                    sizes="(min-width: 1024px) 1100px, 100vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                  />
-                </div>
+                <ProjectVideo
+                  id={CHERRYPICKER_VIDEO_ID}
+                  title={p.cherrypicker.videoTitle}
+                  playLabel={p.cherrypicker.videoPlay}
+                  caption={p.cherrypicker.videoLabel}
+                  poster="/images/projects/cherrypicker-scene.webp"
+                  posterAlt={p.cherrypicker.sceneAlt}
+                  className="aspect-[4/3] sm:aspect-[16/9] lg:aspect-[2.3/1]"
+                />
                 <div className="grid gap-10 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14 lg:p-14">
                   <div>
                     <h3 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">{p.cherrypicker.name}</h3>
