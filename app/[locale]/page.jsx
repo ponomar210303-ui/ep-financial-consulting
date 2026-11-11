@@ -262,9 +262,9 @@ export default function HomePage({ params }) {
                         {p.agrostit.siteLink}
                       </a>
                     </div>
+                    <Points items={p.agrostit.points} className="mt-8 space-y-3 text-white/75" />
                   </div>
                   <Shots srcs={AGROSTIT_SHOTS} alts={p.agrostit.shotsAlt} ratio="600 / 1300" />
-                  <Points items={p.agrostit.points} className="grid gap-x-12 gap-y-4 space-y-0 border-t border-white/15 pt-8 text-white/75 md:grid-cols-2 lg:col-span-2" />
                 </div>
               </article>
             </Reveal>
@@ -294,9 +294,9 @@ export default function HomePage({ params }) {
                     >
                       {p.cherrypicker.storeLink}
                     </a>
+                    <Points items={p.cherrypicker.points} className="mt-8 space-y-3 text-white/75" />
                   </div>
                   <Shots srcs={CHERRYPICKER_SHOTS} alts={p.cherrypicker.shotsAlt} ratio="600 / 1304" island />
-                  <Points items={p.cherrypicker.points} className="grid gap-x-12 gap-y-4 space-y-0 border-t border-white/15 pt-8 text-white/75 md:grid-cols-2 lg:col-span-2" />
                 </div>
               </article>
             </Reveal>
