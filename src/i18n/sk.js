@@ -92,9 +92,9 @@ const sk = {
         'Osobné údaje sa pred odoslaním maskujú. Výstupy idú cez JSON Schema, firmy sa overujú v registri DPH (MFČR) a v ARES, vstupy sa kontrolujú na prompt injection.',
         'Kvalitu strážia evaly s LLM ako hodnotiteľom a automatické testy. Prepis reči beží na vlastnom whisper.cpp, backend na VPS v EÚ.',
       ],
-      videoLabel: 'Demo video, 3 minúty',
-      videoPlay: 'Prehrať demo video AgroŠtít',
-      videoTitle: 'AgroŠtít: demo',
+      videoLabel: 'Video o projekte, 1:36',
+      videoPlay: 'Prehrať video o projekte AgroŠtít',
+      videoTitle: 'AgroŠtít: video o projekte',
       siteLink: 'Web projektu AgroŠtít',
       stats: [
         { value: '55', label: 'eval scenárov' },
@@ -114,6 +114,9 @@ const sk = {
         'Aplikácia v Expo / React Native pre iOS, Android aj web. Výpočet košíka je v Pythone aj v TypeScripte a oba stráži golden test s presnosťou na cent.',
         'MCP server so šiestimi nástrojmi na čítanie, cez ktorý môžu plánovač používať AI agenti. Eval výberu nástrojov (15 prípadov) zachytáva problémy a chyby v práci agentov.',
       ],
+      videoLabel: 'Video o projekte (po anglicky), 1:25',
+      videoPlay: 'Prehrať video o projekte CherryPicker',
+      videoTitle: 'CherryPicker: video o projekte',
       stats: [
         { value: '5 800+', label: 'akcií z letákov' },
         { value: '4', label: 'obchodné reťazce' },

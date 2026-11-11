@@ -14,7 +14,10 @@ export const CONTACT = {
   linkedin: 'https://www.linkedin.com/in/evgenii-ponomarev-446023235',
 };
 
-export const AGROSTIT_VIDEO_ID = 'ztkJkWzBfTk';
+// Portfolio videos (unlisted on YouTube). AgroŠtít has SK and EN cuts;
+// CherryPicker exists only in English. The October farmer demo stays on agrostit.vercel.app.
+export const AGROSTIT_VIDEO_IDS = { sk: 'aB-AwVE8c-w', en: 'BR_iug4K5mM' };
+export const CHERRYPICKER_VIDEO_ID = 'pqXLDnEU_hY';
 export const AGROSTIT_SITE = 'https://agrostit.vercel.app/';
 export const CHERRYPICKER_APP_STORE = 'https://apps.apple.com/sk/app/id6817686801';
 

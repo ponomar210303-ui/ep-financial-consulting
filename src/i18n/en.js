@@ -91,9 +91,9 @@ const en = {
         'Personal data is masked before anything is sent. Outputs follow a JSON Schema, companies are checked against the Czech VAT registry and ARES, and inputs are screened for prompt injection.',
         'Quality is guarded by evals with an LLM judge and automated tests. Speech-to-text runs on a self-hosted whisper.cpp, the backend on an EU VPS.',
       ],
-      videoLabel: 'Demo video, 3 minutes',
-      videoPlay: 'Play the AgroŠtít demo video',
-      videoTitle: 'AgroŠtít demo',
+      videoLabel: 'Project video, 1:34',
+      videoPlay: 'Play the AgroŠtít project video',
+      videoTitle: 'AgroŠtít: project video',
       siteLink: 'AgroŠtít project website',
       stats: [
         { value: '55', label: 'eval cases' },
@@ -113,6 +113,9 @@ const en = {
         'An Expo / React Native app for iOS, Android and the web. Basket maths lives in both Python and TypeScript, and a golden test keeps them equal to the cent.',
         'An MCP server with six read-only tools so AI agents can use the planner. A 15-case tool-selection eval catches problems and bugs in how agents use it.',
       ],
+      videoLabel: 'Project video, 1:25',
+      videoPlay: 'Play the CherryPicker project video',
+      videoTitle: 'CherryPicker: project video',
       stats: [
         { value: '5,800+', label: 'promotions from leaflets' },
         { value: '4', label: 'grocery chains' },

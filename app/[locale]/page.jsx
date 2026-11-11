@@ -21,7 +21,8 @@ import {
   SITE_NAME,
   CONTACT,
   PROFILE_PHOTO,
-  AGROSTIT_VIDEO_ID,
+  AGROSTIT_VIDEO_IDS,
+  CHERRYPICKER_VIDEO_ID,
   AGROSTIT_SITE,
   CHERRYPICKER_APP_STORE,
 } from '@/lib/site';
@@ -236,7 +237,7 @@ export default function HomePage({ params }) {
             <Reveal className="mt-14">
               <article className="group overflow-hidden rounded-[2rem] bg-[#0B2545] text-white">
                 <ProjectVideo
-                  id={AGROSTIT_VIDEO_ID}
+                  id={AGROSTIT_VIDEO_IDS[locale]}
                   title={p.agrostit.videoTitle}
                   playLabel={p.agrostit.videoPlay}
                   caption={p.agrostit.videoLabel}
@@ -245,11 +246,13 @@ export default function HomePage({ params }) {
                   posterClassName="object-[center_12%]"
                   className="aspect-[4/3] sm:aspect-[16/9] lg:aspect-[2.3/1]"
                 />
-                <div className="grid gap-10 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14 lg:p-14">
-                  <div>
+                <div className="grid gap-10 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-x-14 lg:gap-y-8 lg:p-14">
+                  <div className="flex flex-col">
                     <h3 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">{p.agrostit.name}</h3>
                     <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">{p.agrostit.tagline}</p>
-                    <p className="mt-4 inline-block rounded-lg bg-white/10 px-3 py-1.5 text-sm leading-snug text-white/80">{p.agrostit.status}</p>
+                    <p className="mt-4 self-start rounded-lg bg-white/10 px-3 py-1.5 text-sm leading-snug text-white/80">{p.agrostit.status}</p>
+                    {/* Pushes the stats and button down, level with the bottom of the phones. */}
+                    <div className="lg:flex-1" aria-hidden="true" />
                     <ProjectStats stats={p.agrostit.stats} />
                     <div>
                       <a
@@ -270,26 +273,28 @@ export default function HomePage({ params }) {
 
             <Reveal className="mt-10">
               <article className="group overflow-hidden rounded-[2rem] bg-[#6D1A33] text-white">
-                <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/9] lg:aspect-[2.3/1]">
-                  <Image
-                    src="/images/projects/cherrypicker-scene.webp"
-                    alt={p.cherrypicker.sceneAlt}
-                    fill
-                    sizes="(min-width: 1024px) 1100px, 100vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                  />
-                </div>
-                <div className="grid gap-10 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14 lg:p-14">
-                  <div>
+                <ProjectVideo
+                  id={CHERRYPICKER_VIDEO_ID}
+                  title={p.cherrypicker.videoTitle}
+                  playLabel={p.cherrypicker.videoPlay}
+                  caption={p.cherrypicker.videoLabel}
+                  poster="/images/projects/cherrypicker-scene.webp"
+                  posterAlt={p.cherrypicker.sceneAlt}
+                  className="aspect-[4/3] sm:aspect-[16/9] lg:aspect-[2.3/1]"
+                />
+                <div className="grid gap-10 p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-x-14 lg:gap-y-8 lg:p-14">
+                  <div className="flex flex-col">
                     <h3 className="font-display text-3xl font-semibold tracking-tight sm:text-5xl">{p.cherrypicker.name}</h3>
                     <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/85">{p.cherrypicker.tagline}</p>
-                    <p className="mt-4 inline-block rounded-lg bg-white/10 px-3 py-1.5 text-sm leading-snug text-white/80">{p.cherrypicker.status}</p>
+                    <p className="mt-4 self-start rounded-lg bg-white/10 px-3 py-1.5 text-sm leading-snug text-white/80">{p.cherrypicker.status}</p>
+                    {/* Pushes the stats and button down, level with the bottom of the phones. */}
+                    <div className="lg:flex-1" aria-hidden="true" />
                     <ProjectStats stats={p.cherrypicker.stats} />
                     <a
                       href={CHERRYPICKER_APP_STORE}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-8 inline-flex h-11 items-center rounded-full bg-white px-5 text-sm font-medium text-[#6D1A33] transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#6D1A33]"
+                      className="mt-8 inline-flex h-11 self-start items-center rounded-full bg-white px-5 text-sm font-medium text-[#6D1A33] transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#6D1A33]"
                     >
                       {p.cherrypicker.storeLink}
                     </a>
