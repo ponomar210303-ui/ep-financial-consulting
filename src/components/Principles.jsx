@@ -1,8 +1,5 @@
 'use client';
 import { motion, useReducedMotion } from 'framer-motion';
-import { UserCheck, Users, ListChecks, ShieldCheck, FlaskConical } from 'lucide-react';
-
-const ICONS = [UserCheck, Users, ListChecks, ShieldCheck, FlaskConical];
 
 const list = { hidden: {}, show: { transition: { staggerChildren: 0.12 } } };
 const card = {
@@ -22,22 +19,16 @@ export default function Principles({ title, items }) {
         whileInView="show"
         viewport={{ once: true, margin: '-10% 0px' }}
       >
-        {items.map((pr, i) => {
-          const Icon = ICONS[i % ICONS.length];
-          return (
-            // Entrance animation on the <li>, hover styles on the inner card:
-            // framer-motion's inline transform would otherwise cancel the hover lift.
-            <motion.li key={pr.title} variants={reduce ? undefined : card} className="h-full">
-              <div className="group h-full rounded-xl border border-border bg-background p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:bg-primary hover:shadow-xl">
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-white">
-                  <Icon className="h-5 w-5" aria-hidden="true" />
-                </span>
-                <p className="mt-4 font-medium leading-snug transition-colors duration-300 group-hover:text-white">{pr.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground transition-colors duration-300 group-hover:text-white/85">{pr.text}</p>
-              </div>
-            </motion.li>
-          );
-        })}
+        {items.map((pr) => (
+          // Entrance animation on the <li>, hover styles on the inner card:
+          // framer-motion's inline transform would otherwise cancel the hover lift.
+          <motion.li key={pr.title} variants={reduce ? undefined : card} className="h-full">
+            <div className="group h-full rounded-xl border border-border bg-background p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:bg-primary hover:shadow-xl">
+              <p className="font-display text-lg font-semibold leading-snug transition-colors duration-300 group-hover:text-white">{pr.title}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground transition-colors duration-300 group-hover:text-white/85">{pr.text}</p>
+            </div>
+          </motion.li>
+        ))}
       </motion.ul>
     </div>
   );

@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Workflow, Bot, LineChart } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import About from '@/components/About';
@@ -51,7 +50,6 @@ const GRID_STYLE = {
   backgroundSize: '44px 32px',
 };
 
-const CHIP_ICONS = [Workflow, Bot, LineChart];
 // Full class names (no string building) so Tailwind keeps the drift styles.
 const CHIP_POSITIONS = [
   'keyword-drift-1 left-0 top-[54%] sm:-left-4',
@@ -189,20 +187,14 @@ export default function HomePage({ params }) {
                 />
               )}
               {/* Keyword chips sit over the shoulders and arms, never over the face. */}
-              {t.hero.chips.map((chip, i) => {
-                const Icon = CHIP_ICONS[i];
-                return (
-                  <span
-                    key={chip}
-                    className={`absolute inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/60 py-1 pl-1 pr-3 text-xs font-medium text-foreground shadow-[0_8px_24px_-10px_rgba(15,23,42,0.5)] backdrop-blur-md sm:text-sm ${CHIP_POSITIONS[i]}`}
-                  >
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/90 text-white">
-                      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-                    </span>
-                    {chip}
-                  </span>
-                );
-              })}
+              {t.hero.chips.map((chip, i) => (
+                <span
+                  key={chip}
+                  className={`absolute rounded-full border border-white/60 bg-white/60 px-3.5 py-1.5 text-xs font-medium text-foreground shadow-[0_8px_24px_-10px_rgba(15,23,42,0.5)] backdrop-blur-md sm:text-sm ${CHIP_POSITIONS[i]}`}
+                >
+                  {chip}
+                </span>
+              ))}
             </Reveal>
           </div>
 
