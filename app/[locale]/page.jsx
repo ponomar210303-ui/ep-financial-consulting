@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { GearSixIcon, RobotIcon, ChartLineUpIcon } from '@phosphor-icons/react/dist/ssr';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -51,6 +52,8 @@ const GRID_STYLE = {
 };
 
 // Full class names (no string building) so Tailwind keeps the drift styles.
+const CHIP_ICONS = [GearSixIcon, RobotIcon, ChartLineUpIcon];
+
 const CHIP_POSITIONS = [
   'keyword-drift-1 left-0 top-[54%] sm:-left-4',
   'keyword-drift-2 right-0 top-[68%] sm:-right-4',
@@ -187,14 +190,18 @@ export default function HomePage({ params }) {
                 />
               )}
               {/* Keyword chips sit over the shoulders and arms, never over the face. */}
-              {t.hero.chips.map((chip, i) => (
-                <span
-                  key={chip}
-                  className={`absolute rounded-full border border-white/60 bg-white/60 px-3.5 py-1.5 text-xs font-medium text-foreground shadow-[0_8px_24px_-10px_rgba(15,23,42,0.5)] backdrop-blur-md sm:text-sm ${CHIP_POSITIONS[i]}`}
-                >
-                  {chip}
-                </span>
-              ))}
+              {t.hero.chips.map((chip, i) => {
+                const Icon = CHIP_ICONS[i];
+                return (
+                  <span
+                    key={chip}
+                    className={`absolute inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/60 py-1.5 pl-2.5 pr-3.5 text-xs font-medium text-foreground shadow-[0_8px_24px_-10px_rgba(15,23,42,0.5)] backdrop-blur-md sm:text-sm ${CHIP_POSITIONS[i]}`}
+                  >
+                    <Icon weight="duotone" className="h-4 w-4 text-primary sm:h-[1.15rem] sm:w-[1.15rem]" aria-hidden="true" />
+                    {chip}
+                  </span>
+                );
+              })}
             </Reveal>
           </div>
 
