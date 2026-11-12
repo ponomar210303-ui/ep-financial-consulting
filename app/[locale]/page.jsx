@@ -1,6 +1,6 @@
 import Link from 'next/link';
+import { GearSixIcon, RobotIcon, ChartLineUpIcon } from '@phosphor-icons/react/dist/ssr';
 import Image from 'next/image';
-import { Workflow, Bot, LineChart } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import About from '@/components/About';
@@ -51,8 +51,9 @@ const GRID_STYLE = {
   backgroundSize: '44px 32px',
 };
 
-const CHIP_ICONS = [Workflow, Bot, LineChart];
 // Full class names (no string building) so Tailwind keeps the drift styles.
+const CHIP_ICONS = [GearSixIcon, RobotIcon, ChartLineUpIcon];
+
 const CHIP_POSITIONS = [
   'keyword-drift-1 left-0 top-[54%] sm:-left-4',
   'keyword-drift-2 right-0 top-[68%] sm:-right-4',
@@ -194,11 +195,9 @@ export default function HomePage({ params }) {
                 return (
                   <span
                     key={chip}
-                    className={`absolute inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/60 py-1 pl-1 pr-3 text-xs font-medium text-foreground shadow-[0_8px_24px_-10px_rgba(15,23,42,0.5)] backdrop-blur-md sm:text-sm ${CHIP_POSITIONS[i]}`}
+                    className={`absolute inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/60 py-1.5 pl-2.5 pr-3.5 text-xs font-medium text-foreground shadow-[0_8px_24px_-10px_rgba(15,23,42,0.5)] backdrop-blur-md sm:text-sm ${CHIP_POSITIONS[i]}`}
                   >
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/90 text-white">
-                      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-                    </span>
+                    <Icon weight="duotone" className="h-4 w-4 text-primary sm:h-[1.15rem] sm:w-[1.15rem]" aria-hidden="true" />
                     {chip}
                   </span>
                 );

@@ -1,8 +1,8 @@
 'use client';
 import { motion, useReducedMotion } from 'framer-motion';
-import { UserCheck, Users, ListChecks, ShieldCheck, FlaskConical } from 'lucide-react';
+import { HandPalmIcon, HandshakeIcon, SealCheckIcon, LockKeyIcon, FlaskIcon } from '@phosphor-icons/react';
 
-const ICONS = [UserCheck, Users, ListChecks, ShieldCheck, FlaskConical];
+const ICONS = [HandPalmIcon, HandshakeIcon, SealCheckIcon, LockKeyIcon, FlaskIcon];
 
 const list = { hidden: {}, show: { transition: { staggerChildren: 0.12 } } };
 const card = {
@@ -29,10 +29,8 @@ export default function Principles({ title, items }) {
             // framer-motion's inline transform would otherwise cancel the hover lift.
             <motion.li key={pr.title} variants={reduce ? undefined : card} className="h-full">
               <div className="group h-full rounded-xl border border-border bg-background p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:bg-primary hover:shadow-xl">
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-white">
-                  <Icon className="h-5 w-5" aria-hidden="true" />
-                </span>
-                <p className="mt-4 font-medium leading-snug transition-colors duration-300 group-hover:text-white">{pr.title}</p>
+                <Icon weight="duotone" className="h-8 w-8 text-primary transition-colors duration-300 group-hover:text-white" aria-hidden="true" />
+                <p className="mt-4 font-display text-lg font-semibold leading-snug transition-colors duration-300 group-hover:text-white">{pr.title}</p>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground transition-colors duration-300 group-hover:text-white/85">{pr.text}</p>
               </div>
             </motion.li>
